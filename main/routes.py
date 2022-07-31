@@ -8,13 +8,11 @@ from flask_login import login_required, login_user, current_user
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
 @app.route("/")
 @login_required
 def index():
-    if  request.method == "GET":
-        return render_template("index.html")
-    else:
-        return render_template("result.html")
+    return render_template("index.html")
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -54,7 +52,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
 
