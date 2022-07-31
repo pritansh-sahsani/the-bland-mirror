@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import bcrypt
 
 # Initiate Flask app
 app = Flask(__name__)
@@ -10,5 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataistics.db' # SQLite datab
 
 # Initiate database
 db = SQLAlchemy(app)
+
+# Initialize bcrypt for encryption
+bcrypt = Bcrypt(app)
 
 from main import routes
