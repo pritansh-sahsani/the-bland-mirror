@@ -20,7 +20,7 @@ def register():
     """ Register user. """
 
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
     form = RegistrationForm()
 
@@ -42,7 +42,7 @@ def login():
     """ Login user. """
 
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
     form = LoginForm()
     
@@ -57,4 +57,3 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
 
     return render_template('login.html', title='Login', form=form)
-
