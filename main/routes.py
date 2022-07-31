@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request
 from .app import app, db, bcrypt, login_manager
 from .forms import RegistrationForm, LoginForm
 from .models import User
-from flask_login import login_required, login_user, current_user
+from flask_login import login_required, login_user, current_user, logout_user
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -57,3 +57,9 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
 
     return render_template('login.html', title='Login', form=form)
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
