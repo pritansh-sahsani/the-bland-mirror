@@ -13,7 +13,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///main/dataistics.db")    
+db = SQL("sqlite:///main/dataistics.db")
 
 @app.route("/")
 @login_required
