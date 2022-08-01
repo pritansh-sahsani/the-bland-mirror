@@ -1,99 +1,24 @@
-from flask import Flask, render_template, request, session, redirect, url_for
-from werkzeug.security import check_password_hash, generate_password_hash
-from flask_session import Session
-from cs50 import SQL
-from main.additional_functions import *
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 
-
+# Initiate Flask app
 app = Flask(__name__)
 
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+# App configurations
+app.config['SECRET_KEY'] = '96cdd36bb88ee75a099543e467d621c4' # Random secret key for protecting from CSRF attacks
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataistics.db' # SQLite database
 
-# Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///main/dataistics.db")
+# Initiate database
+db = SQLAlchemy(app)
 
-@app.route("/")
-@login_required
-def index():
-    if  request.method == "GET":
-        return render_template("index.html")
-    else:
-        return render_template("result.html")
+# Initialize bcrypt for encryption
+bcrypt = Bcrypt(app)
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Log user in"""
+# Initialize login_manager
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
-    # Forget any user_id
-    session.clear()
-
-    # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username")
-
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password")
-
-        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
-
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password")
-
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-
-        # Redirect user to home page
-        return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
-
-
-@app.route("/logout")
-def logout():
-    """Log user out"""
-
-    # Forget any user_id
-    session.clear()
-
-    # Redirect user to login form
-    return redirect("/login")
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    """Register user."""
-
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        password_confirm = request.form.get("confirmation")
-        if not username:
-            return apology("must provide username")
-
-        elif not password or not password_confirm:
-            return apology("must provide password")
-
-        elif password != password_confirm:
-            return apology("password and password confirmation must match")
-
-        hash = generate_password_hash(password)
-        try:
-            user = db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username=username, hash=hash)
-        except ValueError:
-            return apology("username is already registered")
-
-        session["user_id"] = user
-        return redirect(url_for("index"))
-
-    else:
-        return render_template("register.html")
-
+from main import routes
