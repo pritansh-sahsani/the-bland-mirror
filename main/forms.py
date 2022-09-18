@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from .models import User
 
@@ -26,3 +26,12 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class CForm(FlaskForm):
+    type_of_chart = SelectField('Type of chart', choices=[('bar','Bar Chart'), ('pie','Pie Chart'), ('line','Line Chart'), ('scater', 'Scater Plot')])
+    submit = SubmitField('Continue')
+
+class CForm2(FlaskForm):
+    rows = IntegerField('Number Of rows', validators=[DataRequired(),  Length(min=1 , max=5)])
+    columns = IntegerField('Number Of columns', validators=[DataRequired(),  Length(min=1, max=2)])
+    submit = SubmitField('Continue')

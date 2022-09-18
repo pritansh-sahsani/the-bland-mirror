@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from .app import app, db, bcrypt, login_manager
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, CForm, CForm2
 from .models import User
 from flask_login import login_required, login_user, current_user, logout_user
 
@@ -64,6 +64,14 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route("/chart", methods=['GET', 'POST'])
+@login_required
+def chart():
+    form = CForm()
+    if form.validate_on_submit():
+        flash("a", 'danger')
+        return redirect(url_for('index'))
+    return render_template('chart.html', title='Chart', form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
