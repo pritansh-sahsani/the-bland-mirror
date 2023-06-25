@@ -1,0 +1,241 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+
+{% block main %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- script for likes -->
+    <script type=text/javascript>
+        {% for comment in comments %}
+            $(function() {
+                $('#delete_comment{{ comment.id }}').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("delete_comment", comment_id=comment.id, post_id=post.id) }}',function(data) {});
+                    $("#delete_comment{{ comment.id }}").hide();
+                    $("#{{ comment.id }}comment").hide();
+                });
+            });
+        {% endfor %}
+
+        $(function() {
+            $('#like_button').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("register_like", post_id=post.id) }}',function(data) {});
+                var like_num = parseInt($('#like_display').html())
+                if (  $("#like_image").attr('src') == '../static/assets/like_button.svg' ) 
+                {
+                    $("#like_image").attr('src','../static/assets/like_button_clicked.svg');
+                    $('#like_display').text(like_num + 1);
+                }
+                else
+                {
+                    $("#like_image").attr('src','../static/assets/like_button.svg');
+                    $('#like_display').text(like_num - 1);
+                }
+
+                return false;
+            });
+
+            $('#like_button_rp1').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("register_like", post_id=rp1.id) }}',function(data) {});
+                var like_num_rp1 = parseInt($('#like_display_rp1').html())
+                if (  $("#like_image_rp1").attr('src') == '../static/assets/like_button.svg' ) 
+                {
+                    $("#like_image_rp1").attr('src','../static/assets/like_button_clicked.svg');
+                    $('#like_display_rp1').text(like_num_rp1 + 1);
+                }
+                else
+                {
+                    $("#like_image_rp1").attr('src','../static/assets/like_button.svg');
+                    $('#like_display_rp1').text(like_num_rp1 - 1);
+                }
+
+                return false;
+            });
+
+            $('#like_button_rp2').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("register_like", post_id=rp2.id) }}',function(data) {});
+                var like_num_rp2 = parseInt($('#like_display_rp2').html())
+                if (  $("#like_image_rp2").attr('src') == '../static/assets/like_button.svg' ) 
+                {
+                    $("#like_image_rp2").attr('src','../static/assets/like_button_clicked.svg');
+                    $('#like_display_rp2').text(like_num_rp2 + 1);
+                }
+                else
+                {
+                    $("#like_image_rp2").attr('src','../static/assets/like_button.svg');
+                    $('#like_display_rp2').text(like_num_rp2 - 1);
+                }
+
+                return false;
+            });
+
+            $('#like_button_rp3').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("register_like", post_id=rp3.id) }}',function(data) {});
+                var like_num_rp3 = parseInt($('#like_display_rp3').html())
+                if (  $("#like_image_rp3").attr('src') == '../static/assets/like_button.svg' ) 
+                {
+                    $("#like_image_rp3").attr('src','../static/assets/like_button_clicked.svg');
+                    $('#like_display_rp3').text(like_num_rp3 + 1);
+                }
+                else
+                {
+                    $("#like_image_rp3").attr('src','../static/assets/like_button.svg');
+                    $('#like_display_rp3').text(like_num_rp3 - 1);
+                }
+
+                return false;
+            });
+        });
+    </script>
+
+    <!-- post -->
+    <div class="mx-auto w-80% post border bg-cover">
+        <div class="w-90% mx-auto mt-5% mb-5%">
+            <p class="text-base mb-5 ">{{ post.created_at.strftime("%d %B %Y") }}</p>
+            <p class="text-6xl -ml-2 post_font">{{ post.title }}</p>
+            <p class="text-2xl mt-4 post_font">{{ post.content }}</p>
+            <div class="h-10% mt-10%">
+                <hr class="mb-2 border-slate-400"/>
+                {% if post.views == 1 %}
+                    <p class="ml-0.5 inline-block text-base">{{ post.views }} view</p>
+                {% else %}
+                    <p class="ml-0.5 inline-block text-base">{{ post.views }} views</p>
+                {% endif %}
+                {% if post.comments == 1 %}
+                    <p class="ml-5 inline-block text-base">{{ post.comments }} comment</p>
+                {% else %}
+                    <p class="ml-5 inline-block text-base">{{ post.comments }} comments</p>
+                {% endif %}
+                {% if liked %}
+                    <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button_clicked.svg" /></button>
+                {% else %}
+                    <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button.svg" /></button>
+                {% endif %}
+                <p class="inline-block float-right mr-1 text-base" id="like_display">{{ post.likes }}</p>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- comments -->
+    <div class="w-80% mx-auto border mt-10">
+        <div class="w-90% mx-auto mt-3% mb-5%">
+            {% if post.comments == 0 %}
+                <p class="text-2xl text-center"> No Comments Yet. Be The First One To!</p>
+            {% else %}
+                <p class="text-2xl mb-5">Comments</p>
+                {% for comment in comments %}
+                    <div id="{{comment.id}}comment">
+                        <p class="mt-1 ml-2 text-lg inline">{{ comment.name }}</p>
+                        <p class="text-sm inline">  -  {{ comment.date.strftime("%d %B %Y") }}</p>
+                        
+                        {% if by_user[comment.id] %}
+                            <button  class="float-right mr-1"><img class="h-3" id="delete_comment{{ comment.id }}" src="../static/assets/delete button.png" /></button>
+                        {% endif %}
+
+                        <p class="ml-5 mb-4 text-xl">{{ comment.comment }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+            <hr class="my-6 border-slate-400">
+
+            <form action="" method="POST">
+                {{ comment_form.hidden_tag() }}
+                <div class="border-slate-500 border-0.5">
+            
+                    {{ comment_form.name(class="form-control w-30% h-10 ml-1%", placeholder="Name") }} 
+                    {{ comment_form.text(class="form-control w-57% h-10 ml-1%", placeholder="Comment here") }} 
+                    
+                    {{ comment_form.submit(class="w-10% h-10 bg-slate-100 float-right") }}
+                </div>
+                </fieldset>
+              </form>
+        </div>
+    </div>
+
+
+    <!-- other posts -->
+    <div class="mx-auto w-80% mt-10">
+        <p class="text-2xl">Other Posts</p>
+        <div class="flex justify-between">
+            <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp1.url_title) }}">
+                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "{{ post.cover_img }}" />
+                
+                <div class="h-35">
+                    <p class="pt-2 text-2xl mx-5% h-32">{{ rp1.title }}</p>
+                
+                    <hr class=" border-slate-400 w-90% mx-auto"/>
+                    <img class="inline w-auto h-3 ml-5% object-cover mb-1" src= "../static/assets/views_icon.png">
+                    <p class="ml-1 inline">{{ rp1.views }}</p>
+                    <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src= "../static/assets/comment_icon.png">
+                    <p class="ml-1 inline">{{ rp1.comments }}</p>
+                    
+                    {% if liked_rp1 %}
+                        <button id='like_button_rp1' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp1" src="../static/assets/like_button_clicked.svg" /></button>
+                    {% else %}
+                        <button id='like_button_rp1' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp1" src="../static/assets/like_button.svg" /></button>
+                    {% endif %}
+                    <p class=" float-right inline" id="like_display_rp1">{{ rp1.likes }}</p>
+                </div>
+            </a></div>
+
+            <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp2.url_title) }}">
+                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "{{ post.cover_img }}">
+                
+                <div class="h-35">
+                    <p class="pt-2 text-2xl mx-5% h-32">{{ rp2.title }}</p>
+                
+                    <hr class=" border-slate-400 w-90% mx-auto"/>
+                    <img class="inline w-auto h-3 ml-5% object-cover mb-1" src= "../static/assets/views_icon.png">
+                    <p class="ml-1 inline">{{ rp2.views }}</p>
+                    <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src= "../static/assets/comment_icon.png">
+                    <p class="ml-1 inline">{{ rp2.comments }}</p>
+                    
+                    {% if liked_rp2 %}
+                        <button id='like_button_rp2' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp2" src="../static/assets/like_button_clicked.svg" /></button>
+                    {% else %}
+                        <button id='like_button_rp2' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp2" src="../static/assets/like_button.svg" /></button>
+                    {% endif %}
+                    <p class=" float-right inline"  id="like_display_rp2">{{ rp2.likes }}</p>
+                </div>
+            </a></div>
+
+            <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp3.url_title) }}">
+                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "{{ post.cover_img }}">
+                
+                <div class="h-35">
+                    <p class="pt-2 text-2xl mx-5% h-32">{{ rp3.title }}</p>
+                
+                    <hr class="border-slate-400 w-90% mx-auto"/>
+                    <img class="inline w-auto h-3 ml-5% object-cover mb-1" src= "../static/assets/views_icon.png">
+                    <p class="ml-1 inline">{{ rp3.views }}</p>
+                    <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src= "../static/assets/comment_icon.png">
+                    <p class="ml-1 inline">{{ rp3.comments }}</p>
+                    
+                    {% if liked_rp3 %}
+                        <button id='like_button_rp3' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp3" src="../static/assets/like_button_clicked.svg" /></button>
+                    {% else %}
+                        <button id='like_button_rp3' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp3" src="../static/assets/like_button.svg" /></button>
+                    {% endif %}
+
+                    <p class=" float-right inline"  id="like_display_rp3">{{ rp3.likes }}</p>
+                </div>
+            </a></div>
+        </div>
+    </div>
+
+    <!-- subscribe link -->
+	<div>
+			<hr class="mt-10 w-70% mx-auto border-black"/>
+            <p class="my-5 text-4xl text-center mx-5 text-blue-700"><a class="" href="/subscribe">Click here to subscribe and receive updates on the latest posts!</a></p>
+	</div>
+    
+{% endblock %}

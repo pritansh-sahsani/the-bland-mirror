@@ -1,78 +1,228 @@
+# add email for subscribe and message
+# new post system is shit
+
+
+import os
 from flask import render_template, url_for, flash, redirect, request
-from .app import app, db, bcrypt, login_manager
-from .forms import RegistrationForm, LoginForm, CForm, CForm2
-from .models import User
-from flask_login import login_required, login_user, current_user, logout_user
+from .app import app, db
+from .models import Posts, Images, Comment, Views, Likes, Subscribers, Messages
+from datetime import datetime
+from sqlalchemy import func, insert, update
+from .forms import CommentForm, SubscribeForm, ContactForm, PostForm
+from flask_mail import Mail, Message
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+UPLOAD_FOLDER = '/static/post_img' 
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
-
-@app.route("/")
-@login_required
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    page = request.args.get('page', 1, type=int)
+    # get posts data
+    posts = Posts.query.order_by(Posts.created_at.desc())\
+    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .paginate(page=page, per_page=3)
+    no_of_pages = int((posts.total / posts.per_page)+1)
+
+    liked=[]
+    posts_for_likes = Posts.query.all()
+    for post in posts_for_likes:
+        like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = request.remote_addr).first()
+        if like is None:
+            liked.append(False)
+        else:
+            liked.append(True)
+    return render_template("index.html", posts=posts, liked=liked, no_of_pages=no_of_pages)
 
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    """ Register user. """
+@app.route("/post/<string:post_url>", methods=['GET', 'POST'])
+def post(post_url):
+    user_ip=request.remote_addr
+    
+    # get post details
+    post = Posts.query.filter_by(url_title=post_url)\
+        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.content, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments, Posts.related_1, Posts.related_2, Posts.related_3)\
+        .first_or_404()
 
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = user_ip).first()
+    if like is None:
+        liked = False
+    else:
+        liked = True
 
-    form = RegistrationForm()
+    # get comments
+    comments = Comment.query.order_by(Comment.comment_no.desc())\
+    .with_entities(Comment.id, Comment.comment, Comment.name, Comment.date, Comment.comment_no, Comment.ip_address)\
+    .filter_by(post_no = post.id)\
+    .all()
 
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.name.data, email=form.email.data, password=hashed_password)
+    by_user={}
+    for comment in comments:
+        if comment.ip_address == user_ip:
+            by_user[comment.id] = True 
+        else:
+            by_user[comment.id] = False
+    
+    # get related post details
+    related_post_1 = Posts.query.filter_by(id=post.related_1)\
+        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
+        .first_or_404()
+    related_post_2 = Posts.query.filter_by(id=post.related_2)\
+        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
+        .first_or_404()
+    related_post_3 = Posts.query.filter_by(id=post.related_3)\
+        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
+        .first_or_404()
 
-        db.session.add(user)
+    like_rp1 = Likes.query.filter_by(post_no = related_post_1.id).filter_by(ip_address = user_ip).first()
+    like_rp2 = Likes.query.filter_by(post_no = related_post_2.id).filter_by(ip_address = user_ip).first()
+    like_rp3 = Likes.query.filter_by(post_no = related_post_3.id).filter_by(ip_address = user_ip).first()
+    if like_rp1 is None:
+        liked_rp1 = False
+    else:
+        liked_rp1 = True
+    if like_rp2 is None:
+        liked_rp2 = False
+    else:
+        liked_rp2 = True
+    if like_rp3 is None:
+        liked_rp3 = False
+    else:
+        liked_rp3 = True
+
+    # register view
+    views = Views.query.filter_by(post_no = post.id).filter_by(ip_address = user_ip).first()
+
+    if views is None:
+        update_post_views = Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
+        view = Views(post_no=post.id, ip_address = user_ip)
+        db.session.add(view)
+        db.session.commit()
+    
+    # register comment 
+    comment_form = CommentForm()
+    if comment_form.validate_on_submit():
+        update_post_comment = Posts.query.filter_by(id=post.id).update(dict(comments= post.comments+1))
+        comment = Comment(post_no=post.id, comment_no=post.comments + 1, comment=comment_form.text.data, name=comment_form.name.data, ip_address=user_ip)
+        
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('post',  post_url=post.url_title))
+    # return
+    return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, liked_rp1=liked_rp1, liked_rp2=liked_rp2, liked_rp3=liked_rp3, comments=comments, rp1 = related_post_1, rp2 = related_post_2, rp3 = related_post_3, by_user=by_user)
+
+
+@app.route('/like/<string:post_id>')
+def register_like(post_id):
+    # get post details
+    post = Posts.query.filter_by(id=post_id)\
+        .with_entities(Posts.likes)\
+        .first_or_404()
+    user_ip = request.remote_addr
+
+    likes = Likes.query.filter_by(post_no = post_id)\
+    .filter_by(ip_address = user_ip)\
+    .first()
+    
+    if likes is not None:
+        update_post_like = Posts.query.filter_by(id=post_id).update(dict(likes = post.likes-1))
+        like = Likes.query.filter_by(post_no = post_id).filter_by(ip_address = user_ip).first_or_404()
+        db.session.delete(like)
+        db.session.commit()
+    else:
+        update_post_like = Posts.query.filter_by(id=post_id).update(dict(likes = post.likes+1))
+        like = Likes(post_no=post_id, ip_address = user_ip)
+        db.session.add(like)
         db.session.commit()
 
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
-
-    return render_template('register.html', title='Register', form=form)
+    return ('0')
 
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    """ Login user. """
+@app.route('/delete_comment/<string:post_id>/<string:comment_id>', methods=['GET', 'POST'])
+def delete_comment(comment_id, post_id):
+    comment = Comment.query.filter_by(id = comment_id).first_or_404()
+    db.session.delete(comment)
+    db.session.commit()
+    post = Posts.query.filter_by(id=post_id).with_entities(Posts.comments, Posts.url_title).first_or_404()
+    update_post_comment = Posts.query.filter_by(id=post_id).update(dict(comments = post.comments-1))
+    db.session.commit()
+    flash('Comment deleted.', 'success')
+    return redirect(url_for('post',  post_url=post.url_title))
 
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    form = LoginForm()
-    
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-    
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('index'))
+@app.route('/subscribe', methods=['GET', 'POST'])
+def subscribe():
+     # register subscriber
+    subscriber_form=SubscribeForm()
+    if subscriber_form.validate_on_submit():
+        search = Subscribers.query.filter_by(email = subscriber_form.email.data).first()
+        if search is None:
+            subscriber = Subscribers(email = subscriber_form.email.data)
+            db.session.add(subscriber)
+            db.session.commit()
+            flash('Thank you for subscribing!', 'success')
+            return redirect(url_for('index'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('This email address is already subscribed.', 'error')
+            return redirect(url_for('subscribe'))
+    return render_template("subscribe.html", subscriber_form=subscriber_form)
 
-    return render_template('login.html', title='Login', form=form)
 
-
-@app.route("/logout")
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-@app.route("/chart", methods=['GET', 'POST'])
-@login_required
-def chart():
-    form = CForm()
-    if form.validate_on_submit():
-        flash("a", 'danger')
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    contact_form=ContactForm()
+    if contact_form.validate_on_submit():
+        contact=Messages(name=contact_form.name.data, email=contact_form.email.data, message=contact_form.message.data)
+        db.session.add(contact)
+        db.session.commit()
+        flash('Message sent.', 'success')
         return redirect(url_for('index'))
-    return render_template('chart.html', title='Chart', form=form)
+    return render_template("contact.html", contact_form=contact_form)
+
+
+@app.route("/create_post", methods=['GET', 'POST'])
+def create_post():
+    post_form=PostForm()
+    if post_form.validate_on_submit():
+        flash(post_form.content.data, 'success')
+        return redirect(url_for('index'))
+    return render_template("new_post.html", post_form=post_form)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html'), 404    
+
+#         file = request.files['file'] 
+
+#         if file and allowed_file(file.filename): 
+#             # create name of image file
+#             if Post.query.all():
+#                 filename = str(db.session.query(func.max(Images.id)) + 1) + file.filename.rsplit('.', 1)[1].lower()
+#             else:
+#                 filename = '1'+file.filename.rsplit('.', 1)[1].lower()
+
+#             # save image in files
+#             file.save(os.path.join(UPLOAD_FOLDER, filename))
+
+#             # save image in db.Images
+#             Images.session.add(post_no = db.session.query(func.max(Post.id))+ 1)
+
+#             # save Post with image in db
+#             post1 = Post(title=, content=, created_at=datetime.now().strftime("%d %M %Y"), cover_img=filename, views=, likes = , comments=)
+#             db.session.add(post1)
+#             db.session.commit()
+#             return redirect('/') 
+
+# # check if file has a appropriate extension
+# def allowed_file(filename):
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+
+#     post1 = Posts(title='first post', url_title='first-post', content='first post content', summary='first post summary', cover_img='/static/assets/logo.png') 
+#     db.session.add(post1)
+#     post2 = Posts(title='second post', url_title='second-post', content='second post content', summary='second post summary', cover_img='/static/assets/logo.png') 
+#     db.session.add(post2)
+#     post3 = Posts(title='third post', url_title='third-post', content='third post content', summary='third post summary', cover_img='/static/assets/logo.png') 
+#     db.session.add(post3)
+#     post4 = Posts(title='fourth post', url_title='fourth-post', content='fourth post content', summary='fourth post summary', cover_img='/static/assets/logo.png') 
+#     db.session.add(post4)
+    # db.session.commit()

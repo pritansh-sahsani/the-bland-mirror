@@ -5,34 +5,122 @@
 {% endblock %}
 
 {% block main %}
-    <table class="table table-striped" id="table">
-        <thead>
-          <tr>
-            <td class="fw-bold" scope="col"></td>
-            <td class="fw-bold" scope="col">First</td>
-            <td class="fw-bold" scope="col">Last</td>
-            <td class="fw-bold" scope="col">Handle</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="fw-bold">1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td class="fw-bold">2</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td class="fw-bold">3</td>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-          </tr>
-        </tbody>
-      </table>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- script for likes -->
+    <script type=text/javascript>
+        $(function() {
+            {% for post in posts.items %}
+                $('#{{ post.id }}button').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("register_like", post_id=post.id) }}',function(data) {});
+                    var like_num = parseInt($('#{{ post.id }}display').html())
+                    if (  $("#{{ post.id }}image").attr('src') == '../static/assets/like_button.svg' ) 
+                    {
+                        $("#{{ post.id }}image").attr('src','../static/assets/like_button_clicked.svg');
+                        $('#{{ post.id }}display').text(like_num + 1);
+                    }
+                    else
+                    {
+                        $("#{{ post.id }}image").attr('src','../static/assets/like_button.svg');
+                        $('#{{ post.id }}display').text(like_num - 1);
+                    }
+
+                    return false;
+                });
+            {% endfor %}
+        });
+    </script>
+
+<center>
+    <div class="w-100%">
+        <h1 id="home_heading" class="pb-5 text-4xl md:text-8xl">THE BLAND MIRROR</h1>
+        <p class="body_font pb-10 md:text-lg">With the aim of dusting up the issues buried within our minds and societies, my opinions in the form of this blog aims to force open the eyes of the world to the ugly truth. Shape your understanding of the world around you and improve our lives through it, with a variety of topics, spanning from emotions to politics to morals to education.</p>
+        <hr class="w-100% m-0 p-0 border-slate-900"/>
+    </div>
+    
+    <div class="w-95% hidden md:block">
+        {% for post in posts.items %}
+            <div id="home_container" class="border-solid border-0.5 border-slate-900 my-6">
+                <a href="{{ url_for('post', post_url=post.url_title) }}"><img class="home_section float-left border-r-0.5 border-slate-900 object-cover" src= "{{ post.cover_img }}"></a>
+                
+                <div class="home_section float-right">
+                    <a href="{{ url_for('post', post_url=post.url_title) }}">
+                        <div class="mt-5% ml-5% h-80% w-90%">
+                            <p class="text-sm">{{ post.created_at.strftime("%d %B %Y") }}</p>
+                            <p class="pt-1 text-3xl">{{ post.title }}</p>
+                            <p class="pt-1.5 text-lg">{{ post.summary }}</p>
+                        </div>
+                    </a>
+
+                    <div class="ml-5% h-10% w-90%">
+                        <hr class="mb-2 border-slate-400"/>
+                        {% if post.views == 1 %}
+                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
+                        {% else %}
+                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
+                        {% endif %}
+                        {% if post.comments == 1 %}
+                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
+                        {% else %}
+                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
+                        {% endif %} 
+                        <button class='float-right mr-0.5 mt-0.5' id='{{ post.id }}button'>
+                            {% if liked[post.id-1] %}
+                                <img id='{{ post.id }}image' src="../static/assets/like_button_clicked.svg" />
+                            {% else %}
+                                <img id='{{ post.id }}image' src="../static/assets/like_button.svg" />
+                            {% endif %}
+                        </button>
+                        <p id="{{ post.id }}display" class="inline-block float-right mr-0.5 text-sm">{{ post.likes }}</p>
+                    </div>
+
+                </div>
+			</div>
+        {% endfor %}
+        <div>
+            {% if no_of_pages > 7 %}
+                {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+                    {% if page_num %}
+
+                        {% if page_num == no_of_pages and posts.page != no_of_pages %}
+                            <a href="{{ url_for('index', page=posts.page+1) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pb-1 pagination_font_arrows">></button></a>
+                            <a href="{{ url_for('index', page=page_num) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pagination_font">{{ page_num }}</button></a>
+                        {% else %}
+
+                            {% if posts.page == page_num %}
+                                <button class="bg-slate-900 border-0.5 rounded-lg h-10 w-10 text-white mx-1 border-none pagination_font">{{ page_num }}</button>
+                            {% else %}
+                                <a href="{{ url_for('index', page=page_num) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pagination_font">{{ page_num }}</button></a>
+                            {% endif %}
+
+                        {% endif %}
+
+                        {% if page_num == 1 and posts.page != 1 %}
+                            <a href="{{ url_for('index', page=posts.page-1) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pb-1 pagination_font_arrows">&lt</button></a>
+                        {% endif %}
+
+                    {% endif %}
+                {% endfor %}
+
+            {% else %}
+            
+                {% for page_num in posts.iter_pages(left_current=7, right_current=8) %}
+                    {% if posts.page == page_num %}
+                        <button class="bg-slate-900 border-0.5 rounded-lg h-10 w-10 text-white mx-1 border-none pagination_font">{{ page_num }}</button>
+                    {% else %}
+                        <a href="{{ url_for('index', page=page_num) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pagination_font">{{ page_num }}</button></a>
+                    {% endif %}
+                {% endfor %}
+                
+            {% endif %}
+
+        </div>
+        
+		<div>
+			<hr class="mt-10 w-90% mx-auto border-black"/>
+            <p class="my-5 text-4xl text-center mx-5 text-blue-700"><a class="" href="/subscribe">Click here to subscribe and receive updates on the latest posts!</a></p>
+		</div>
+    </div>
+</center>
 {% endblock main %}
