@@ -31,11 +31,6 @@ class Comment(db.Model):
     def __repr__(self):
         return f"Comment('{self.id}', '{self.post_no}', '{self.comment_no}')"
 
-class Views(db.Model):
-    id = db.Column(db.Integer, nullable=False, primary_key=True)
-    post_no = db.Column(db.Integer, nullable=False)
-    ip_address = db.Column(db.String(50), nullable=False)
-
 class Images(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     post_no = db.Column(db.Integer, nullable=False)

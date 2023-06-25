@@ -5,7 +5,7 @@
 import os
 from flask import render_template, url_for, flash, redirect, request
 from .app import app, db
-from .models import Posts, Images, Comment, Views, Likes, Subscribers, Messages
+from .models import Posts, Images, Comment, Likes, Subscribers, Messages
 from datetime import datetime
 from sqlalchemy import func, insert, update
 from .forms import CommentForm, SubscribeForm, ContactForm, PostForm
@@ -90,13 +90,8 @@ def post(post_url):
         liked_rp3 = True
 
     # register view
-    views = Views.query.filter_by(post_no = post.id).filter_by(ip_address = user_ip).first()
-
-    if views is None:
-        update_post_views = Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
-        view = Views(post_no=post.id, ip_address = user_ip)
-        db.session.add(view)
-        db.session.commit()
+    update_post_views = Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
+    db.session.commit()
     
     # register comment 
     comment_form = CommentForm()
