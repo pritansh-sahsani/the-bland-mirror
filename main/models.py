@@ -5,7 +5,7 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     url_title = db.Column(db.String(100), nullable=False) 
-    content = db.Column(db.String(100000), nullable=False)
+    content = db.Column(db.String(1000000), nullable=False)
     summary= db.Column(db.String(140), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     cover_img = db.Column(db.String(9), nullable=False)
@@ -30,13 +30,6 @@ class Comment(db.Model):
     
     def __repr__(self):
         return f"Comment('{self.id}', '{self.post_no}', '{self.comment_no}')"
-
-class Images(db.Model):
-    id = db.Column(db.Integer, nullable=False, primary_key=True)
-    post_no = db.Column(db.Integer, nullable=False)
-
-    def __repr__(self):
-        return f"Image('{self.id}', ',{self.post_no}')"
 
 class Subscribers(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)

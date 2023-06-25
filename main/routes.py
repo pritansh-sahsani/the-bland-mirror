@@ -1,15 +1,11 @@
-# add email for subscribe and message
-# new post system is shit
-
-
 import os
 from flask import render_template, url_for, flash, redirect, request
 from .app import app, db
-from .models import Posts, Images, Comment, Likes, Subscribers, Messages
+from .models import Posts, Comment, Likes, Subscribers, Messages
 from datetime import datetime
-from sqlalchemy import func, insert, update
 from .forms import CommentForm, SubscribeForm, ContactForm, PostForm
 from flask_mail import Mail, Message
+import re
 
 UPLOAD_FOLDER = '/static/post_img' 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -175,10 +171,24 @@ def contact():
 
 @app.route("/create_post", methods=['GET', 'POST'])
 def create_post():
-    post_form=PostForm()
+    posts = Posts.query.order_by(Posts.created_at.desc())\
+        .with_entities(Posts.title)
+    
+    choices = []
+    for post in posts:
+        for x in post:
+            choices.append(x)
+    
+    post_form=PostForm(selection_choices=choices)
+
     if post_form.validate_on_submit():
-        flash(post_form.content.data, 'success')
+        flash("Post Created Successfully!", 'success')
+        url_title = post_form.title.data
+        url_title = url_title.replace(" ", "_")
+        url_title = re.sub('[^-._~0-9a-zA-Z]', '', url_title)
+        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = post_form.cover_img.data, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
         return redirect(url_for('index'))
+    
     return render_template("new_post.html", post_form=post_form)
 
 @app.errorhandler(404)
