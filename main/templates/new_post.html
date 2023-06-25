@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-    <form action="{{ url_for('create_post') }}", method="POST" class="w-80% mx-auto mt-6">
+    <form action="{{ url_for('create_post') }}", method="POST" class="w-80% mx-auto mt-6"  enctype="multipart/form-data">
         {{ post_form.hidden_tag() }}
 
             {% if post_form.content.errors %} 

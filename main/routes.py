@@ -7,8 +7,6 @@ from .forms import CommentForm, SubscribeForm, ContactForm, PostForm
 from flask_mail import Mail, Message
 import re
 
-UPLOAD_FOLDER = '/static/post_img' 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -183,51 +181,22 @@ def create_post():
 
     if post_form.validate_on_submit():
         flash("Post Created Successfully!", 'success')
+
         url_title = post_form.title.data
         url_title = url_title.replace(" ", "_")
         url_title = re.sub('[^-._~0-9a-zA-Z]', '', url_title)
-        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = post_form.cover_img.data, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
+        
+        f = post_form.cover_img.data
+        filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
+        f.save(os.path.join(app.root_path+ '\static\post_img\\' + filename))
+
+        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
+        db.session.add(post)
+        db.session.commit()
         return redirect(url_for('index'))
-    
+        
     return render_template("new_post.html", post_form=post_form)
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404    
-
-#         file = request.files['file'] 
-
-#         if file and allowed_file(file.filename): 
-#             # create name of image file
-#             if Post.query.all():
-#                 filename = str(db.session.query(func.max(Images.id)) + 1) + file.filename.rsplit('.', 1)[1].lower()
-#             else:
-#                 filename = '1'+file.filename.rsplit('.', 1)[1].lower()
-
-#             # save image in files
-#             file.save(os.path.join(UPLOAD_FOLDER, filename))
-
-#             # save image in db.Images
-#             Images.session.add(post_no = db.session.query(func.max(Post.id))+ 1)
-
-#             # save Post with image in db
-#             post1 = Post(title=, content=, created_at=datetime.now().strftime("%d %M %Y"), cover_img=filename, views=, likes = , comments=)
-#             db.session.add(post1)
-#             db.session.commit()
-#             return redirect('/') 
-
-# # check if file has a appropriate extension
-# def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-
-#     post1 = Posts(title='first post', url_title='first-post', content='first post content', summary='first post summary', cover_img='/static/assets/logo.png') 
-#     db.session.add(post1)
-#     post2 = Posts(title='second post', url_title='second-post', content='second post content', summary='second post summary', cover_img='/static/assets/logo.png') 
-#     db.session.add(post2)
-#     post3 = Posts(title='third post', url_title='third-post', content='third post content', summary='third post summary', cover_img='/static/assets/logo.png') 
-#     db.session.add(post3)
-#     post4 = Posts(title='fourth post', url_title='fourth-post', content='fourth post content', summary='fourth post summary', cover_img='/static/assets/logo.png') 
-#     db.session.add(post4)
-    # db.session.commit()

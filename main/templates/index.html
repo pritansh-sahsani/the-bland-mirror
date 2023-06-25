@@ -42,7 +42,7 @@
     <div class="w-95% hidden md:block">
         {% for post in posts.items %}
             <div id="home_container" class="border-solid border-0.5 border-slate-900 my-6">
-                <a href="{{ url_for('post', post_url=post.url_title) }}"><img class="home_section float-left border-r-0.5 border-slate-900 object-cover" src= "{{ post.cover_img }}"></a>
+                <a href="{{ url_for('post', post_url=post.url_title) }}"><img class="home_section float-left border-r-0.5 border-slate-900 object-cover" src= "/static/post_img/{{ post.cover_img }}"></a>
                 
                 <div class="home_section float-right">
                     <a href="{{ url_for('post', post_url=post.url_title) }}">

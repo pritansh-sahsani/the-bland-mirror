@@ -167,7 +167,7 @@
         <p class="text-2xl">Other Posts</p>
         <div class="flex justify-between">
             <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp1.url_title) }}">
-                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "{{ post.cover_img }}" />
+                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "/static/post_img/{{ post.cover_img }}" />
                 
                 <div class="h-35">
                     <p class="pt-2 text-2xl mx-5% h-32">{{ rp1.title }}</p>
