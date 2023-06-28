@@ -216,8 +216,6 @@ def send_email_for_new_post(post):
     msg = Message(subject = subject, sender=os.getenv('MAIL_USERNAME'), recipients = recipients, body=body)
     # mail.send(msg)
 
-def view_email():
-
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404    
