@@ -1,14 +1,20 @@
-
+ 
+:root {
+    --gradient:#003764;
+    --main: white;
+    --antimain: #1a1a1d;
+}
+  
 .heading_font {
     font-family: 'Bebas Neue', cursive;
-	color: rgb(15 23 42);
+	color: gradient;
     line-height: 1.3;
     font-size: 3rem;
 }
 
 .pagination_font_arrows{
     font-family: 'Bebas Neue', cursive;
-	color: rgb(15 23 42);
+	color: gradient;
     font-size: 1.5rem;
     vertical-align: middle;
     text-align: center;
@@ -16,7 +22,7 @@
 
 .pagination_font{
     font-family: 'Bebas Neue', cursive;
-	color: rgb(15 23 42);
+	color: gradient;
     vertical-align: middle;
     text-align: center;
 }
@@ -36,27 +42,20 @@
 
 #home_heading{
   font-family: 'Kaushan Script', cursive;  
-  color:rgb(71 140 225);
+  color:gradient;
 }
   
 .body_font {
     font-family: 'Open Sans', sans-serif;
-	color: rgb(15 23 42);
+	color: gradient;
 }
-  
-:root {
-    --gradient: rgb(96 165 250);
-    --main: white;
-    --antimain: black;
-}
-  
 span{
     color: var(--gradient);
 }
   
 body{
     background-color: var(--main);
-    color: var(--antimain);
+    color: var(--gradient);
 }
   
 .message-box {
@@ -87,7 +86,7 @@ body{
     color: white;
     margin-top: 1rem;
     --tw-bg-opacity: 1;
-    background-color: rgb(96 165 250);
+    background-color: gradient;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 0.5rem;
@@ -101,7 +100,7 @@ body{
   
 .underline-btn {
     background-color: var(--main);
-    color: var(--antimain);
+    color: var(--gradient);
     margin-top: 0.7rem;
     margin-left: 3rem;
     transition: all ease-in-out 250ms;
@@ -137,10 +136,14 @@ body{
 
 .border
 {   
-    border: 1.5px rgb(15 23 42) solid;
+    border: 1.5px gradient solid;
 }
 
 
 input:focus, textarea:focus, select:focus{
     outline: none;
+}
+
+.link{
+    color: gradient;
 }
