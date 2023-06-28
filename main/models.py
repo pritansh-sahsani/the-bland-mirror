@@ -51,6 +51,8 @@ class Messages(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     message = db.Column(db.String(4000), nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    read = db.Column(db.Boolean, default=False)
 
 with app.app_context():
     db.create_all()
