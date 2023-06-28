@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Messages
+{% endblock %}
+
+{% block main %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<center>
+    <div class="w-95% hidden md:block">
+        {% for message in messages %}
+            <div></div>
+                    <p>{{ message.name }}</p>
+                    <p>{{ message.date.strftime("%d %B %Y") }}</p>
+                    <p>{{ message.email }}</p>
+                    <p>{{ message.message }}</p>
+            </div>
+        {% endfor %}
+</center>
+{% endblock main %}

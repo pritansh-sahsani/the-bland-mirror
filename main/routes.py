@@ -205,16 +205,31 @@ def send_email_for_new_post(post):
     recipients = []
     for recipient in query:
         recipients.append(recipient[0])
-    print(recipients)
     
-    subject = "New Post - "+post.title
-    body = f"""New post out!
-    {post.title}
-    <hr>
-    {post.summary}"""
+    if len(recipients) != 0:
+        subject = "New Post - "+post.title
+        body = f"""New post out!
+        {post.title}
+        <hr>
+        {post.summary}"""
+        
+        msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], recipients = recipients, body=body)
+        mail.send(msg)
+
+@app.route("/messages")
+def view_messages():
+    query = Messages.query.with_entities(Messages.name, Messages.email, Messages.message, Messages.read, Messages.date)
+    messages = []
+    for message in query:
+        messages.append(message)
+    if len(messages) == 0:
+        return render_template("messages.html", no_messages=True)
+    else:
+        return render_template("messages.html", messages=messages, no_messages=False)
     
-    msg = Message(subject = subject, sender=os.getenv('MAIL_USERNAME'), recipients = recipients, body=body)
-    # mail.send(msg)
+
+    # query = Messages.query.with_entities(Messages.name, Messages.email, Messages.message, Messages.read, Messages.date)
+    
 
 @app.errorhandler(404)
 def page_not_found(e):
