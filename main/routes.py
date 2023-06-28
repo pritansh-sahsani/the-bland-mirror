@@ -1,10 +1,10 @@
 import os
 from flask import render_template, url_for, flash, redirect, request
-from .app import app, db
+from .app import app, db, mail
 from .models import Posts, Comment, Likes, Subscribers, Messages
 from datetime import datetime
 from .forms import CommentForm, SubscribeForm, ContactForm, PostForm
-from flask_mail import Mail, Message
+from flask_mail import Message
 import re
 
 
@@ -193,9 +193,30 @@ def create_post():
         post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
         db.session.add(post)
         db.session.commit()
+
+        send_email_for_new_post(post)
+
         return redirect(url_for('index'))
         
     return render_template("new_post.html", post_form=post_form)
+
+def send_email_for_new_post(post):
+    query = Subscribers.query.with_entities(Subscribers.email)
+    recipients = []
+    for recipient in query:
+        recipients.append(recipient[0])
+    print(recipients)
+    
+    subject = "New Post - "+post.title
+    body = f"""New post out!
+    {post.title}
+    <hr>
+    {post.summary}"""
+    
+    msg = Message(subject = subject, sender=os.getenv('MAIL_USERNAME'), recipients = recipients, body=body)
+    # mail.send(msg)
+
+def view_email():
 
 @app.errorhandler(404)
 def page_not_found(e):
