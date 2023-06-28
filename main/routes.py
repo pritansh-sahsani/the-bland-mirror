@@ -218,7 +218,7 @@ def send_email_for_new_post(post):
 
 @app.route("/messages")
 def view_messages():
-    query = Messages.query.with_entities(Messages.name, Messages.email, Messages.message, Messages.read, Messages.date)
+    query = Messages.query.with_entities(Messages.id, Messages.name, Messages.email, Messages.message, Messages.read, Messages.date)
     messages = []
     for message in query:
         messages.append(message)
@@ -228,7 +228,21 @@ def view_messages():
         return render_template("messages.html", messages=messages, no_messages=False)
     
 
-    # query = Messages.query.with_entities(Messages.name, Messages.email, Messages.message, Messages.read, Messages.date)
+    
+@app.route('/delete_message/<string:message_id>', methods=['GET', 'POST'])
+def delete_message(message_id):
+    message_id = int(message_id)
+    message = Messages.query.filter_by(id = message_id).first_or_404()
+    db.session.delete(message)
+    db.session.commit()
+
+@app.route('/read_message/<string:message_id>', methods=['GET', 'POST'])
+def read_message(message_id):
+    message_id = int(message_id)
+    message = Messages.query.filter_by(id = message_id).first_or_404()
+    update_message = Messages.query.filter_by(id = message_id).update(dict(read = (not message.read)))
+    db.session.commit()
+    return
     
 
 @app.errorhandler(404)

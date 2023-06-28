@@ -7,16 +7,52 @@
 {% block main %}
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    {% for message in messages %}
+        $(function() {
+            $('#delete_message{{ message.id }}').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("delete_message", message_id = message.id) }}',function(data) {});
+                $("#message{{ message.id }}").hide();
+            });
+        });
+        $(function() {
+            $('#read_message{{ message.id }}').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("read_message", message_id = message.id) }}',function(data) {});
+                if ( $('#read_message{{ message.id }}').text() == "Mark As Unread")
+                {
+                    $('#read_message{{ message.id }}').text("Mark As Read");
+                }
+                else
+                {
+                    $('#read_message{{ message.id }}').text("Mark As Unread");
+                }
+            });
+        });
+    {% endfor %}
+</script>
 
 <center>
     <div class="w-95% hidden md:block">
-        {% for message in messages %}
-            <div></div>
-                    <p>{{ message.name }}</p>
-                    <p>{{ message.date.strftime("%d %B %Y") }}</p>
-                    <p>{{ message.email }}</p>
-                    <p>{{ message.message }}</p>
-            </div>
-        {% endfor %}
+        {% if no_messages == False %}
+            {% for message in messages %}
+                    <div id="message{{ message.id }}">
+                        <p>{{ message.name }}</p>
+                        <p>{{ message.date.strftime("%d %B %Y") }}</p>
+                        <p>{{ message.email }}</p>
+                        <p>{{ message.message }}</p>
+                        <button id="delete_message{{ message.id }}">Delete Message</button>
+                        {% if message.read == True %}
+                            <button id="read_message{{ message.id }}">Mark As Unread</button>
+                        {% else %}
+                            <button id="read_message{{ message.id }}">Mark As Read</button>
+                        {% endif %}
+                    </div>
+                    <hr>
+            {% endfor %}
+        {% else %}
+            <h3>No Messages</h3>
+        {% endif %}
 </center>
 {% endblock main %}
