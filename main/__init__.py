@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from main.config import Config
 from flask_mail import Mail
@@ -13,7 +13,6 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 mail = Mail(app)
 bcrypt = Bcrypt(app)
-admin = Admin(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -24,6 +23,14 @@ from main.models import *
 class MyModelView(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated
+
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+        
+
+admin = Admin(app, index_view=MyAdminIndexView())
 
 admin.add_view(MyModelView(User, db.session))
 admin.add_view(MyModelView(Posts, db.session))

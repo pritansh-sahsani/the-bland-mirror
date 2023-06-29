@@ -1,6 +1,7 @@
 from main import db, app, login_manager, bcrypt
 from datetime import datetime
 from flask_login import UserMixin
+from flask import current_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 @login_manager.user_loader
