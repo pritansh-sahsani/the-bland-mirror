@@ -1,4 +1,4 @@
-from main.app import app
+from main import app
 import os
 
 SECRET_KEY = os.urandom(32)
