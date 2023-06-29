@@ -1,9 +1,8 @@
 import os
 from flask import render_template, url_for, flash, redirect, request
 from .app import app, db, mail
-from .models import Posts, Comment, Likes, Subscribers, Messages
-from datetime import datetime
-from .forms import CommentForm, SubscribeForm, ContactForm, PostForm
+from .models import Posts, Comment, Likes, Subscribers, Messages, MessageReply
+from .forms import CommentForm, SubscribeForm, ContactForm, PostForm, MessageReplyForm
 from flask_mail import Message
 import re
 
@@ -218,14 +217,19 @@ def send_email_for_new_post(post):
 
 @app.route("/messages")
 def view_messages():
-    query = Messages.query.with_entities(Messages.id, Messages.name, Messages.email, Messages.message, Messages.read, Messages.date)
+    message_query = Messages.query.all()
+    reply_query = MessageReply.query.all()
+    
     messages = []
-    for message in query:
+    replies = {}
+    for message in message_query:
         messages.append(message)
+    for reply in reply_query:
+        replies[reply.message_id] = reply.reply
     if len(messages) == 0:
         return render_template("messages.html", no_messages=True)
     else:
-        return render_template("messages.html", messages=messages, no_messages=False)
+        return render_template("messages.html", messages=messages, no_messages=False, replies=replies)
     
 
     
@@ -235,6 +239,8 @@ def delete_message(message_id):
     message = Messages.query.filter_by(id = message_id).first_or_404()
     db.session.delete(message)
     db.session.commit()
+    flash("Message deleted successfully.")
+    return redirect(url_for('messages'))
 
 @app.route('/read_message/<string:message_id>', methods=['GET', 'POST'])
 def read_message(message_id):
@@ -242,8 +248,40 @@ def read_message(message_id):
     message = Messages.query.filter_by(id = message_id).first_or_404()
     update_message = Messages.query.filter_by(id = message_id).update(dict(read = (not message.read)))
     db.session.commit()
-    return
-    
+    if message.read:
+        flash("Message marked as unread.")
+    else:
+        flash("Message marked as read.")
+    return redirect(url_for('messages'))
+
+@app.route('/reply_message/<string:message_id>', methods=['GET', 'POST'])
+def reply_message(message_id):
+    message = Messages.query.filter_by(id = message_id).first_or_404()
+    # reply if exists
+    reply = MessageReply.query.filter_by(message_id = message_id).first()
+    reply_form = MessageReplyForm()
+
+    if reply_form.validate_on_submit():
+        subject = "Reply to your message"
+        body = f"""Hello { message.name }!
+        I am mailing regarding your message on my blog, The Bland Mirror.
+        
+        { reply_form.reply.data }"""
+        
+        msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], body=body, recipients=[message.email])
+        mail.send(msg)
+
+        update_message = Messages.query.filter_by(id = message_id).update(dict(replied = True, read = True))
+        db.session.commit()
+        reply = MessageReply(message_id = message_id, reply=reply_form.reply.data)
+        db.session.add(reply)
+        db.session.commit()
+
+        flash("Replied sucessfully.")
+        return redirect(url_for('view_messages'))
+
+    return render_template("reply_message.html", reply_form = reply_form, message = message, reply= reply)
+
 
 @app.errorhandler(404)
 def page_not_found(e):

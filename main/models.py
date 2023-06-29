@@ -52,7 +52,15 @@ class Messages(db.Model):
     email = db.Column(db.String(100), nullable=False)
     message = db.Column(db.String(4000), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    read = db.Column(db.Boolean, default=False)
+    read = db.Column(db.Boolean, nullable = False, default=False)
+    replied = db.Column(db.Boolean, nullable = False, default=False)
+
+    
+class MessageReply(db.Model):
+    id= db.Column(db.Integer, nullable=False, primary_key=True)
+    message_id = db.Column(db.Integer, nullable=False)
+    reply = db.Column(db.String(4000), nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
 with app.app_context():
     db.create_all()

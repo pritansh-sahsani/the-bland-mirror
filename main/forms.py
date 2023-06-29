@@ -19,7 +19,6 @@ class ContactForm(FlaskForm):
     message = TextAreaField('Message', validators=[DataRequired(), Length(max=4000)])
     submit = SubmitField('Submit')
 
-
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(max=100)])
     content = TextAreaField('Content', validators=[Length(min=1, max=100000)])
@@ -35,3 +34,7 @@ class PostForm(FlaskForm):
         self.related_1.choices = selection_choices
         self.related_2.choices = selection_choices
         self.related_3.choices = selection_choices
+
+class MessageReplyForm(FlaskForm):
+    reply = TextAreaField('reply', validators=[DataRequired(), Length(max=4000)])
+    submit = SubmitField('Reply')
