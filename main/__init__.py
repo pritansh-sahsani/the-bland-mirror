@@ -6,6 +6,10 @@ from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from main.config import Config
 from flask_mail import Mail
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -39,5 +43,17 @@ admin.add_view(MyModelView(Subscribers, db.session))
 admin.add_view(MyModelView(Likes, db.session))
 admin.add_view(MyModelView(Messages, db.session))
 admin.add_view(MyModelView(MessageReply, db.session))
+
+
+# Initiate database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///the_bland_mirror.sqlite3'
+db = SQLAlchemy(app)
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS').lower() == 'true'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+mail = Mail(app)
 
 from main import routes
