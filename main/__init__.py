@@ -13,9 +13,6 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
-db = SQLAlchemy(app)
-mail = Mail(app)
 bcrypt = Bcrypt(app)
 
 login_manager = LoginManager(app)
