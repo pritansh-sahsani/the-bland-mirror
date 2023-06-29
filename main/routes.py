@@ -126,7 +126,6 @@ def register_like(post_id):
 
 
 @app.route('/delete_comment/<string:post_id>/<string:comment_id>', methods=['GET', 'POST'])
-@login_required
 def delete_comment(comment_id, post_id):
     comment = Comment.query.filter_by(id = comment_id).first_or_404()
     db.session.delete(comment)

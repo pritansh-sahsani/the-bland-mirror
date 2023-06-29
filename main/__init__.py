@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from main.config import Config
@@ -21,12 +21,16 @@ login_manager.login_message_category = 'info'
 
 from main.models import *
 
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Posts, db.session))
-admin.add_view(ModelView(Comment, db.session))
-admin.add_view(ModelView(Subscribers, db.session))
-admin.add_view(ModelView(Likes, db.session))
-admin.add_view(ModelView(Messages, db.session))
-admin.add_view(ModelView(MessageReply, db.session))
+class MyModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(Posts, db.session))
+admin.add_view(MyModelView(Comment, db.session))
+admin.add_view(MyModelView(Subscribers, db.session))
+admin.add_view(MyModelView(Likes, db.session))
+admin.add_view(MyModelView(Messages, db.session))
+admin.add_view(MyModelView(MessageReply, db.session))
 
 from main import routes
