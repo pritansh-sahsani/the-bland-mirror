@@ -126,6 +126,7 @@ def register_like(post_id):
 
 
 @app.route('/delete_comment/<string:post_id>/<string:comment_id>', methods=['GET', 'POST'])
+@login_required
 def delete_comment(comment_id, post_id):
     comment = Comment.query.filter_by(id = comment_id).first_or_404()
     db.session.delete(comment)
@@ -167,6 +168,7 @@ def contact():
 
 
 @app.route("/create_post", methods=['GET', 'POST'])
+@login_required
 def create_post():
     posts = Posts.query.order_by(Posts.created_at.desc())\
         .with_entities(Posts.title)
@@ -216,6 +218,7 @@ def send_email_for_new_post(post):
         mail.send(msg)
 
 @app.route("/messages")
+@login_required
 def view_messages():
     message_query = Messages.query.all()
     reply_query = MessageReply.query.all()
@@ -231,9 +234,8 @@ def view_messages():
     else:
         return render_template("messages.html", messages=messages, no_messages=False, replies=replies)
     
-
-    
 @app.route('/delete_message/<string:message_id>', methods=['GET', 'POST'])
+@login_required
 def delete_message(message_id):
     message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
@@ -243,6 +245,7 @@ def delete_message(message_id):
     return redirect(url_for('messages'))
 
 @app.route('/read_message/<string:message_id>', methods=['GET', 'POST'])
+@login_required
 def read_message(message_id):
     message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
@@ -255,6 +258,7 @@ def read_message(message_id):
     return redirect(url_for('messages'))
 
 @app.route('/reply_message/<string:message_id>', methods=['GET', 'POST'])
+@login_required
 def reply_message(message_id):
     message = Messages.query.filter_by(id = message_id).first_or_404()
     # reply if exists
