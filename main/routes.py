@@ -36,6 +36,28 @@ def post(post_url):
         .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.content, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments, Posts.related_1, Posts.related_2, Posts.related_3)\
         .first_or_404()
 
+    # get related posts
+    related_posts = Posts.query.filter(
+            Posts.id.in_([post.related_1, post.related_2, post.related_3])
+        ).with_entities(
+            Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
+            Posts.views, Posts.comments, Posts.likes
+        ).all()
+
+    # if less than three related posts, then add random post
+    random_posts = []
+    if len(related_posts) < 3:
+        num_random_posts = 3 - len(related_posts)
+        random_posts = Posts.query.filter(
+            ~Posts.is_random,  # Exclude random posts
+            Posts.id != post.id  # Exclude the current post
+        ).with_entities(
+            Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
+            Posts.views, Posts.comments, Posts.likes
+        ).order_by(func.random()).limit(num_random_posts).all()
+
+    related_posts += random_posts
+
     like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = user_ip).first()
     if like is None:
         liked = False
@@ -56,31 +78,39 @@ def post(post_url):
             by_user[comment.id] = False
     
     # get related post details
-    related_post_1 = Posts.query.filter_by(id=post.related_1)\
-        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
-        .first_or_404()
-    related_post_2 = Posts.query.filter_by(id=post.related_2)\
-        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
-        .first_or_404()
-    related_post_3 = Posts.query.filter_by(id=post.related_3)\
-        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
-        .first_or_404()
+    # related_post_1 = Posts.query.filter_by(id=post.related_1)\
+    #     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
+    #     .first_or_404()
+    # related_post_2 = Posts.query.filter_by(id=post.related_2)\
+    #     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
+    #     .first_or_404()
+    # related_post_3 = Posts.query.filter_by(id=post.related_3)\
+    #     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
+    #     .first_or_404()
 
-    like_rp1 = Likes.query.filter_by(post_no = related_post_1.id).filter_by(ip_address = user_ip).first()
-    like_rp2 = Likes.query.filter_by(post_no = related_post_2.id).filter_by(ip_address = user_ip).first()
-    like_rp3 = Likes.query.filter_by(post_no = related_post_3.id).filter_by(ip_address = user_ip).first()
-    if like_rp1 is None:
-        liked_rp1 = False
-    else:
-        liked_rp1 = True
-    if like_rp2 is None:
-        liked_rp2 = False
-    else:
-        liked_rp2 = True
-    if like_rp3 is None:
-        liked_rp3 = False
-    else:
-        liked_rp3 = True
+    # like_rp1 = Likes.query.filter_by(post_no = related_post_1.id).filter_by(ip_address = user_ip).first()
+    # like_rp2 = Likes.query.filter_by(post_no = related_post_2.id).filter_by(ip_address = user_ip).first()
+    # like_rp3 = Likes.query.filter_by(post_no = related_post_3.id).filter_by(ip_address = user_ip).first()
+    # if like_rp1 is None:
+    #     liked_rp1 = False
+    # else:
+    #     liked_rp1 = True
+    # if like_rp2 is None:
+    #     liked_rp2 = False
+    # else:
+    #     liked_rp2 = True
+    # if like_rp3 is None:
+    #     liked_rp3 = False
+    # else:
+    #     liked_rp3 = True
+
+    liked_related_posts = {}
+    for related_post in related_posts:
+        like = Likes.query.filter_by(post_no=related_post.id, ip_address=user_ip).first()
+        if like is None:
+            liked_related_posts[related_post.id] = False
+        else:
+            liked_related_posts[related_post.id] = True
 
     # register view
     update_post_views = Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
@@ -95,8 +125,9 @@ def post(post_url):
         db.session.add(comment)
         db.session.commit()
         return redirect(url_for('post',  post_url=post.url_title))
-    # return
-    return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, liked_rp1=liked_rp1, liked_rp2=liked_rp2, liked_rp3=liked_rp3, comments=comments, rp1 = related_post_1, rp2 = related_post_2, rp3 = related_post_3, by_user=by_user)
+        
+    return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
+    # return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, liked_rp1=liked_rp1, liked_rp2=liked_rp2, liked_rp3=liked_rp3, comments=comments, rp1 = related_post_1, rp2 = related_post_2, rp3 = related_post_3, by_user=by_user)
 
 
 @app.route('/like/<string:post_id>')
