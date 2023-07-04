@@ -5,6 +5,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User
 from main.forms import CommentForm, SubscribeForm, ContactForm, PostForm, MessageReplyForm, RegistrationForm, LoginForm
 from flask_mail import Message
+from sqlalchemy.sql.expression import func
 import re
 
 @app.route("/", methods=["GET", "POST"])
@@ -125,7 +126,7 @@ def post(post_url):
         db.session.add(comment)
         db.session.commit()
         return redirect(url_for('post',  post_url=post.url_title))
-        
+
     return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
     # return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, liked_rp1=liked_rp1, liked_rp2=liked_rp2, liked_rp3=liked_rp3, comments=comments, rp1 = related_post_1, rp2 = related_post_2, rp3 = related_post_3, by_user=by_user)
 
