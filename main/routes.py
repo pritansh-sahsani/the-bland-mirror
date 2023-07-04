@@ -36,6 +36,17 @@ def post(post_url):
         .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.content, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments, Posts.related_1, Posts.related_2, Posts.related_3)\
         .first_or_404()
 
+    # random_posts = []
+    # if len(post) < 3:
+    #     num_random_posts = 3 - len(post)
+    #     random_posts = Posts.query.filter(
+    #         ~Posts.is_random,  # Exclude random posts
+    #         Posts.id != post.id  # Exclude the current post
+    #     ).with_entities(
+    #         Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
+    #         Posts.views, Posts.comments, Posts.likes
+    #     ).order_by(func.random()).limit(num_random_posts).all()
+
     like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = user_ip).first()
     if like is None:
         liked = False
