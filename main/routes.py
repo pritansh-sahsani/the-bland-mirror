@@ -1,4 +1,5 @@
 import os
+import json
 from flask import render_template, url_for, flash, redirect, request
 from main import db, mail, app, bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
@@ -39,18 +40,18 @@ def post(post_url):
 
     # get related posts
     related_posts = Posts.query.filter(
-            Posts.id.in_([post.related_1, post.related_2, post.related_3])
-        ).with_entities(
-            Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
-            Posts.views, Posts.comments, Posts.likes
-        ).all()
+        Posts.id.in_([post.related_1, post.related_2, post.related_3])
+    ).with_entities(
+        Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
+        Posts.views, Posts.comments, Posts.likes
+    ).all()
+        
 
     # if less than three related posts, then add random post
     random_posts = []
     if len(related_posts) < 3:
         num_random_posts = 3 - len(related_posts)
         random_posts = Posts.query.filter(
-            ~Posts.is_random,  # Exclude random posts
             Posts.id != post.id  # Exclude the current post
         ).with_entities(
             Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
@@ -201,15 +202,17 @@ def contact():
 @app.route("/create_post", methods=['GET', 'POST'])
 @login_required
 def create_post():
-    posts = Posts.query.order_by(Posts.created_at.desc())\
-        .with_entities(Posts.title)
+    posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
-    choices = []
-    for post in posts:
-        for x in post:
-            choices.append(x)
+    choices = [(post.id, post.title) for post in posts]
     
     post_form=PostForm(selection_choices=choices)
+
+    if not choices:
+        default_choice = ('', 'No posts available')
+        post_form.related_1.choices = [default_choice]
+        post_form.related_2.choices = [default_choice]
+        post_form.related_3.choices = [default_choice]
 
     if post_form.validate_on_submit():
         flash("Post Created Successfully!", 'success')
@@ -219,10 +222,17 @@ def create_post():
         url_title = re.sub('[^-._~0-9a-zA-Z]', '', url_title)
         
         f = post_form.cover_img.data
-        filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
-        f.save(os.path.join(app.root_path+ '\static\post_img\\' + filename))
+        if f:
+            filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
+            f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
+        else:
+            filename = None
 
-        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
+        related_1 = int(post_form.related_1.data) if post_form.related_1.data else None
+        related_2 = int(post_form.related_2.data) if post_form.related_2.data else None
+        related_3 = int(post_form.related_3.data) if post_form.related_3.data else None
+
+        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = related_1, related_2 = related_2, related_3 = related_3)
         db.session.add(post)
         db.session.commit()
 

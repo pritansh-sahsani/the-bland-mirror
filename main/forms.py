@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, SelectField, PasswordField, BooleanField
 from flask_wtf.file import FileAllowed, FileField
-from wtforms.validators import DataRequired, EqualTo, Email, Length, ValidationError
+from wtforms.validators import DataRequired, EqualTo, Email, Length, ValidationError, Optional
 
 from main.models import User
 
@@ -51,9 +51,9 @@ class PostForm(FlaskForm):
     content = TextAreaField('Content', validators=[Length(min=1, max=100000)])
     summary= StringField('Summary', validators=[DataRequired(), Length(max=140)])
     cover_img = FileField('Cover image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only .jpg, .png and .jpeg file formats are supported.')])
-    related_1 = SelectField('Post 1', validators=[DataRequired()])
-    related_2 = SelectField('Post 2', validators=[DataRequired()])
-    related_3 = SelectField('Post 3', validators=[DataRequired()])
+    related_1 = SelectField('Post 1', choices=[], validators=[Optional()])
+    related_2 = SelectField('Post 2', choices=[], validators=[Optional()])
+    related_3 = SelectField('Post 3', choices=[], validators=[Optional()])
     submit = SubmitField('Post')
     
     def __init__(self, selection_choices):

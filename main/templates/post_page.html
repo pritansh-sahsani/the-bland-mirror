@@ -38,59 +38,85 @@
                 return false;
             });
 
-            $('#like_button_rp1').on('click', function(e) {
-                e.preventDefault()
-                $.getJSON('{{ url_for("register_like", post_id=rp1.id) }}',function(data) {});
-                var like_num_rp1 = parseInt($('#like_display_rp1').html())
-                if (  $("#like_image_rp1").attr('src') == '../static/assets/like_button.svg' ) 
-                {
-                    $("#like_image_rp1").attr('src','../static/assets/like_button_clicked.svg');
-                    $('#like_display_rp1').text(like_num_rp1 + 1);
-                }
-                else
-                {
-                    $("#like_image_rp1").attr('src','../static/assets/like_button.svg');
-                    $('#like_display_rp1').text(like_num_rp1 - 1);
-                }
+            var relatedPosts = {{ related_posts | safe }};
 
-                return false;
+            relatedPosts.forEach(function(relatedPost) {
+                $('#like_button_' + relatedPost.id).on('click', function(e) {
+                    e.preventDefault();
+                    $.getJSON('{{ url_for("register_like", post_id=' + relatedPost.id + ') }}', function(data) {});
+
+                    var likeNum = parseInt($('#like_display_' + relatedPost.id).html());
+                    var likeImageSrc = $('#like_image_' + relatedPost.id).attr('src');
+
+                    if (likeImageSrc === '../static/assets/like_button.svg') {
+                        $('#like_image_' + relatedPost.id).attr('src', '../static/assets/like_button_clicked.svg');
+                        $('#like_display_' + relatedPost.id).text(likeNum + 1);
+                    } else {
+                        $('#like_image_' + relatedPost.id).attr('src', '../static/assets/like_button.svg');
+                        $('#like_display_' + relatedPost.id).text(likeNum - 1);
+                    }
+
+                    return false;
+                });
             });
 
-            $('#like_button_rp2').on('click', function(e) {
-                e.preventDefault()
-                $.getJSON('{{ url_for("register_like", post_id=rp2.id) }}',function(data) {});
-                var like_num_rp2 = parseInt($('#like_display_rp2').html())
-                if (  $("#like_image_rp2").attr('src') == '../static/assets/like_button.svg' ) 
-                {
-                    $("#like_image_rp2").attr('src','../static/assets/like_button_clicked.svg');
-                    $('#like_display_rp2').text(like_num_rp2 + 1);
-                }
-                else
-                {
-                    $("#like_image_rp2").attr('src','../static/assets/like_button.svg');
-                    $('#like_display_rp2').text(like_num_rp2 - 1);
-                }
 
-                return false;
-            });
+            {#
 
-            $('#like_button_rp3').on('click', function(e) {
-                e.preventDefault()
-                $.getJSON('{{ url_for("register_like", post_id=rp3.id) }}',function(data) {});
-                var like_num_rp3 = parseInt($('#like_display_rp3').html())
-                if (  $("#like_image_rp3").attr('src') == '../static/assets/like_button.svg' ) 
-                {
-                    $("#like_image_rp3").attr('src','../static/assets/like_button_clicked.svg');
-                    $('#like_display_rp3').text(like_num_rp3 + 1);
-                }
-                else
-                {
-                    $("#like_image_rp3").attr('src','../static/assets/like_button.svg');
-                    $('#like_display_rp3').text(like_num_rp3 - 1);
-                }
+                // $('#like_button_rp1').on('click', function(e) {
+            //     e.preventDefault()
+            //     $.getJSON('{{ url_for("register_like", post_id=rp1.id) }}',function(data) {});
+            //     var like_num_rp1 = parseInt($('#like_display_rp1').html())
+            //     if (  $("#like_image_rp1").attr('src') == '../static/assets/like_button.svg' ) 
+            //     {
+            //         $("#like_image_rp1").attr('src','../static/assets/like_button_clicked.svg');
+            //         $('#like_display_rp1').text(like_num_rp1 + 1);
+            //     }
+            //     else
+            //     {
+            //         $("#like_image_rp1").attr('src','../static/assets/like_button.svg');
+            //         $('#like_display_rp1').text(like_num_rp1 - 1);
+            //     }
 
-                return false;
-            });
+            //     return false;
+            // });
+
+            // $('#like_button_rp2').on('click', function(e) {
+            //     e.preventDefault()
+            //     $.getJSON('{{ url_for("register_like", post_id=rp2.id) }}',function(data) {});
+            //     var like_num_rp2 = parseInt($('#like_display_rp2').html())
+            //     if (  $("#like_image_rp2").attr('src') == '../static/assets/like_button.svg' ) 
+            //     {
+            //         $("#like_image_rp2").attr('src','../static/assets/like_button_clicked.svg');
+            //         $('#like_display_rp2').text(like_num_rp2 + 1);
+            //     }
+            //     else
+            //     {
+            //         $("#like_image_rp2").attr('src','../static/assets/like_button.svg');
+            //         $('#like_display_rp2').text(like_num_rp2 - 1);
+            //     }
+
+            //     return false;
+            // });
+
+            // $('#like_button_rp3').on('click', function(e) {
+            //     e.preventDefault()
+            //     $.getJSON('{{ url_for("register_like", post_id=rp3.id) }}',function(data) {});
+            //     var like_num_rp3 = parseInt($('#like_display_rp3').html())
+            //     if (  $("#like_image_rp3").attr('src') == '../static/assets/like_button.svg' ) 
+            //     {
+            //         $("#like_image_rp3").attr('src','../static/assets/like_button_clicked.svg');
+            //         $('#like_display_rp3').text(like_num_rp3 + 1);
+            //     }
+            //     else
+            //     {
+            //         $("#like_image_rp3").attr('src','../static/assets/like_button.svg');
+            //         $('#like_display_rp3').text(like_num_rp3 - 1);
+            //     }
+
+            //     return false;
+            // });
+        #}
         });
     </script>
 
@@ -196,7 +222,7 @@
             {% endfor %}
         </div>
     </div>
-
+   {#
     <!-- <div class="mx-auto w-80% mt-10">
         <p class="text-2xl">Other Posts</p>
         <div class="flex justify-between">
@@ -265,6 +291,7 @@
             </a></div>
         </div>
     </div> -->
+    #}
 
     <!-- subscribe link -->
 	<div>
