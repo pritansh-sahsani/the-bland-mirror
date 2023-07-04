@@ -125,7 +125,7 @@
         <div class="w-90% mx-auto mt-5% mb-5%">
             <p class="text-base mb-5 ">{{ post.created_at.strftime("%d %B %Y") }}</p>
             <p class="text-6xl -ml-2 post_font">{{ post.title }}</p>
-            <p class="text-2xl mt-4 post_font">{{ post.content }}</p>
+            <p class="text-2xl mt-4 post_font">{{ post.content | safe }}</p>
             <div class="h-10% mt-10%">
                 <hr class="mb-2 border-slate-400"/>
                 {% if post.views == 1 %}

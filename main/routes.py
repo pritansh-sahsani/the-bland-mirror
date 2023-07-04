@@ -45,20 +45,23 @@ def post(post_url):
         Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
         Posts.views, Posts.comments, Posts.likes
     ).all()
-        
 
-    # if less than three related posts, then add random post
+    # if less than three related posts, then add random posts
     random_posts = []
     if len(related_posts) < 3:
         num_random_posts = 3 - len(related_posts)
+        exclude_post_ids = [post.id] + [related_post.id for related_post in related_posts]
         random_posts = Posts.query.filter(
-            Posts.id != post.id  # Exclude the current post
+            ~Posts.id.in_(exclude_post_ids)  # Exclude the current post and related posts
         ).with_entities(
             Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
             Posts.views, Posts.comments, Posts.likes
         ).order_by(func.random()).limit(num_random_posts).all()
 
     related_posts += random_posts
+
+    related_posts = list(set(related_posts))
+    related_posts = [related_post for related_post in related_posts if related_post.id != post.id]
 
     like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = user_ip).first()
     if like is None:
@@ -205,8 +208,9 @@ def create_post():
     posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
     choices = [(post.id, post.title) for post in posts]
-    
-    post_form=PostForm(selection_choices=choices)
+    choices.insert(0, ('', 'No related post'))
+
+    post_form = PostForm(selection_choices=choices)
 
     if not choices:
         default_choice = ('', 'No posts available')
