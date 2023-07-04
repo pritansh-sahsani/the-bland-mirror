@@ -5,7 +5,8 @@ load_dotenv()
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///the_bland_mirror.sqlite3'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), 'the_bland_mirror.sqlite3')
+
 
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_PORT = int(os.getenv('MAIL_PORT'))
