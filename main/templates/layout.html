@@ -56,17 +56,34 @@
 					<a href="/" class="ml-2">
 						<img src="../static/assets/logo.png" class="ml-4 w-12 mr-0" alt="" />
 					</a>
-					<div class="pr-8 md:block hidden mx-5">
-						<a class="navbar-link" href="/">
-							<button class="underline-btn">Home</button>
-						</a>
-						<a class="navbar-link" href="/contact">
-							<button class="underline-btn">Contact</button>
-						</a>
-						<a class="navbar-link" href="/subscribe">
-							<button class="underline-btn">Subscribe</button>
-						</a>
-					</div>
+					{% if current_user.is_authenticated %}
+						<div class="pr-8 md:block hidden mx-5">
+							<a class="navbar-link" href="/authors_home">
+								<button class="underline-btn">Author's Home</button>
+							</a>
+							<a class="navbar-link" href="/create_post">
+								<button class="underline-btn">Create post</button>
+							</a>
+							<a class="navbar-link" href="/messages">
+								<button class="underline-btn">Messages</button>
+							</a>
+							<a class="navbar-link" href="/admin">
+								<button class="underline-btn">Admin</button>
+							</a>
+						</div>
+					{% else %}
+						<div class="pr-8 md:block hidden mx-5">
+							<a class="navbar-link" href="/">
+								<button class="underline-btn">Home</button>
+							</a>
+							<a class="navbar-link" href="/contact">
+								<button class="underline-btn">Contact</button>
+							</a>
+							<a class="navbar-link" href="/subscribe">
+								<button class="underline-btn">Subscribe</button>
+							</a>
+						</div>
+					{% endif %}
 				</div>
 
 				<div class="block md:float md:items-right md:mr-8">
