@@ -289,7 +289,7 @@ def delete_message(message_id):
     db.session.delete(message)
     db.session.commit()
     flash("Message deleted successfully.")
-    return redirect(url_for('messages'))
+    return redirect(url_for('view_messages'))
 
 @app.route('/read_message/<string:message_id>', methods=['GET', 'POST'])
 @login_required
@@ -302,7 +302,7 @@ def read_message(message_id):
         flash("Message marked as unread.")
     else:
         flash("Message marked as read.")
-    return redirect(url_for('messages'))
+    return redirect(url_for('view_messages'))
 
 @app.route('/reply_message/<string:message_id>', methods=['GET', 'POST'])
 @login_required
