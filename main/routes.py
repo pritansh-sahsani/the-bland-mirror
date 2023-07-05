@@ -1,5 +1,6 @@
 import os
 import json
+from operator import attrgetter
 from flask import render_template, url_for, flash, redirect, request
 from main import db, mail, app, bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
@@ -276,6 +277,8 @@ def view_messages():
     if len(messages) == 0:
         return render_template("messages.html", no_messages=True)
     else:
+        messages.sort(key=attrgetter('date'), reverse=True)
+        messages.sort(key=attrgetter('replied'))
         return render_template("messages.html", messages=messages, no_messages=False, replies=replies)
     
 @app.route('/delete_message/<string:message_id>', methods=['GET', 'POST'])
