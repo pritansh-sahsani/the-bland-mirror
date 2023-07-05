@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
+from flask_migrate import Migrate
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from main.config import Config
@@ -13,6 +14,8 @@ bcrypt = Bcrypt(app)
 
 # Initiate database
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -39,6 +42,7 @@ admin.add_view(MyModelView(Subscribers, db.session))
 admin.add_view(MyModelView(Likes, db.session))
 admin.add_view(MyModelView(Messages, db.session))
 admin.add_view(MyModelView(MessageReply, db.session))
+admin.add_view(MyModelView(Notification, db.session))
 
 mail = Mail(app)
 

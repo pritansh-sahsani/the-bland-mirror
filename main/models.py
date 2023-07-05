@@ -92,6 +92,17 @@ class MessageReply(db.Model):
     reply = db.Column(db.String(4000), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(255))
+    is_read = db.Column(db.Boolean, default=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Notification {self.id}>"
+
+
 with app.app_context():
     db.create_all()
     db.session.commit()
