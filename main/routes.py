@@ -222,8 +222,7 @@ def create_post():
         flash("Post Created Successfully!", 'success')
 
         url_title = post_form.title.data
-        url_title = url_title.replace(" ", "_")
-        url_title = re.sub('[^-._~0-9a-zA-Z]', '', url_title)
+        url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
         
         f = post_form.cover_img.data
         if f:
@@ -353,7 +352,7 @@ def register():
         flash(f'Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -367,13 +366,19 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('index'))
+            return redirect(next_page) if next_page else redirect(url_for('authors_home'))
         else:
             flash('Login unsuccessful, please check your email and password', 'danger')
 
-    return render_template('login.html', title='Login', form=form)
+    return render_template('login.html', form=form)
+
+@app.route('/authors_home')
+@login_required
+def authors_home():
+    return render_template('authors_home.html')
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
