@@ -4,7 +4,7 @@ from operator import attrgetter
 from flask import render_template, url_for, flash, redirect, request
 from main import db, mail, app, bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
-from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User
+from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User, Notification
 from main.forms import CommentForm, SubscribeForm, ContactForm, PostForm, MessageReplyForm, RegistrationForm, LoginForm
 from flask_mail import Message
 from sqlalchemy.sql.expression import func
@@ -129,8 +129,14 @@ def post(post_url):
         comment = Comment(post_no=post.id, comment_no=post.comments + 1, comment=comment_form.text.data, name=comment_form.name.data, ip_address=user_ip)
         
         db.session.add(comment)
+
+        notification_message = f"New comment on your post: {post.title}"
+        notification = Notification(message=notification_message)
+
+        db.session.add(notification)
+
         db.session.commit()
-        return redirect(url_for('post',  post_url=post.url_title))
+        return redirect(url_for('post', post_url=post.url_title))
 
     return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
     # return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, liked_rp1=liked_rp1, liked_rp2=liked_rp2, liked_rp3=liked_rp3, comments=comments, rp1 = related_post_1, rp2 = related_post_2, rp3 = related_post_3, by_user=by_user)
@@ -261,6 +267,21 @@ def send_email_for_new_post(post):
         
         msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], recipients = recipients, body=body)
         mail.send(msg)
+
+@app.route("/notifications")
+@login_required
+def view_notifications():
+    notification_query = Notification.query.all()
+    
+    notifications = []
+    replies = {}
+    for notification in notification_query:
+        notifications.append(notification)
+    if len(notifications) == 0:
+        return render_template("notifications.html", no_notifications=True)
+    else:
+        notifications.sort(key=attrgetter('date'), reverse=True)
+        return render_template("notifications.html", notifications=notifications, no_notifications=False)
 
 @app.route("/messages")
 @login_required
