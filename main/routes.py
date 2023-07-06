@@ -83,33 +83,6 @@ def post(post_url):
         else:
             by_user[comment.id] = False
     
-    # get related post details
-    # related_post_1 = Posts.query.filter_by(id=post.related_1)\
-    #     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
-    #     .first_or_404()
-    # related_post_2 = Posts.query.filter_by(id=post.related_2)\
-    #     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
-    #     .first_or_404()
-    # related_post_3 = Posts.query.filter_by(id=post.related_3)\
-    #     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.cover_img, Posts.views, Posts.comments, Posts.likes)\
-    #     .first_or_404()
-
-    # like_rp1 = Likes.query.filter_by(post_no = related_post_1.id).filter_by(ip_address = user_ip).first()
-    # like_rp2 = Likes.query.filter_by(post_no = related_post_2.id).filter_by(ip_address = user_ip).first()
-    # like_rp3 = Likes.query.filter_by(post_no = related_post_3.id).filter_by(ip_address = user_ip).first()
-    # if like_rp1 is None:
-    #     liked_rp1 = False
-    # else:
-    #     liked_rp1 = True
-    # if like_rp2 is None:
-    #     liked_rp2 = False
-    # else:
-    #     liked_rp2 = True
-    # if like_rp3 is None:
-    #     liked_rp3 = False
-    # else:
-    #     liked_rp3 = True
-
     liked_related_posts = {}
     for related_post in related_posts:
         like = Likes.query.filter_by(post_no=related_post.id, ip_address=user_ip).first()
@@ -139,8 +112,6 @@ def post(post_url):
         return redirect(url_for('post', post_url=post.url_title))
 
     return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
-    # return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, liked_rp1=liked_rp1, liked_rp2=liked_rp2, liked_rp3=liked_rp3, comments=comments, rp1 = related_post_1, rp2 = related_post_2, rp3 = related_post_3, by_user=by_user)
-
 
 @app.route('/like/<string:post_id>')
 def register_like(post_id):

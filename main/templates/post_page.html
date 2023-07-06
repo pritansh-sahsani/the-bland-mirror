@@ -37,87 +37,30 @@
 
                 return false;
             });
-
-            var relatedPosts = {{ related_posts | safe }};
-
-            relatedPosts.forEach(function(relatedPost) {
-                $('#like_button_' + relatedPost.id).on('click', function(e) {
-                    e.preventDefault();
-                    $.getJSON('{{ url_for("register_like", post_id=' + relatedPost.id + ') }}', function(data) {});
-
-                    var likeNum = parseInt($('#like_display_' + relatedPost.id).html());
-                    var likeImageSrc = $('#like_image_' + relatedPost.id).attr('src');
-
-                    if (likeImageSrc === '../static/assets/like_button.svg') {
-                        $('#like_image_' + relatedPost.id).attr('src', '../static/assets/like_button_clicked.svg');
-                        $('#like_display_' + relatedPost.id).text(likeNum + 1);
-                    } else {
-                        $('#like_image_' + relatedPost.id).attr('src', '../static/assets/like_button.svg');
-                        $('#like_display_' + relatedPost.id).text(likeNum - 1);
-                    }
-
-                    return false;
-                });
-            });
-
-
-            {#
-
-                // $('#like_button_rp1').on('click', function(e) {
-            //     e.preventDefault()
-            //     $.getJSON('{{ url_for("register_like", post_id=rp1.id) }}',function(data) {});
-            //     var like_num_rp1 = parseInt($('#like_display_rp1').html())
-            //     if (  $("#like_image_rp1").attr('src') == '../static/assets/like_button.svg' ) 
-            //     {
-            //         $("#like_image_rp1").attr('src','../static/assets/like_button_clicked.svg');
-            //         $('#like_display_rp1').text(like_num_rp1 + 1);
-            //     }
-            //     else
-            //     {
-            //         $("#like_image_rp1").attr('src','../static/assets/like_button.svg');
-            //         $('#like_display_rp1').text(like_num_rp1 - 1);
-            //     }
-
-            //     return false;
-            // });
-
-            // $('#like_button_rp2').on('click', function(e) {
-            //     e.preventDefault()
-            //     $.getJSON('{{ url_for("register_like", post_id=rp2.id) }}',function(data) {});
-            //     var like_num_rp2 = parseInt($('#like_display_rp2').html())
-            //     if (  $("#like_image_rp2").attr('src') == '../static/assets/like_button.svg' ) 
-            //     {
-            //         $("#like_image_rp2").attr('src','../static/assets/like_button_clicked.svg');
-            //         $('#like_display_rp2').text(like_num_rp2 + 1);
-            //     }
-            //     else
-            //     {
-            //         $("#like_image_rp2").attr('src','../static/assets/like_button.svg');
-            //         $('#like_display_rp2').text(like_num_rp2 - 1);
-            //     }
-
-            //     return false;
-            // });
-
-            // $('#like_button_rp3').on('click', function(e) {
-            //     e.preventDefault()
-            //     $.getJSON('{{ url_for("register_like", post_id=rp3.id) }}',function(data) {});
-            //     var like_num_rp3 = parseInt($('#like_display_rp3').html())
-            //     if (  $("#like_image_rp3").attr('src') == '../static/assets/like_button.svg' ) 
-            //     {
-            //         $("#like_image_rp3").attr('src','../static/assets/like_button_clicked.svg');
-            //         $('#like_display_rp3').text(like_num_rp3 + 1);
-            //     }
-            //     else
-            //     {
-            //         $("#like_image_rp3").attr('src','../static/assets/like_button.svg');
-            //         $('#like_display_rp3').text(like_num_rp3 - 1);
-            //     }
-
-            //     return false;
-            // });
-        #}
         });
+
+            {% for relatedPost in related_posts %}
+                $(function() {
+                    $('#like_button_{{ relatedPost.id }}').on('click', function(e) {
+                        console.log("hello")
+                        e.preventDefault();
+                        $.getJSON('{{ url_for("register_like", post_id=relatedPost.id) }}', function(data) {});
+
+                        var likeNum = parseInt($('#like_display_{{ relatedPost.id }}').html());
+                        var likeImageSrc = $('#like_image_{{ relatedPost.id }}').attr('src');
+
+                        if (likeImageSrc === '../static/assets/like_button.svg') {
+                            $('#like_image_{{ relatedPost.id }}').attr('src', '../static/assets/like_button_clicked.svg');
+                            $('#like_display_{{ relatedPost.id }}').text(likeNum + 1);
+                        } else {
+                            $('#like_image_{{ relatedPost.id }}').attr('src', '../static/assets/like_button.svg');
+                            $('#like_display_{{ relatedPost.id }}').text(likeNum - 1);
+                        }
+
+                        return false;
+                    });
+                });
+            {% endfor %}
     </script>
 
     <!-- post -->
@@ -196,102 +139,32 @@
                 <div class="small_post_view border w-30% mt-5 inline">
                     <a href="{{ url_for('post', post_url=post.url_title) }}">
                         <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src="/static/post_img/{{ post.cover_img }}" />
-    
+                    </a>
                         <div class="h-35">
-                            <p class="pt-2 text-2xl mx-5% h-32">{{ post.title }}</p>
-    
+                            <a href="{{ url_for('post', post_url=post.url_title) }}">
+                                <p class="pt-2 text-2xl mx-5% h-32">{{ post.title }}</p>
+                            </a>
+
                             <hr class="border-slate-400 w-90% mx-auto" />
                             <img class="inline w-auto h-3 ml-5% object-cover mb-1" src="../static/assets/views_icon.png">
                             <p class="ml-1 inline">{{ post.views }}</p>
                             <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src="../static/assets/comment_icon.png">
                             <p class="ml-1 inline">{{ post.comments }}</p>
-    
-                            {% if post in liked_related_posts %}
-                                <button id='like_button_{{ loop.index }}' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2">
-                                    <img id="like_image_{{ loop.index }}" src="../static/assets/like_button_clicked.svg" />
-                                </button>
-                            {% else %}
-                                <button id='like_button_{{ loop.index }}' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2">
-                                    <img id="like_image_{{ loop.index }}" src="../static/assets/like_button.svg" />
-                                </button>
-                            {% endif %}
-                            <p class="float-right inline" id="like_display_{{ loop.index }}">{{ post.likes }}</p>
+                            
+                            <button id='like_button_{{ post.id }}' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2">
+                                {% if liked_related_posts[post.id] %}
+                                        <img id="like_image_{{ post.id }}" src="../static/assets/like_button_clicked.svg" />
+                                {% else %}
+                                        <img id="like_image_{{ post.id }}" src="../static/assets/like_button.svg" />
+                                {% endif %}
+                            </button>
+
+                            <p class="float-right inline" id="like_display_{{ post.id }}">{{ post.likes }}</p>
                         </div>
-                    </a>
                 </div>
             {% endfor %}
         </div>
     </div>
-   {#
-    <!-- <div class="mx-auto w-80% mt-10">
-        <p class="text-2xl">Other Posts</p>
-        <div class="flex justify-between">
-            <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp1.url_title) }}">
-                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "/static/post_img/{{ post.cover_img }}" />
-                
-                <div class="h-35">
-                    <p class="pt-2 text-2xl mx-5% h-32">{{ rp1.title }}</p>
-                
-                    <hr class=" border-slate-400 w-90% mx-auto"/>
-                    <img class="inline w-auto h-3 ml-5% object-cover mb-1" src= "../static/assets/views_icon.png">
-                    <p class="ml-1 inline">{{ rp1.views }}</p>
-                    <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src= "../static/assets/comment_icon.png">
-                    <p class="ml-1 inline">{{ rp1.comments }}</p>
-                    
-                    {% if liked_rp1 %}
-                        <button id='like_button_rp1' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp1" src="../static/assets/like_button_clicked.svg" /></button>
-                    {% else %}
-                        <button id='like_button_rp1' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp1" src="../static/assets/like_button.svg" /></button>
-                    {% endif %}
-                    <p class=" float-right inline" id="like_display_rp1">{{ rp1.likes }}</p>
-                </div>
-            </a></div>
-
-            <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp2.url_title) }}">
-                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "{{ post.cover_img }}">
-                
-                <div class="h-35">
-                    <p class="pt-2 text-2xl mx-5% h-32">{{ rp2.title }}</p>
-                
-                    <hr class=" border-slate-400 w-90% mx-auto"/>
-                    <img class="inline w-auto h-3 ml-5% object-cover mb-1" src= "../static/assets/views_icon.png">
-                    <p class="ml-1 inline">{{ rp2.views }}</p>
-                    <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src= "../static/assets/comment_icon.png">
-                    <p class="ml-1 inline">{{ rp2.comments }}</p>
-                    
-                    {% if liked_rp2 %}
-                        <button id='like_button_rp2' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp2" src="../static/assets/like_button_clicked.svg" /></button>
-                    {% else %}
-                        <button id='like_button_rp2' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp2" src="../static/assets/like_button.svg" /></button>
-                    {% endif %}
-                    <p class=" float-right inline"  id="like_display_rp2">{{ rp2.likes }}</p>
-                </div>
-            </a></div>
-
-            <div class="small_post_view border w-30% mt-5 inline"><a href="{{ url_for('post', post_url=rp3.url_title) }}">
-                <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src= "{{ post.cover_img }}">
-                
-                <div class="h-35">
-                    <p class="pt-2 text-2xl mx-5% h-32">{{ rp3.title }}</p>
-                
-                    <hr class="border-slate-400 w-90% mx-auto"/>
-                    <img class="inline w-auto h-3 ml-5% object-cover mb-1" src= "../static/assets/views_icon.png">
-                    <p class="ml-1 inline">{{ rp3.views }}</p>
-                    <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src= "../static/assets/comment_icon.png">
-                    <p class="ml-1 inline">{{ rp3.comments }}</p>
-                    
-                    {% if liked_rp3 %}
-                        <button id='like_button_rp3' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp3" src="../static/assets/like_button_clicked.svg" /></button>
-                    {% else %}
-                        <button id='like_button_rp3' class="inline w-auto mr-5% mt-1 float-right h-4 ml-1 object-cover mb-2" ><img id="like_image_rp3" src="../static/assets/like_button.svg" /></button>
-                    {% endif %}
-
-                    <p class=" float-right inline"  id="like_display_rp3">{{ rp3.likes }}</p>
-                </div>
-            </a></div>
-        </div>
-    </div> -->
-    #}
 
     <!-- subscribe link -->
 	<div>
