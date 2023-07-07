@@ -100,13 +100,6 @@ def post(post_url):
         notification = Notification(message=notification_message)
         db.session.add(notification)
 
-    print(post.likes)
-
-    if post.likes % 10 == 0:
-        notification_message = f"Your post '{post.title}' has reached {post.likes} likes!"
-        notification = Notification(message=notification_message)
-        db.session.add(notification)
-
     db.session.commit()
     
     # register comment 
@@ -131,7 +124,7 @@ def post(post_url):
 def register_like(post_id):
     # get post details
     post = Posts.query.filter_by(id=post_id)\
-        .with_entities(Posts.likes)\
+        .with_entities(Posts.title, Posts.likes)\
         .first_or_404()
     user_ip = request.remote_addr
 
@@ -148,6 +141,13 @@ def register_like(post_id):
         update_post_like = Posts.query.filter_by(id=post_id).update(dict(likes = post.likes+1))
         like = Likes(post_no=post_id, ip_address = user_ip)
         db.session.add(like)
+        db.session.commit()
+    
+    print(post.likes)
+    if post.likes % 10 == 0:
+        notification_message = f"Your post '{post.title}' has received {post.likes} likes!"
+        notification = Notification(message=notification_message)
+        db.session.add(notification)
         db.session.commit()
 
     return ('0')
@@ -175,6 +175,12 @@ def subscribe():
             db.session.add(subscriber)
             db.session.commit()
             flash('Thank you for subscribing!', 'success')
+
+            notification_message = f"You got a new subscriber!"
+            notification = Notification(message=notification_message)
+            db.session.add(notification)
+            db.session.commit()
+
             return redirect(url_for('index'))
         else:
             flash('This email address is already subscribed.', 'error')
