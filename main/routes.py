@@ -93,6 +93,20 @@ def post(post_url):
 
     # register view
     update_post_views = Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
+
+    # send notification when views reach a particular milestone
+    if post.views % 10 == 0:
+        notification_message = f"Your post '{post.title}' has reached {post.views} views!"
+        notification = Notification(message=notification_message)
+        db.session.add(notification)
+
+    print(post.likes)
+
+    if post.likes % 10 == 0:
+        notification_message = f"Your post '{post.title}' has reached {post.likes} likes!"
+        notification = Notification(message=notification_message)
+        db.session.add(notification)
+
     db.session.commit()
     
     # register comment 
