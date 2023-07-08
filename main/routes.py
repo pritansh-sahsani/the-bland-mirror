@@ -209,15 +209,17 @@ def create_post():
     posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
     choices = [(post.id, post.title) for post in posts]
-    choices.insert(0, ('', 'No related post'))
+
+    if len(choices) == 0:
+        default_choice = ('', 'No posts available')
+        choices = [default_choice]
+        choices = [default_choice]
+        choices = [default_choice]
+    else:
+        choices.insert(0, ('', 'Random Post'))
 
     post_form = PostForm(selection_choices=choices)
 
-    if not choices:
-        default_choice = ('', 'No posts available')
-        post_form.related_1.choices = [default_choice]
-        post_form.related_2.choices = [default_choice]
-        post_form.related_3.choices = [default_choice]
 
     if post_form.validate_on_submit():
         flash("Post Created Successfully!", 'success')
