@@ -7,12 +7,18 @@
 {% block main %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type=text/javascript>
+    var msg_len = {{ msg_len }}
     {% for message in messages %}
         $(function() {
             $('#delete_message{{ message.id }}').on('click', function(e) {
                 e.preventDefault()
                 $.getJSON('{{ url_for("delete_message", message_id = message.id) }}',function(data) {});
                 $("#message{{ message.id }}").hide();
+                msg_len = msg_len-1;
+                if(msg_len==0)
+                {
+                    $('#no_msg').text("No Messages");
+                }
             });
         });
         $(function() {
@@ -34,7 +40,8 @@
 
 <center>
     <div class="w-95% hidden md:block">
-        {% if no_messages == False %}
+        <h3 id="no_msg"></h3>
+        {% if msg_len != 0 %}
             {% for message in messages %}
                     <div id="message{{ message.id }}">
                         <p>{{ message.name }}</p>
@@ -55,11 +62,11 @@
                         {% else %}
                             <button id="read_message{{ message.id }}">Mark As Read</button><br>
                         {% endif %}
+                        <hr>
                     </div>
-                    <hr>
             {% endfor %}
         {% else %}
-            <h3>No Messages</h3>
+            <h3 id="no_msg">No Messages</h3>
         {% endif %}
     </div>
 </center>

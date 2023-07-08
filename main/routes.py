@@ -92,7 +92,7 @@ def post(post_url):
             liked_related_posts[related_post.id] = True
 
     # register view
-    update_post_views = Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
+    Posts.query.filter_by(id=post.id).update(dict(views= post.views+1))
 
     # send notification when views reach a particular milestone
     if post.views % 10 == 0:
@@ -105,7 +105,7 @@ def post(post_url):
     # register comment 
     comment_form = CommentForm()
     if comment_form.validate_on_submit():
-        update_post_comment = Posts.query.filter_by(id=post.id).update(dict(comments= post.comments+1))
+        Posts.query.filter_by(id=post.id).update(dict(comments= post.comments+1))
         comment = Comment(post_no=post.id, comment_no=post.comments + 1, comment=comment_form.text.data, name=comment_form.name.data, ip_address=user_ip)
         
         db.session.add(comment)
@@ -133,12 +133,12 @@ def register_like(post_id):
     .first()
     
     if likes is not None:
-        update_post_like = Posts.query.filter_by(id=post_id).update(dict(likes = post.likes-1))
+        Posts.query.filter_by(id=post_id).update(dict(likes = post.likes-1))
         like = Likes.query.filter_by(post_no = post_id).filter_by(ip_address = user_ip).first_or_404()
         db.session.delete(like)
         db.session.commit()
     else:
-        update_post_like = Posts.query.filter_by(id=post_id).update(dict(likes = post.likes+1))
+        Posts.query.filter_by(id=post_id).update(dict(likes = post.likes+1))
         like = Likes(post_no=post_id, ip_address = user_ip)
         db.session.add(like)
         db.session.commit()
@@ -162,7 +162,7 @@ def delete_comment(comment_id, post_id):
     db.session.delete(comment)
     db.session.commit()
     post = Posts.query.filter_by(id=post_id).with_entities(Posts.comments, Posts.url_title).first_or_404()
-    update_post_comment = Posts.query.filter_by(id=post_id).update(dict(comments = post.comments-1))
+    Posts.query.filter_by(id=post_id).update(dict(comments = post.comments-1))
     db.session.commit()
     flash('Comment deleted.', 'success')
     return redirect(url_for('post',  post_url=post.url_title))
@@ -215,15 +215,17 @@ def create_post():
     posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
     choices = [(post.id, post.title) for post in posts]
-    choices.insert(0, ('', 'No related post'))
+
+    if len(choices) == 0:
+        default_choice = ('', 'No posts available')
+        choices = [default_choice]
+        choices = [default_choice]
+        choices = [default_choice]
+    else:
+        choices.insert(0, ('', 'Random Post'))
 
     post_form = PostForm(selection_choices=choices)
 
-    if not choices:
-        default_choice = ('', 'No posts available')
-        post_form.related_1.choices = [default_choice]
-        post_form.related_2.choices = [default_choice]
-        post_form.related_3.choices = [default_choice]
 
     if post_form.validate_on_submit():
         flash("Post Created Successfully!", 'success')
@@ -236,7 +238,8 @@ def create_post():
             filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
         else:
-            filename = None
+            flash("Please provide a cover image.")
+            return redirect(url_for("create_post", post_form=post_form))
 
         related_1 = int(post_form.related_1.data) if post_form.related_1.data else None
         related_2 = int(post_form.related_2.data) if post_form.related_2.data else None
@@ -296,19 +299,21 @@ def view_messages():
     for reply in reply_query:
         replies[reply.message_id] = reply.reply
     if len(messages) == 0:
-        return render_template("messages.html", no_messages=True)
+        return render_template("messages.html", msg_len=len(messages))
     else:
         messages.sort(key=attrgetter('date'), reverse=True)
         messages.sort(key=attrgetter('replied'))
         messages.sort(key=attrgetter('read'))
-        return render_template("messages.html", messages=messages, no_messages=False, replies=replies)
+        return render_template("messages.html", messages=messages, msg_len=len(messages), replies=replies)
     
 @app.route('/delete_message/<string:message_id>', methods=['GET', 'POST'])
 @login_required
 def delete_message(message_id):
     message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
+    message_reply = MessageReply.query.filter_by(message_id = message_id).first()
     db.session.delete(message)
+    db.session.delete(message_reply)
     db.session.commit()
     flash("Message deleted successfully.")
     return redirect(url_for('view_messages'))
@@ -318,7 +323,7 @@ def delete_message(message_id):
 def read_message(message_id):
     message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
-    update_message = Messages.query.filter_by(id = message_id).update(dict(read = (not message.read)))
+    Messages.query.filter_by(id = message_id).update(dict(read = (not message.read)))
     db.session.commit()
     if message.read:
         flash("Message marked as unread.")
@@ -344,7 +349,7 @@ def reply_message(message_id):
         msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], body=body, recipients=[message.email])
         mail.send(msg)
 
-        update_message = Messages.query.filter_by(id = message_id).update(dict(replied = True, read = True))
+        Messages.query.filter_by(id = message_id).update(dict(replied = True, read = True))
         db.session.commit()
         reply = MessageReply(message_id = message_id, reply=reply_form.reply.data)
         db.session.add(reply)
