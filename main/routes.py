@@ -199,6 +199,12 @@ def contact():
         db.session.add(contact)
         db.session.commit()
         flash('Message sent.', 'success')
+
+        notification_message = f"You got a new message!"
+        notification = Notification(message=notification_message)
+        db.session.add(notification)
+        db.session.commit()
+
         return redirect(url_for('index'))
     return render_template("contact.html", contact_form=contact_form)
 
