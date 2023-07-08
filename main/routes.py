@@ -512,6 +512,9 @@ def login():
 @app.route('/authors_home')
 @login_required
 def authors_home():
+    unread_notifications = Notification.query.filter_by(is_read=False).count()
+    flash(f'You have {unread_notifications} unread notifications')
+
     return render_template('authors_home.html')
 
 @app.route('/logout')
