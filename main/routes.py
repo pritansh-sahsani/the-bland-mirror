@@ -277,9 +277,9 @@ def view_notifications():
     notification_query = Notification.query.all()
     
     notifications = []
-    replies = {}
     for notification in notification_query:
         notifications.append(notification)
+
     if len(notifications) == 0:
         return render_template("notifications.html", no_notifications=True)
     else:
@@ -305,6 +305,21 @@ def view_messages():
         messages.sort(key=attrgetter('replied'))
         messages.sort(key=attrgetter('read'))
         return render_template("messages.html", messages=messages, msg_len=len(messages), replies=replies)
+
+@app.route('/read_notification/<string:notification_id>', methods=['GET', 'POST'])
+@login_required
+def read_notification(notification_id):
+    notification = Notification.query.get_or_404(notification_id)
+
+    if notification.is_read:
+        notification.is_read = False
+        flash('Notification marked as unread.', 'success')
+    else:
+        notification.is_read = True
+        flash('Notification marked as read.', 'success')
+
+    db.session.commit()
+    return redirect(url_for('view_notifications'))
     
 @app.route('/delete_message/<string:message_id>', methods=['GET', 'POST'])
 @login_required

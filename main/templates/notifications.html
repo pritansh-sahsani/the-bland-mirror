@@ -6,6 +6,26 @@
 
 {% block main %}
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    {% for notification in notifications %}
+        $(function() {
+            $('#read_notification{{ notification.id }}').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('{{ url_for("read_notification", notification_id = notification.id) }}',function(data) {});
+                if ( $('#read_notification{{ notification.id }}').text() == "Mark As Unread")
+                {
+                    $('#read_notification{{ notification.id }}').text("Mark As Read");
+                }
+                else
+                {
+                    $('#read_notification{{ notification.id }}').text("Mark As Unread");
+                }
+            });
+        });
+    {% endfor %}
+</script>
+
 <center>
     <div class="w-95% hidden md:block">
         {% if no_notifications == False %}
@@ -13,6 +33,11 @@
                     <div id="notification{{ notification.id }}">
                         <p>{{ notification.message }}</p>
                         <p>{{ notification.date.strftime("%d %B %Y") }}</p>
+                        {% if notification.is_read == True %}
+                            <button id="read_notification{{ notification.id }}">Mark As Unread</button><br>
+                        {% else %}
+                            <button id="read_notification{{ notification.id }}">Mark As Read</button><br>
+                        {% endif %}
                     </div>
                     <hr>
             {% endfor %}
