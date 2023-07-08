@@ -305,7 +305,9 @@ def view_messages():
 def delete_message(message_id):
     message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
+    message_reply = MessageReply.query.filter_by(message_id = message_id).first()
     db.session.delete(message)
+    db.session.delete(message_reply)
     db.session.commit()
     flash("Message deleted successfully.")
     return redirect(url_for('view_messages'))
