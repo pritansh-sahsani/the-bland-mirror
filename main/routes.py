@@ -219,8 +219,6 @@ def create_post():
     if len(choices) == 0:
         default_choice = ('', 'No posts available')
         choices = [default_choice]
-        choices = [default_choice]
-        choices = [default_choice]
     else:
         choices.insert(0, ('', 'Random Post'))
 
@@ -375,6 +373,99 @@ def reply_message(message_id):
 
     return render_template("reply_message.html", reply_form = reply_form, message = message, reply= reply)
 
+@app.route('/manage_posts', methods=['GET', 'POST'])
+@login_required
+def manage_posts(): 
+    posts = Posts.query.order_by(Posts.created_at.desc())\
+    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .all()
+    posts_len=len(posts)
+    return render_template("manage_posts.html", posts=posts, posts_len=posts_len)
+
+@app.route('/delete_post/<string:post_id>', methods=['GET', 'POST'])
+@login_required
+def delete_post(post_id):
+    post_id = int(post_id)
+
+    post = Posts.query.filter_by(id = post_id).first_or_404()
+    likes = Likes.query.filter_by(post_no=post.id).all()
+    comments =  Comment.query.filter_by(post_no=post.id).all()
+    db.session.delete(post)
+    for like in likes:
+        db.session.delete(like)
+    for comment in comments:
+        db.session.delete(comment)
+    db.session.commit()
+
+    os.remove(os.path.join(app.root_path + '/static/post_img/' + post.cover_img))
+
+
+    flash("Post deleted successfully.")
+    return redirect(url_for('manage_posts'))
+
+@app.route('/edit_post/<string:post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(post_id):
+    post_id = int(post_id)
+    old_post = Posts.query.filter_by(id = post_id).first_or_404()
+    posts = Posts.query.order_by(Posts.created_at.desc()).all()#
+    
+    r1 = Posts.query.filter_by(id=old_post.related_1).first()
+    r2 = Posts.query.filter_by(id=old_post.related_2).first()
+    r3 = Posts.query.filter_by(id=old_post.related_3).first()
+
+    choices = [(post.id, post.title) for post in posts]
+
+    if len(choices) == 0:
+        [('', 'No posts available')]
+    else:
+        choices.insert(0, ('', 'Random Post'))
+        choices.remove((r1.id, r1.title))
+        choices.insert(0, (r1.id, r1.title))
+        
+        choices.remove((r2.id, r2.title))
+        choices.insert(0, (r2.id, r2.title))
+
+        choices.remove((r3.id, r3.title))
+        choices.insert(0, (r3.id, r3.title))
+
+    post_form = PostForm(selection_choices=choices)
+
+    if post_form.validate_on_submit():
+
+        url_title = post_form.title.data
+        url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
+        
+        f = post_form.cover_img.data
+        if f:
+            os.remove(os.path.join(app.root_path + 'static','post_img', old_post.cover_img))
+            filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
+            f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
+        else:
+            filename=old_post.cover_img
+
+        related_1 = int(post_form.related_1.data) if post_form.related_1.data else None
+        related_2 = int(post_form.related_2.data) if post_form.related_2.data else None
+        related_3 = int(post_form.related_3.data) if post_form.related_3.data else None
+
+        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = related_1, related_2 = related_2, related_3 = related_3)
+        
+        likes = Likes.query.filter_by(post_no=old_post.id).all()
+        comments =  Comment.query.filter_by(post_no=old_post.id).all()
+        db.session.delete(old_post)
+        for like in likes:
+            db.session.delete(like)
+        for comment in comments:
+            db.session.delete(comment)
+            
+        db.session.add(new_post)
+        db.session.commit()
+
+        flash("Post Updated Successfully!", 'success')
+
+        return redirect(url_for('index'))
+    
+    return render_template("edit_post.html", post_form=post_form, old_post=old_post)
 
 @app.errorhandler(404)
 def page_not_found(e):

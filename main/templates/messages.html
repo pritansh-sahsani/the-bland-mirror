@@ -5,69 +5,69 @@
 {% endblock %}
 
 {% block main %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type=text/javascript>
-    var msg_len = {{ msg_len }}
-    {% for message in messages %}
-        $(function() {
-            $('#delete_message{{ message.id }}').on('click', function(e) {
-                e.preventDefault()
-                $.getJSON('{{ url_for("delete_message", message_id = message.id) }}',function(data) {});
-                $("#message{{ message.id }}").hide();
-                msg_len = msg_len-1;
-                if(msg_len==0)
-                {
-                    $('#no_msg').text("No Messages");
-                }
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        var msg_len = {{ msg_len }}
+        {% for message in messages %}
+            $(function() {
+                $('#delete_message{{ message.id }}').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("delete_message", message_id = message.id) }}',function(data) {});
+                    $("#message{{ message.id }}").hide();
+                    msg_len = msg_len-1;
+                    if(msg_len==0)
+                    {
+                        $('#no_msg').text("No Messages");
+                    }
+                });
             });
-        });
-        $(function() {
-            $('#read_message{{ message.id }}').on('click', function(e) {
-                e.preventDefault()
-                $.getJSON('{{ url_for("read_message", message_id = message.id) }}',function(data) {});
-                if ( $('#read_message{{ message.id }}').text() == "Mark As Unread")
-                {
-                    $('#read_message{{ message.id }}').text("Mark As Read");
-                }
-                else
-                {
-                    $('#read_message{{ message.id }}').text("Mark As Unread");
-                }
+            $(function() {
+                $('#read_message{{ message.id }}').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("read_message", message_id = message.id) }}',function(data) {});
+                    if ( $('#read_message{{ message.id }}').text() == "Mark As Unread")
+                    {
+                        $('#read_message{{ message.id }}').text("Mark As Read");
+                    }
+                    else
+                    {
+                        $('#read_message{{ message.id }}').text("Mark As Unread");
+                    }
+                });
             });
-        });
-    {% endfor %}
-</script>
+        {% endfor %}
+    </script>
 
-<center>
-    <div class="w-95% hidden md:block">
-        <h3 id="no_msg"></h3>
-        {% if msg_len != 0 %}
-            {% for message in messages %}
-                    <div id="message{{ message.id }}">
-                        <p>{{ message.name }}</p>
-                        <p>{{ message.date.strftime("%d %B %Y") }}</p>
-                        <p>{{ message.email }}</p>
-                        <p>{{ message.message }}</p>
+    <center>
+        <div class="w-95% hidden md:block">
+            {% if msg_len != 0 %}
+                <h3 id="no_msg"></h3>
+                {% for message in messages %}
+                        <div id="message{{ message.id }}">
+                            <p>{{ message.name }}</p>
+                            <p>{{ message.date.strftime("%d %B %Y") }}</p>
+                            <p>{{ message.email }}</p>
+                            <p>{{ message.message }}</p>
 
-                        {% if message.replied == True %}
-                            <p>reply: {{ replies[message.id] }}</p>
-                        {% else %}
-                            <a href="{{ url_for('reply_message', message_id = message.id) }}"><button>reply</button></a><br>
-                        {% endif %}
+                            {% if message.replied == True %}
+                                <p>reply: {{ replies[message.id] }}</p>
+                            {% else %}
+                                <a href="{{ url_for('reply_message', message_id = message.id) }}"><button>reply</button></a><br>
+                            {% endif %}
 
-                        <button id="delete_message{{ message.id }}">Delete Message</button><br>
-                        
-                        {% if message.read == True %}
-                            <button id="read_message{{ message.id }}">Mark As Unread</button><br>
-                        {% else %}
-                            <button id="read_message{{ message.id }}">Mark As Read</button><br>
-                        {% endif %}
-                        <hr>
-                    </div>
-            {% endfor %}
-        {% else %}
-            <h3 id="no_msg">No Messages</h3>
-        {% endif %}
-    </div>
-</center>
+                            <button id="delete_message{{ message.id }}">Delete Message</button><br>
+                            
+                            {% if message.read == True %}
+                                <button id="read_message{{ message.id }}">Mark As Unread</button><br>
+                            {% else %}
+                                <button id="read_message{{ message.id }}">Mark As Read</button><br>
+                            {% endif %}
+                            <hr>
+                        </div>
+                {% endfor %}
+            {% else %}
+                <h3 id="no_msg">No Messages</h3>
+            {% endif %}
+        </div>
+    </center>
 {% endblock main %}
