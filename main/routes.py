@@ -232,7 +232,8 @@ def create_post():
             filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
         else:
-            filename = None
+            flash("Please provide a cover image.")
+            return redirect(url_for("create_post", post_form=post_form))
 
         related_1 = int(post_form.related_1.data) if post_form.related_1.data else None
         related_2 = int(post_form.related_2.data) if post_form.related_2.data else None
