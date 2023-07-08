@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Manage Posts
+{% endblock %}
+
+{% block main %}
+    
+    <script type=text/javascript>
+    
+        var posts_len = {{ posts_len }}
+        {% for post in posts %}
+            $(function() {
+                $('#delete_post{{ post.id }}').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("delete_post", post_id=post.id) }}',function(data) {});
+                    $("#post{{ post.id }}").hide();
+                    posts_len = posts_len-1;
+                    if(posts_len==0)
+                    {
+                        $('#no_posts').text("No Posts");
+                    }
+                });
+            });
+        {% endfor %}
+    </script>
+    <center>
+        {% if posts_len != 0 %}
+            <h3 id="no_posts"></h3>
+            {% for post in posts %}
+                <div id="post{{ post.id }}">
+                    <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
+                    <p>{{ post.title }}</p>
+                    <p>{{ post.summary }}</p>
+                    
+                    {% if post.views == 1 %}
+                        <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
+                    {% else %}
+                        <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
+                    {% endif %}
+
+                    {% if post.comments == 1 %}
+                        <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
+                    {% else %}
+                        <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
+                    {% endif %} 
+                    
+                    {% if post.comments == 1 %}
+                        <p class="ml-5 inline-block text-sm">{{ post.likes }} like</p>
+                    {% else %}
+                        <p class="ml-5 inline-block text-sm">{{ post.likes }} likes</p>
+                    {% endif %} 
+                    <br>
+                    <button id="delete_post{{ post.id }}">Delete Post</button>
+                    <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button>
+                    <hr>
+                </div>
+            {% endfor %}
+        {% else %}
+                <h3 id="no_posts">No Published Posts</h3>
+        {% endif %}
+    </center>
+{% endblock main %}
