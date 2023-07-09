@@ -66,7 +66,7 @@
                             <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
                         {% endif %} 
                         <button class='float-right mr-0.5 mt-0.5' id='{{ post.id }}button'>
-                            {% if liked[post.id-1] %}
+                            {% if liked[post.id] %}
                                 <img id='{{ post.id }}image' src="../static/assets/like_button_clicked.svg" />
                             {% else %}
                                 <img id='{{ post.id }}image' src="../static/assets/like_button.svg" />

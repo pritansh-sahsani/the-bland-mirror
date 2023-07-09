@@ -19,14 +19,13 @@ def index():
     .paginate(page=page, per_page=3)
     no_of_pages = int((posts.total / posts.per_page)+1)
 
-    liked=[]
-    posts_for_likes = Posts.query.all()
-    for post in posts_for_likes:
+    liked={}
+    for post in posts.items:
         like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = request.remote_addr).first()
         if like is None:
-            liked.append(False)
+            liked[post.id]=False
         else:
-            liked.append(True)
+            liked[post.id]=True
     return render_template("index.html", posts=posts, liked=liked, no_of_pages=no_of_pages)
 
 
