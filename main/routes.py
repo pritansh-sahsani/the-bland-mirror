@@ -178,10 +178,20 @@ def subscribe():
             db.session.commit()
             flash('Thank you for subscribing!', 'success')
 
-            notification_message = f"You got a new subscriber!"
-            notification = Notification(message=notification_message)
-            db.session.add(notification)
-            db.session.commit()
+            existing_notification = Notification.query.filter_by(message="You got 1 new subscriber!", is_read=False).first()
+
+            if existing_notification is None:
+                existing_notification = Notification.query.filter(Notification.message.like("You got % new subscribers!")).filter_by(is_read=False).first()
+
+            if existing_notification is None:
+                notification_message = "You got 1 new subscriber!"
+                notification = Notification(message=notification_message)
+                db.session.add(notification)
+                db.session.commit()
+            else:
+                count = int(existing_notification.message.split()[2])
+                existing_notification.message = f"You got {count + 1} new subscribers!"
+                db.session.commit()
 
             return redirect(url_for('index'))
         else:
