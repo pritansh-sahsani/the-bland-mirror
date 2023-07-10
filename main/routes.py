@@ -209,10 +209,20 @@ def contact():
         db.session.commit()
         flash('Message sent.', 'success')
 
-        notification_message = f"You got a new message!"
-        notification = Notification(message=notification_message)
-        db.session.add(notification)
-        db.session.commit()
+        existing_notification = Notification.query.filter_by(message="You got 1 new message!", is_read=False).first()
+
+        if existing_notification is None:
+                existing_notification = Notification.query.filter(Notification.message.like("You got % new messages!")).filter_by(is_read=False).first()
+
+        if existing_notification is None:
+            notification_message = "You got 1 new message!"
+            notification = Notification(message=notification_message)
+            db.session.add(notification)
+            db.session.commit()
+        else:
+            count = int(existing_notification.message.split()[2])
+            existing_notification.message = f"You got {count + 1} new messages!"
+            db.session.commit()
 
         return redirect(url_for('index'))
     return render_template("contact.html", contact_form=contact_form)
