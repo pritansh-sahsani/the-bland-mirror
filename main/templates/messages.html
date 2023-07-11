@@ -53,15 +53,14 @@
                                 <p>reply: {{ replies[message.id] }}</p>
                             {% else %}
                                 <a href="{{ url_for('reply_message', message_id = message.id) }}"><button>reply</button></a><br>
+                                {% if message.read == True %}
+                                    <button id="read_message{{ message.id }}">Mark As Unread</button><br>
+                                {% else %}
+                                    <button id="read_message{{ message.id }}">Mark As Read</button><br>
+                                {% endif %}
                             {% endif %}
 
                             <button id="delete_message{{ message.id }}">Delete Message</button><br>
-                            
-                            {% if message.read == True %}
-                                <button id="read_message{{ message.id }}">Mark As Unread</button><br>
-                            {% else %}
-                                <button id="read_message{{ message.id }}">Mark As Read</button><br>
-                            {% endif %}
                             <hr>
                         </div>
                 {% endfor %}
