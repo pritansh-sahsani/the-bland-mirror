@@ -6,8 +6,20 @@
 
 {% block main %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <!-- script for likes -->
+    <!-- script for likes and copy link -->
     <script type=text/javascript>
+        function copyLink() {
+            var currentURL = window.location.href;
+            var tempInput = document.createElement('input');
+            tempInput.value = currentURL;
+            document.body.appendChild(tempInput);
+
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+        }
         {% for comment in comments %}
             $(function() {
                 $('#delete_comment{{ comment.id }}').on('click', function(e) {
@@ -87,7 +99,8 @@
                     <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button.svg" /></button>
                 {% endif %}
                 <p class="inline-block float-right mr-1 text-base" id="like_display">{{ post.likes }}</p>
-                
+
+                <button id="copy_link_btn" class="float-right mr-5" onclick="copyLink()">Copy Link</button>
             </div>
         </div>
     </div>
