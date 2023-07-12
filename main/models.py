@@ -42,9 +42,9 @@ class Posts(db.Model):
     views = db.Column(db.Integer, nullable=False, default=0)
     likes = db.Column(db.Integer, nullable=False, default=0)
     comments = db.Column(db.Integer, nullable=False, default=0)
-    related_1 = db.Column(db.Integer, nullable=False, default=1)
-    related_2 = db.Column(db.Integer, nullable=False, default=2)
-    related_3 = db.Column(db.Integer, nullable=False, default=3)
+    related_1 = db.Column(db.Integer, nullable=False, default=0)
+    related_2 = db.Column(db.Integer, nullable=False, default=0)
+    related_3 = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"Post('{self.id}', '{self.title}', '{self.created_at}', '{self.summary}', '{self.views}', '{self.likes}', '{self.comments}')"
