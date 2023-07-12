@@ -268,7 +268,7 @@ def create_post():
 
         send_email_for_new_post(post)
 
-        return redirect(url_for('index'))
+        return redirect(url_for('authors_home'))
         
     return render_template("new_post.html", post_form=post_form)
 
@@ -483,7 +483,7 @@ def edit_post(post_id):
 
         flash("Post Updated Successfully!", 'success')
 
-        return redirect(url_for('index'))
+        return redirect(url_for('manage_posts'))
     
     return render_template("edit_post.html", post_form=post_form, old_post=old_post)
 
