@@ -236,12 +236,11 @@ def create_post():
     choices = [(post.id, post.title) for post in posts]
 
     if len(choices) == 0:
-        default_choice = (0, 'No posts available')
-        choices = [default_choice]
+        choices = [(0, 'No posts available')]
     else:
         choices.insert(0, (0, 'Random Post'))
 
-    post_form = PostForm(selection_choices=choices)
+    post_form = PostForm(s1 = choices, s2 = choices, s3 = choices)
 
 
     if post_form.validate_on_submit():
