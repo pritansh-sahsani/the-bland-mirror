@@ -433,23 +433,23 @@ def edit_post(post_id):
     r1 = Posts.query.filter_by(id=old_post.related_1).first()
     r2 = Posts.query.filter_by(id=old_post.related_2).first()
     r3 = Posts.query.filter_by(id=old_post.related_3).first()
+    r = [r1, r2, r3]
+    s = []
+    for a in range(0,3):
+        s.append([(post.id, post.title) for post in posts])
+        if len(s[a]) == 0:
+            [('', 'No posts available')]
+        else:
+            s[a].insert(0, ('', 'Random Post'))
 
-    choices = [(post.id, post.title) for post in posts]
-
-    if len(choices) == 0:
-        [('', 'No posts available')]
-    else:
-        choices.insert(0, ('', 'Random Post'))
-        choices.remove((r1.id, r1.title))
-        choices.insert(0, (r1.id, r1.title))
+        if  r[a] is not None:
+            s[a].remove((r[a].id, r[a].title))
+            s[a].insert(0, (r[a].id, r[a].title))
+        else:
+            s[a].remove(('', 'Random Post'))
+            s[a].insert(0, ('', 'Random Post'))
         
-        choices.remove((r2.id, r2.title))
-        choices.insert(0, (r2.id, r2.title))
-
-        choices.remove((r3.id, r3.title))
-        choices.insert(0, (r3.id, r3.title))
-
-    post_form = PostForm(selection_choices=choices)
+    post_form = PostForm(s1 = s[0], s2 = s[1], s3 = s[2])
 
     if post_form.validate_on_submit():
 

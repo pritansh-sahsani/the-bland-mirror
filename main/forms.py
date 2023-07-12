@@ -56,11 +56,11 @@ class PostForm(FlaskForm):
     related_3 = SelectField('Post 3', choices=[], validators=[Optional()])
     submit = SubmitField('Post')
     
-    def __init__(self, selection_choices):
+    def __init__(self, s1, s2, s3):
         super(PostForm, self).__init__()
-        self.related_1.choices = selection_choices
-        self.related_2.choices = selection_choices
-        self.related_3.choices = selection_choices
+        self.related_1.choices = s1
+        self.related_2.choices = s2
+        self.related_3.choices = s3
 
 class MessageReplyForm(FlaskForm):
     reply = TextAreaField('reply', validators=[DataRequired(), Length(max=4000)])
