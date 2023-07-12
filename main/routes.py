@@ -338,10 +338,9 @@ def view_messages():
         messages.sort(key=attrgetter('read'))
         return render_template("messages.html", messages=messages, msg_len=len(messages), replies=replies)
     
-@app.route('/delete_message/<string:message_id>', methods=['GET', 'POST'])
+@app.route('/delete_message/<int:message_id>', methods=['GET', 'POST'])
 @login_required
 def delete_message(message_id):
-    message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
     message_reply = MessageReply.query.filter_by(message_id = message_id).first()
     db.session.delete(message)
@@ -350,10 +349,9 @@ def delete_message(message_id):
     flash("Message deleted successfully.")
     return redirect(url_for('view_messages'))
 
-@app.route('/read_message/<string:message_id>', methods=['GET', 'POST'])
+@app.route('/read_message/<int:message_id>', methods=['GET', 'POST'])
 @login_required
 def read_message(message_id):
-    message_id = int(message_id)
     message = Messages.query.filter_by(id = message_id).first_or_404()
     Messages.query.filter_by(id = message_id).update(dict(read = (not message.read)))
     db.session.commit()
@@ -401,11 +399,9 @@ def manage_posts():
     posts_len=len(posts)
     return render_template("manage_posts.html", posts=posts, posts_len=posts_len)
 
-@app.route('/delete_post/<string:post_id>', methods=['GET', 'POST'])
+@app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def delete_post(post_id):
-    post_id = int(post_id)
-
     post = Posts.query.filter_by(id = post_id).first_or_404()
     likes = Likes.query.filter_by(post_no=post.id).all()
     comments =  Comment.query.filter_by(post_no=post.id).all()
@@ -422,10 +418,9 @@ def delete_post(post_id):
     flash("Post deleted successfully.")
     return redirect(url_for('manage_posts'))
 
-@app.route('/edit_post/<string:post_id>', methods=['GET', 'POST'])
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
-    post_id = int(post_id)
     old_post = Posts.query.filter_by(id = post_id).first_or_404()
     posts = Posts.query.order_by(Posts.created_at.desc()).all()#
     
@@ -463,9 +458,9 @@ def edit_post(post_id):
         else:
             filename=old_post.cover_img
 
-        related_1 = int(post_form.related_1.data) if post_form.related_1.data else None
-        related_2 = int(post_form.related_2.data) if post_form.related_2.data else None
-        related_3 = int(post_form.related_3.data) if post_form.related_3.data else None
+        related_1 = int(post_form.related_1.data)
+        related_2 = int(post_form.related_2.data)
+        related_3 = int(post_form.related_3.data)
 
         new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = related_1, related_2 = related_2, related_3 = related_3)
         
