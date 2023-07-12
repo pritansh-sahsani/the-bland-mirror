@@ -236,10 +236,10 @@ def create_post():
     choices = [(post.id, post.title) for post in posts]
 
     if len(choices) == 0:
-        default_choice = ('', 'No posts available')
+        default_choice = (0, 'No posts available')
         choices = [default_choice]
     else:
-        choices.insert(0, ('', 'Random Post'))
+        choices.insert(0, (0, 'Random Post'))
 
     post_form = PostForm(selection_choices=choices)
 
@@ -258,9 +258,9 @@ def create_post():
             flash("Please provide a cover image.")
             return redirect(url_for("create_post", post_form=post_form))
 
-        related_1 = int(post_form.related_1.data) if post_form.related_1.data else None
-        related_2 = int(post_form.related_2.data) if post_form.related_2.data else None
-        related_3 = int(post_form.related_3.data) if post_form.related_3.data else None
+        related_1 = int(post_form.related_1.data)
+        related_2 = int(post_form.related_2.data)
+        related_3 = int(post_form.related_3.data)
 
         post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = related_1, related_2 = related_2, related_3 = related_3)
         db.session.add(post)
@@ -438,16 +438,16 @@ def edit_post(post_id):
     for a in range(0,3):
         s.append([(post.id, post.title) for post in posts])
         if len(s[a]) == 0:
-            [('', 'No posts available')]
+            [(0, 'No posts available')]
         else:
-            s[a].insert(0, ('', 'Random Post'))
+            s[a].insert(0, (0, 'Random Post'))
 
         if  r[a] is not None:
             s[a].remove((r[a].id, r[a].title))
             s[a].insert(0, (r[a].id, r[a].title))
         else:
-            s[a].remove(('', 'Random Post'))
-            s[a].insert(0, ('', 'Random Post'))
+            s[a].remove((0, 'Random Post'))
+            s[a].insert(0, (0, 'Random Post'))
         
     post_form = PostForm(s1 = s[0], s2 = s[1], s3 = s[2])
 

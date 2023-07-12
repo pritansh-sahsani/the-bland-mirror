@@ -51,9 +51,9 @@ class PostForm(FlaskForm):
     content = TextAreaField('Content', validators=[Length(min=1, max=100000)])
     summary= StringField('Summary', validators=[DataRequired(), Length(max=140)])
     cover_img = FileField('Cover image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only .jpg, .png and .jpeg file formats are supported.')])
-    related_1 = SelectField('Post 1', choices=[], validators=[Optional()])
-    related_2 = SelectField('Post 2', choices=[], validators=[Optional()])
-    related_3 = SelectField('Post 3', choices=[], validators=[Optional()])
+    related_1 = SelectField('Post 1', choices=[], validators=[DataRequired()])
+    related_2 = SelectField('Post 2', choices=[], validators=[DataRequired()])
+    related_3 = SelectField('Post 3', choices=[], validators=[DataRequired()])
     submit = SubmitField('Post')
     
     def __init__(self, s1, s2, s3):
