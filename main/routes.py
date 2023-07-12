@@ -257,11 +257,7 @@ def create_post():
             flash("Please provide a cover image.")
             return redirect(url_for("create_post", post_form=post_form))
 
-        related_1 = int(post_form.related_1.data)
-        related_2 = int(post_form.related_2.data)
-        related_3 = int(post_form.related_3.data)
-
-        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = related_1, related_2 = related_2, related_3 = related_3)
+        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
         db.session.add(post)
         db.session.commit()
 
@@ -458,11 +454,7 @@ def edit_post(post_id):
         else:
             filename=old_post.cover_img
 
-        related_1 = int(post_form.related_1.data)
-        related_2 = int(post_form.related_2.data)
-        related_3 = int(post_form.related_3.data)
-
-        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = related_1, related_2 = related_2, related_3 = related_3)
+        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
         
         likes = Likes.query.filter_by(post_no=old_post.id).all()
         comments =  Comment.query.filter_by(post_no=old_post.id).all()
