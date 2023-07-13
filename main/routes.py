@@ -420,18 +420,21 @@ def edit_post(post_id):
     r3 = Posts.query.filter_by(id=old_post.related_3).first()
     r = [r1, r2, r3]
     s = []
-    for a in range(0,3):
-        s.append([(post.id, post.title) for post in posts])
+
+    for a in range(0, 3):
+        s.append([(post.id, post.title) for post in posts if post.id != post_id])
         if len(s[a]) == 0:
             [(0, 'No posts available')]
         else:
             s[a].insert(0, (0, 'Random Post'))
 
-        if  r[a] is not None:
-            s[a].remove((r[a].id, r[a].title))
+        if r[a] is not None:
+            if (r[a].id, r[a].title) in s[a]:
+                s[a].remove((r[a].id, r[a].title))
             s[a].insert(0, (r[a].id, r[a].title))
         else:
-            s[a].remove((0, 'Random Post'))
+            if (0, 'Random Post') in s[a]:
+                s[a].remove((0, 'Random Post'))
             s[a].insert(0, (0, 'Random Post'))
         
     post_form = PostForm(s1 = s[0], s2 = s[1], s3 = s[2])
