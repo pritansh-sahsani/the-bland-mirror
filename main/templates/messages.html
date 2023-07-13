@@ -14,6 +14,10 @@
                     e.preventDefault()
                     $.getJSON('{{ url_for("delete_message", message_id = message.id) }}',function(data) {});
                     $("#message{{ message.id }}").hide();
+                    
+                    $("#flash_text").text("{{ del_flash }}");
+                    $("#flash_text_div").show();
+                    
                     msg_len = msg_len-1;
                     if(msg_len==0)
                     {
@@ -28,11 +32,14 @@
                     if ( $('#read_message{{ message.id }}').text() == "Mark As Unread")
                     {
                         $('#read_message{{ message.id }}').text("Mark As Read");
+                        $("#flash_text").text("{{ read_flash }}");
                     }
                     else
                     {
                         $('#read_message{{ message.id }}').text("Mark As Unread");
+                        $("#flash_text").text("{{ unread_flash }}");
                     }
+                    $("#flash_text_div").show();
                 });
             });
         {% endfor %}

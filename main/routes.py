@@ -117,7 +117,8 @@ def post(post_url):
         db.session.commit()
         return redirect(url_for('post', post_url=post.url_title))
 
-    return render_template("post_page.html", comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
+    flash = 'Comment Deleted Successfully!'
+    return render_template("post_page.html", flash=flash, comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
 
 @app.route('/like/<string:post_id>')
 def register_like(post_id):
@@ -163,7 +164,6 @@ def delete_comment(comment_id, post_id):
     post = Posts.query.filter_by(id=post_id).with_entities(Posts.comments, Posts.url_title).first_or_404()
     Posts.query.filter_by(id=post_id).update(dict(comments = post.comments-1))
     db.session.commit()
-    flash('Comment deleted.', 'success')
     return redirect(url_for('post',  post_url=post.url_title))
 
 @app.route('/subscribe', methods=['GET', 'POST'])
@@ -195,7 +195,7 @@ def subscribe():
 
             return redirect(url_for('index'))
         else:
-            flash('This email address is already subscribed.', 'error')
+            flash('This Email Address Is Already Subscribed!', 'error')
             return redirect(url_for('subscribe'))
     return render_template("subscribe.html", subscriber_form=subscriber_form)
 
@@ -207,7 +207,7 @@ def contact():
         contact=Messages(name=contact_form.name.data, email=contact_form.email.data, message=contact_form.message.data)
         db.session.add(contact)
         db.session.commit()
-        flash('Message sent.', 'success')
+        flash('Message Sent!', 'success')
 
         existing_notification = Notification.query.filter_by(message="You got 1 new message!", is_read=False).first()
 
@@ -254,7 +254,7 @@ def create_post():
             filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
         else:
-            flash("Please provide a cover image.")
+            flash("Please Provide A Cover Image!")
             return redirect(url_for("create_post", post_form=post_form))
 
         post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
@@ -292,25 +292,21 @@ def view_notifications():
     for notification in notification_query:
         notifications.append(notification)
 
+    read_flash = "Notification Marked As Read Successfully!"
+    unread_flash = "Notification Marked As Unread Successfully!"
+
     if len(notifications) == 0:
-        return render_template("notifications.html", no_notifications=True)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, no_notifications=True)
     else:
         notifications.sort(key=attrgetter('date'), reverse=True)
         notifications.sort(key=attrgetter('is_read'))
-        return render_template("notifications.html", notifications=notifications, no_notifications=False)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, notifications=notifications, no_notifications=False)
 
 @app.route('/read_notification/<string:notification_id>', methods=['GET', 'POST'])
 @login_required
 def read_notification(notification_id):
     notification = Notification.query.get_or_404(notification_id)
-
-    if notification.is_read:
-        notification.is_read = False
-        flash('Notification marked as unread.', 'success')
-    else:
-        notification.is_read = True
-        flash('Notification marked as read.', 'success')
-
+    notification.is_read = not notification.is_read
     db.session.commit()
     return redirect(url_for('view_notifications'))
 
@@ -332,7 +328,12 @@ def view_messages():
         messages.sort(key=attrgetter('date'), reverse=True)
         messages.sort(key=attrgetter('replied'))
         messages.sort(key=attrgetter('read'))
-        return render_template("messages.html", messages=messages, msg_len=len(messages), replies=replies)
+        
+        read_flash = 'Message Marked As Read Successfully!'
+        unread_flash = 'Message Marked As Unread Successfully!'
+        del_flash = "Message Deleted successfully!"
+
+        return render_template("messages.html", del_flash=del_flash, read_flash=read_flash, unread_flash=unread_flash, messages=messages, msg_len=len(messages), replies=replies)
     
 @app.route('/delete_message/<int:message_id>', methods=['GET', 'POST'])
 @login_required
@@ -342,7 +343,6 @@ def delete_message(message_id):
     db.session.delete(message)
     db.session.delete(message_reply)
     db.session.commit()
-    flash("Message deleted successfully.")
     return redirect(url_for('view_messages'))
 
 @app.route('/read_message/<int:message_id>', methods=['GET', 'POST'])
@@ -351,10 +351,6 @@ def read_message(message_id):
     message = Messages.query.filter_by(id = message_id).first_or_404()
     Messages.query.filter_by(id = message_id).update(dict(read = (not message.read)))
     db.session.commit()
-    if message.read:
-        flash("Message marked as unread.")
-    else:
-        flash("Message marked as read.")
     return redirect(url_for('view_messages'))
 
 @app.route('/reply_message/<string:message_id>', methods=['GET', 'POST'])
@@ -381,7 +377,7 @@ def reply_message(message_id):
         db.session.add(reply)
         db.session.commit()
 
-        flash("Replied sucessfully.")
+        flash("Reply Sent Sucessfully!")
         return redirect(url_for('view_messages'))
 
     return render_template("reply_message.html", reply_form = reply_form, message = message, reply= reply)
@@ -393,7 +389,8 @@ def manage_posts():
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
     posts_len=len(posts)
-    return render_template("manage_posts.html", posts=posts, posts_len=posts_len)
+    flash = "Post Deleted Successfully!"
+    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash)
 
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -410,8 +407,6 @@ def delete_post(post_id):
 
     os.remove(os.path.join(app.root_path + '/static/post_img/' + post.cover_img))
 
-
-    flash("Post deleted successfully.")
     return redirect(url_for('manage_posts'))
 
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
@@ -491,7 +486,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        flash(f'Your account has been created! You are now able to log in', 'success')
+        flash(f'Your account has been created! You are now able to log in.', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
@@ -510,7 +505,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('authors_home'))
         else:
-            flash('Login unsuccessful, please check your email and password', 'danger')
+            flash('Login Unsuccessful, Please Check Your Email And Password.', 'danger')
 
     return render_template('login.html', form=form)
 
@@ -518,7 +513,7 @@ def login():
 @login_required
 def authors_home():
     unread_notifications = Notification.query.filter_by(is_read=False).count()
-    flash(f'You have {unread_notifications} unread notifications')
+    flash(f'You Have {unread_notifications} Unread Notifications!')
 
     return render_template('authors_home.html')
 

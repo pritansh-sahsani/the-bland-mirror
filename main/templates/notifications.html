@@ -16,11 +16,14 @@
                 if ( $('#read_notification{{ notification.id }}').text() == "Mark As Unread")
                 {
                     $('#read_notification{{ notification.id }}').text("Mark As Read");
+                    $("#flash_text").text("{{ read_flash }}");
                 }
                 else
                 {
                     $('#read_notification{{ notification.id }}').text("Mark As Unread");
+                    $("#flash_text").text("{{ unread_flash }}");
                 }
+                $("#flash_text_div").show();
             });
         });
     {% endfor %}

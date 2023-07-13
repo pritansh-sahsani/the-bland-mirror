@@ -6,6 +6,8 @@
 
 {% block main %}
     
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- script for likes -->
     <script type=text/javascript>
     
         var posts_len = {{ posts_len }}
@@ -15,6 +17,9 @@
                     e.preventDefault()
                     $.getJSON('{{ url_for("delete_post", post_id=post.id) }}',function(data) {});
                     $("#post{{ post.id }}").hide();
+                    $("#flash_text").text("{{ flash }}");
+                    $("#flash_text_div").show();
+
                     posts_len = posts_len-1;
                     if(posts_len==0)
                     {
