@@ -429,12 +429,10 @@ def edit_post(post_id):
             s[a].insert(0, (0, 'Random Post'))
 
         if r[a] is not None:
-            if (r[a].id, r[a].title) in s[a]:
-                s[a].remove((r[a].id, r[a].title))
+            s[a].remove((r[a].id, r[a].title))
             s[a].insert(0, (r[a].id, r[a].title))
         else:
-            if (0, 'Random Post') in s[a]:
-                s[a].remove((0, 'Random Post'))
+            s[a].remove((0, 'Random Post'))
             s[a].insert(0, (0, 'Random Post'))
         
     post_form = PostForm(s1 = s[0], s2 = s[1], s3 = s[2])
