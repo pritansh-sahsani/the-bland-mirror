@@ -5,73 +5,75 @@
 {% endblock %}
 
 {% block main %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    
+    function raise_error() {
+        {% if post_form.content.errors %} 
+            {% for error in post_form.content.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+        
+        {% if post_form.title.errors %} 
+            {% for error in post_form.title.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+        
+        {% if post_form.summary.errors %} 
+            {% for error in post_form.summary.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+        
+        {% if post_form.cover_img.errors %} 
+            {% for error in post_form.cover_img.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+
+        {% if post_form.related_1.errors %} 
+            {% for error in post_form.related_1.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+        
+        {% if post_form.related_2.errors %} 
+            {% for error in post_form.related_2.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+        
+        {% if post_form.related_3.errors %} 
+            {% for error in post_form.related_3.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+
+    }
+    setInterval('raise_error()', 1);
+</script>
+
     <form action="{{ url_for('create_post') }}", method="POST" class="w-80% mx-auto mt-6"  enctype="multipart/form-data">
         {{ post_form.hidden_tag() }}
-
-            {% if post_form.content.errors %} 
-                {% for error in post_form.content.errors %}
-                    {{ error }}
-                    {{ post_form.content(id="blog_post") }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.content(id="blog_post") }} 
-            {% endif %}
-
-            {% if post_form.title.errors %} 
-                {% for error in post_form.title.errors %}
-                    {{ error }}
-                    {{ post_form.title() }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.title() }} 
-            {% endif %}
-
-            {% if post_form.summary.errors %} 
-                {% for error in post_form.summary.errors %}
-                    {{ error }}
-                    {{ post_form.summary() }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.summary() }} 
-            {% endif %}
-
-            {% if post_form.cover_img.errors %} 
-                {% for error in post_form.cover_img.errors %}
-                    {{ error }}
-                    {{ post_form.cover_img() }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.cover_img() }} 
-            {% endif %}
-            
-            {% if post_form.related_1.errors %} 
-                {% for error in post_form.related_1.errors %}
-                    {{ error }}
-                    {{ post_form.related_1() }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.related_1() }} 
-            {% endif %}
-
-            {% if post_form.related_2.errors %} 
-                {% for error in post_form.related_2.errors %}
-                    {{ error }}
-                    {{ post_form.related_2() }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.related_2() }} 
-            {% endif %}
-
-            {% if post_form.related_3.errors %} 
-                {% for error in post_form.related_3.errors %}
-                    {{ error }}
-                    {{ post_form.related_3() }} 
-                {% endfor %}
-            {% else %} 
-                {{ post_form.related_3() }} 
-            {% endif %}
-
-            {{ post_form.submit(class="my-5 w-20% h-14 ml-40% bg-blue-400 text-white rounded-lg text-2xl") }}
+        
+        {{ post_form.content(id="blog_post") }}
+        {{ post_form.title() }} 
+        {{ post_form.summary() }} 
+        {{ post_form.cover_img() }} 
+        {{ post_form.related_1() }} 
+        {{ post_form.related_2() }} 
+        {{ post_form.related_3() }} 
+        {{ post_form.submit(class="my-5 w-20% h-14 ml-40% bg-blue-400 text-white rounded-lg text-2xl") }}
     </form>
     <script>
         tinymce.init({

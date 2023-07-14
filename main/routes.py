@@ -532,4 +532,5 @@ def authors_home():
 @login_required
 def logout():
     logout_user()
+    flash("Logged Out Successfully!")
     return redirect(url_for('index'))

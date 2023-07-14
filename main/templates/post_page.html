@@ -8,6 +8,23 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <!-- script for likes and copy link -->
     <script type=text/javascript>
+        function raise_error() {
+            {% if comment_form.name.errors %} 
+                {% for error in comment_form.name.errors %}
+                    $("#flash_text").text("{{error}}");
+                    $("#flash_text_div").show();
+                {% endfor %}
+            {% endif %}
+            
+            {% if comment_form.text.errors %} 
+                {% for error in comment_form.text.errors %}
+                    $("#flash_text").text("{{error}}");
+                    $("#flash_text_div").show();
+                {% endfor %}
+            {% endif %}
+        }
+        setInterval('raise_error()', 1);
+        
         function copyLink() {
             var currentURL = window.location.href;
             var tempInput = document.createElement('input');
@@ -139,7 +156,6 @@
                     
                     {{ comment_form.submit(class="w-10% h-10 bg-slate-100 float-right") }}
                 </div>
-                </fieldset>
               </form>
         </div>
     </div>

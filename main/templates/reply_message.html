@@ -5,6 +5,19 @@
 {% endblock %}
 
 {% block main %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    
+    function raise_error() {
+        {% if reply_form.reply.errors %} 
+            {% for error in reply_form.reply.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+    }
+    setInterval('raise_error()', 1);
+</script>
 
 <center>
     <div class="w-95% hidden md:block">
@@ -23,14 +36,8 @@
             {% else %}
                 <form action='', method="POST" class="w-80% mx-auto mt-6">
                     {{ reply_form.hidden_tag() }}
-                    {% if reply_form.reply.errors %} 
-                        {% for error in reply_form.reply.errors %}
-                            {{ flash(error) }} 
-                        {% endfor %}
-                    {% endif %}
-                        
+
                     {{ reply_form.reply(class="w-100% h-10 pl-1% text-center text-xl", placeholder="Reply") }} 
-                    
                     {{ reply_form.submit(class="my-5 w-20% h-14 bg-blue-400 text-white rounded-lg text-2xl") }}
                 </form>
             {% endif %}
