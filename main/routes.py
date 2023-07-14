@@ -450,6 +450,16 @@ def edit_post(post_id):
         else:
             filename=old_post.cover_img
 
+        # check if related posts are same by check if every post is not equal other posts
+        related_post = [post_form.related_1.data, post_form.related_2.data, post_form.related_3.data]
+        for post_1 in related_post:
+            posts_without_post1 = related_post
+            posts_without_post1.remove(post_1)
+            for post_2 in posts_without_post1:
+                if post_1 == post_2 and post_1 != '0':
+                    flash("Please Select Unique Related Posts!")
+                    return render_template("edit_post.html", post_form=post_form, old_post=old_post)
+
         new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
         
         likes = Likes.query.filter_by(post_no=old_post.id).all()
