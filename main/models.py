@@ -38,7 +38,7 @@ class Posts(db.Model):
     content = db.Column(db.String(1000000), nullable=False)
     summary= db.Column(db.String(140), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    cover_img = db.Column(db.String(9), nullable=False)
+    cover_img = db.Column(db.String(104), nullable=False)
     views = db.Column(db.Integer, nullable=False, default=0)
     likes = db.Column(db.Integer, nullable=False, default=0)
     comments = db.Column(db.Integer, nullable=False, default=0)
@@ -63,7 +63,7 @@ class Comment(db.Model):
 
 class Subscribers(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     
     def __repr__(self):
         return f"Subscriber('{self.id}', ',{self.email}')"
@@ -79,7 +79,7 @@ class Likes(db.Model):
 class Messages(db.Model):
     id= db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
     message = db.Column(db.String(4000), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
     read = db.Column(db.Boolean, nullable = False, default=False)
