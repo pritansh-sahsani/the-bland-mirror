@@ -242,6 +242,11 @@ def create_post():
 
     post_form = PostForm(s1 = choices, s2 = choices, s3 = choices)
 
+    for post in posts:
+        if post.title == post_form.title.data:
+            flash("This title already exists!", 'danger')
+            return redirect(url_for('create_post'))
+
 
     if post_form.validate_on_submit():
         flash("Post Created Successfully!", 'success')
