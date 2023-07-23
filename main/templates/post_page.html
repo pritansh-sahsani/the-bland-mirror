@@ -111,14 +111,15 @@
                 {% else %}
                     <p class="ml-5 inline-block text-base">{{ post.comments }} comments</p>
                 {% endif %}
+                <div class="w-50% m-0 inline-block">
+                    <div class="sharethis-inline-share-buttons inline-block"></div>
+                </div>
                 {% if liked %}
                     <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button_clicked.svg" /></button>
                 {% else %}
                     <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button.svg" /></button>
                 {% endif %}
                 <p class="inline-block float-right mr-1 text-base" id="like_display">{{ post.likes }}</p>
-
-                <button id="copy_link_btn" class="float-right mr-5" onclick="copyLink()">Copy Link</button>
             </div>
         </div>
     </div>
