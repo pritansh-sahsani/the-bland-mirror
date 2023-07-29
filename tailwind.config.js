@@ -4,6 +4,8 @@ module.exports = {
   theme: {
     screens: {
       md: "800px",
+      sm: "640px", 
+      xsm: "500px",
     },
     borderWidth: {
       0.5: "0.5px",
@@ -40,6 +42,7 @@ module.exports = {
         "80%": "80%",
         "90%": "90%",
         "95%": "95%",
+        "98%": "98%",
         "100%": "100%",
       },
       margin:{

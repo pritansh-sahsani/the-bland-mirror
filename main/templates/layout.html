@@ -6,9 +6,10 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
 
-		<!-- google fonts -->
+		<!-- sharethis for share buttons -->
 		<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=64b57bdbccbbb00012432cca&product=inline-share-buttons' async='async'></script>
 		
+		<!-- google fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
@@ -16,6 +17,9 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+		
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 
 		<!-- css -->
         <link rel="stylesheet" href="{{url_for('static',filename='css/src.css')}}">
@@ -126,14 +130,15 @@
 	  	{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
 		  		{% for category, message in messages %}
-					<div class="fixed w-12% bottom-3 left-1% bg-blue-600 rounded-lg">
-						<p class="text-sm text-white text-center w-90% ml-5% mt-3% mb-5%">{{ message }}</p>
+					<div class="fixed bottom-3 left-1% bg-blue-600 rounded-lg w-98% p-1% md:p-0">
+						<p class="text-sm text-white text-center w-90% ml-5% mt-1% mb-1% sm:mt-3% sm:mb-5%">{{ message }}</p>
 					</div>
 		  		{% endfor %}
 			{% endif %}
 	  	{% endwith %}
-		<div class="fixed w-12% bottom-3 left-1% bg-blue-600 rounded-lg hidden" id="flash_text_div">
-			<p class="text-sm text-white text-center w-90% ml-5% mt-3% mb-5%" id="flash_text"></p>
+
+		<div class="fixed bottom-3 left-1% bg-blue-600 rounded-lg w-98% sm:w-30% md:25% p-1% md:p-0 hidden" id="flash_text_div">
+			<p class="text-sm text-white text-center w-90% ml-5% my-1% sm:mt-3% sm:mb-4% sm:text-base" id="flash_text"></p>
 		</div>      
 	  
 	  	<main class="ml-5% py-5 w-90%">

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, EqualTo, Email, Length, ValidationE
 
 from main.models import User
 
-min_max_error_message = """{field} Length Must Be Between {min} and {max}!"""
+min_max_error_message = """{field} Length Must Be Between {min} and {max} characters!"""
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[Length(min=1, max=20, message=min_max_error_message.format(field='User Name', min='%(min)d', max='%(max)d'))])
