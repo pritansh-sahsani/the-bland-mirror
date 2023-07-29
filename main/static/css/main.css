@@ -634,6 +634,11 @@ video {
   margin-bottom: 3%;
 }
 
+.my-5\% {
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
 .-ml-2 {
   margin-left: -0.5rem;
 }
