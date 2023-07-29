@@ -147,3 +147,8 @@ input:focus, textarea:focus, select:focus{
 .link{
     color: gradient;
 }
+
+.form-control:focus
+{ 
+    box-shadow: none; 
+}
