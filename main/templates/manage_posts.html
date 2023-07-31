@@ -57,7 +57,7 @@
                     {% endif %} 
                     <br>
                     <button id="delete_post{{ post.id }}">Delete Post</button>
-                    <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button>
+                    <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button></a>
                     <hr>
                 </div>
             {% endfor %}

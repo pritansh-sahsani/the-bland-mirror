@@ -429,14 +429,16 @@ def edit_post(post_id):
     for a in range(0, 3):
         s.append([(post.id, post.title) for post in posts if post.id != post_id])
         if len(s[a]) == 0:
-            [(0, 'No posts available')]
+            s[a].insert(0, (0, 'No posts available'))
         else:
             s[a].insert(0, (0, 'Random Post'))
 
+        print(s[a])
+        print(r[a])
         if r[a] is not None:
             s[a].remove((r[a].id, r[a].title))
             s[a].insert(0, (r[a].id, r[a].title))
-        else:
+        elif s[a] != [(0, 'No posts available')]:
             s[a].remove((0, 'Random Post'))
             s[a].insert(0, (0, 'Random Post'))
         
