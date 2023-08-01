@@ -37,17 +37,8 @@
 		<!-- script for likes -->
 		<script type=text/javascript>
 			$(function() {
-				$('#phone_navbar_button').on('click', function(e) {
-					
-					if ($("#phone_navbar").is(":visible")) 
-					{
-						$("#phone_navbar").show();
-					}
-					else
-					{	
-						$("#phone_navbar").hide();
-					}
-					
+				$('#phone_navbar_button').on('click', function(e) {		
+					$("#phone_navbar").toggle();
 				});
 			});
 		</script>
@@ -59,6 +50,7 @@
 					<a href="/" class="ml-2">
 						<img src="../static/assets/logo.png" class="ml-4 w-12 mr-0" alt="" />
 					</a>
+					<!-- pc navbar -->
 					{% if current_user.is_authenticated %}
 						<div class="pr-8 md:block hidden mx-5">
 							<a class="navbar-link" href="/authors_home">
@@ -98,8 +90,8 @@
 					{% endif %}
 				</div>
 
-				<div class="block md:float md:items-right md:mr-8">
-					<p class="text-lg">By Pritansh Sahsani</p>
+				<div class="block pr-2 md:float md:items-right md:mr-8">
+					<p class="text-base xsm:text-lg">By Pritansh Sahsani</p>
 				</div>
 
 				<div class="mr-8 cursor-pointer block md:hidden">
@@ -122,8 +114,51 @@
 				
 			</nav>
 			<hr class="w-100% m-0 p-0 border-slate-900" />
-			<div id="phone_navbar" class="hidden">
-				<p>navbar</p>
+			<!-- phone navbar -->
+			<div class="block md:hidden">
+				<div id="phone_navbar" class="block md:hidden">
+					{% if current_user.is_authenticated %}
+						<div class="">
+							<a class="navbar-link" href="/authors_home">
+								<button class="underline-btn">Author's Home</button>
+							</a>
+							<a class="navbar-link" href="/create_post">
+								<button class="underline-btn">Create post</button>
+							</a>
+							<a class="navbar-link" href="/manage_posts">
+								<button class="underline-btn">Manage Posts</button>
+							</a>
+							<a class="navbar-link" href="/messages">
+								<button class="underline-btn">Messages</button>
+							</a>
+							<a class="navbar-link" href="/notifications">
+								<button class="underline-btn">Notifications</button>
+							</a>
+							<a class="navbar-link" href="/admin">
+								<button class="underline-btn">Admin</button>
+							</a>
+							<a class="navbar-link" href="/logout">
+								<button class="underline-btn">Logout</button>
+							</a>
+						</div>
+					{% else %}
+						<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto pt-2 w-80%">
+						<div class=" w-full md:block md:w-auto" id="navbar-default">
+							<ul class="font-medium flex flex-col p-3 m-1 md:p-0 rounded-lg border-solid border-black border-0.5">
+							<li>
+								<a href="/" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Home</a>
+							</li>
+							<li>
+								<a href="/contact" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Contact</a>
+							</li>
+							<li>
+								<a href="/subscribe" class="w-fit underline-btn mt-0 mx-auto block pt-2 text-black rounded">Subscribe</a>
+							</li>
+							</ul>
+						</div>
+						</div>
+					{% endif %}
+				</div>
 			</div>
 		</div>
 	
