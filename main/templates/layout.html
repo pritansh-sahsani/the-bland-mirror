@@ -5,6 +5,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
+		
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.css" rel="stylesheet" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script>
 
 		<!-- sharethis for share buttons -->
 		<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=64b57bdbccbbb00012432cca&product=inline-share-buttons' async='async'></script>
@@ -52,24 +55,18 @@
 					</a>
 					<!-- pc navbar -->
 					{% if current_user.is_authenticated %}
-						<div class="pr-8 md:block hidden mx-5">
+						<div class="md:block hidden mx-5">
 							<a class="navbar-link" href="/authors_home">
-								<button class="underline-btn">Author's Home</button>
+								<button class="underline-btn ml-8 960:ml-16">Author's Home</button>
 							</a>
 							<a class="navbar-link" href="/manage_posts">
-								<button class="underline-btn">Posts</button>
+								<button class="underline-btn ml-8 960:ml-16">Posts</button>
 							</a>
 							<a class="navbar-link" href="/messages">
-								<button class="underline-btn">Messages</button>
-							</a>
-							<a class="navbar-link" href="/notifications">
-								<button class="underline-btn">Notifications</button>
-							</a>
-							<a class="navbar-link" href="/admin">
-								<button class="underline-btn">Admin</button>
+								<button class="underline-btn ml-8 960:ml-16">Messages</button>
 							</a>
 							<a class="navbar-link" href="/logout">
-								<button class="underline-btn">Logout</button>
+								<button class="underline-btn ml-8 960:ml-16">Logout</button>
 							</a>
 						</div>
 					{% else %}
@@ -86,9 +83,29 @@
 						</div>
 					{% endif %}
 				</div>
+					<div class="block pr-2 float items-right mr-8">
+						{% if current_user.is_authenticated %}
+						<a id="dropdownHoverButton" data-dropdown-toggle="dropdownHover" data-dropdown-trigger="hover" class="navbar-link hidden md:inline" href="/notifications">
+								<img class="w-8 h-8 mr-4 md:inline" id="notification_icon" src="../static/assets/notification-bell.svg">
+						</a>
+						<!-- Dropdown menu -->
+						<div id="dropdownHover" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+							<ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
+							<li>
+								{% if no_notifications_in_navbar == False %}
+									{% for notification in notifications_in_navbar %}
+										<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ notification.message }}</a>
+										<hr>
+									{% endfor %}
+								{% else %}
+									<h3>No Notifications</h3>
+								{% endif %}
+							</li>
+							</ul>
+						</div>	
+						{% endif %}
 
-				<div class="block pr-2 md:float md:items-right md:mr-8">
-					<p class="text-base xsm:text-lg">By Pritansh Sahsani</p>
+					<p class="inline text-base xsm:text-lg">By Pritansh Sahsani</p>
 				</div>
 
 				<div class="mr-8 cursor-pointer block md:hidden">

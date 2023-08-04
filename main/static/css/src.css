@@ -223,3 +223,7 @@ input:focus, textarea:focus, select:focus{
   a:active { text-decoration: none; }
   
   #phone_navbar{display: none;}
+
+#notification_icon:hover + #notifications {
+    display: block;
+  }
