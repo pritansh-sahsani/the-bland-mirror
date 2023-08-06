@@ -5,6 +5,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
+		
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.css" rel="stylesheet" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script>
 
 		<!-- sharethis for share buttons -->
 		<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=64b57bdbccbbb00012432cca&product=inline-share-buttons' async='async'></script>
@@ -38,45 +41,39 @@
 		<script type=text/javascript>
 			$(function() {
 				$('#phone_navbar_button').on('click', function(e) {		
-					$("#phone_navbar").toggle();
+					$("#phone_bottom_navbar").toggle();
 				});
 			});
 		</script>
 
 
 		<div>
-			<nav class="flex justify-between items-center relative">
-				<div class="flex items-center">
+			<!-- pc navbar -->
+			<nav class="hidden md:inline justify-between items-center relative">
+				<div class="inline items-center">
 					<a href="/" class="ml-2">
-						<img src="../static/assets/logo.png" class="ml-4 w-12 mr-0" alt="" />
+						<img src="../static/assets/logo.png" class="ml-4 w-12 inline" alt="" />
 					</a>
-					<!-- pc navbar -->
 					{% if current_user.is_authenticated %}
-						<div class="pr-8 md:block hidden mx-5">
+						<div class="inline">
 							<a class="navbar-link" href="/authors_home">
-								<button class="underline-btn">Author's Home</button>
+								<button class="underline-btn ml-8 960:ml-14">Author's Home</button>
 							</a>
 							<a class="navbar-link" href="/manage_posts">
-								<button class="underline-btn">Posts</button>
+								<button class="underline-btn ml-8 960:ml-14">Posts</button>
 							</a>
 							<a class="navbar-link" href="/manage_drafts">
 								<button class="underline-btn">Drafts</button>
 							</a>
 							<a class="navbar-link" href="/messages">
-								<button class="underline-btn">Messages</button>
-							</a>
-							<a class="navbar-link" href="/notifications">
-								<button class="underline-btn">Notifications</button>
-							</a>
-							<a class="navbar-link" href="/admin">
-								<button class="underline-btn">Admin</button>
+								<button class="underline-btn ml-8 960:ml-14">Messages</button>
 							</a>
 							<a class="navbar-link" href="/logout">
-								<button class="underline-btn">Logout</button>
+								<button class="underline-btn ml-8 960:ml-14">Logout</button>
 							</a>
 						</div>
 					{% else %}
-						<div class="pr-8 md:block hidden mx-5">
+						<div class="pr-8 inline mx-5">
 							<a class="navbar-link" href="/">
 								<button class="underline-btn">Home</button>
 							</a>
@@ -89,75 +86,119 @@
 						</div>
 					{% endif %}
 				</div>
-
-				<div class="block pr-2 md:float md:items-right md:mr-8">
-					<p class="text-base xsm:text-lg">By Pritansh Sahsani</p>
-				</div>
-
-				<div class="mr-8 cursor-pointer block md:hidden">
-					<svg
-						id="phone_navbar_button"
-						class="w-6 h-6"
-						fill="black"
-						stroke=black
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M4 6h16M4 12h16M4 18h16"
-						></path>
-					</svg>
-				</div>
-				
-			</nav>
-			<hr class="w-100% m-0 p-0 border-slate-900" />
-			<!-- phone navbar -->
-			<div class="block md:hidden">
-				<div id="phone_navbar" class="block md:hidden">
+				<div class="inline float-right mr-10 mt-2.5">
 					{% if current_user.is_authenticated %}
-						<div class="">
-							<a class="navbar-link" href="/authors_home">
-								<button class="underline-btn">Author's Home</button>
-							</a>
-							<a class="navbar-link" href="/create_post">
-								<button class="underline-btn">Create post</button>
-							</a>
-							<a class="navbar-link" href="/manage_posts">
-								<button class="underline-btn">Manage Posts</button>
-							</a>
-							<a class="navbar-link" href="/messages">
-								<button class="underline-btn">Messages</button>
-							</a>
-							<a class="navbar-link" href="/notifications">
-								<button class="underline-btn">Notifications</button>
-							</a>
-							<a class="navbar-link" href="/admin">
-								<button class="underline-btn">Admin</button>
-							</a>
-							<a class="navbar-link" href="/logout">
-								<button class="underline-btn">Logout</button>
-							</a>
+						<!-- Notification div -->
+						<div id="notification-div" class="inline">
+							<!-- icons -->
+							<div class="inline">
+								<a href="/notifications"><img class="w-8 h-8 inline" id="notification_icon" src="../static/assets/notification-bell.svg"></a>
+							</div>
+							<div class="inline">
+								<img class="w-4 h-4 mr-4 inline" data-dropdown-toggle="dropdownHover" data-dropdown-trigger="click"  id="DropdownNotifications" src="../static/assets/dropdown-icon.svg">
+							</div>
 						</div>
-					{% else %}
-						<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto pt-2 w-80%">
-						<div class=" w-full md:block md:w-auto" id="navbar-default">
-							<ul class="font-medium flex flex-col p-3 m-1 md:p-0 rounded-lg border-solid border-black border-0.5">
-							<li>
-								<a href="/" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Home</a>
-							</li>
-							<li>
-								<a href="/contact" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Contact</a>
-							</li>
-							<li>
-								<a href="/subscribe" class="w-fit underline-btn mt-0 mx-auto block pt-2 text-black rounded">Subscribe</a>
-							</li>
-							</ul>
-						</div>
+							
+							<!-- Dropdown menu -->
+						<div id="dropdownHover" class="hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 mt-2">
+							{% if no_notifications_in_navbar == False %}
+								<table class="text-sm text-gray-700" aria-labelledby="dropdownHoverButton">
+									{% for notification in notifications_in_navbar %}
+										<tr class="hover:bg-gray-100 border-slate-900">
+											<td>
+												<a href='/notifications' class="inline py-2 pl-2 hover:text-black">														{{ notification.message }}
+													</a>
+											</td>
+											<td>
+												<a href='{{ url_for("read_notification", notification_id = notification.id) }}'>
+													<img src="../static/assets/mark_as_read.svg" class="inline w-5 ml-4 mr-2 mb-0.5">
+												</a>
+											</td>
+										</tr>
+									{% endfor %}
+								</table>
+							{% else %}
+								<h3 class="text-lg m-3">No Unread Notifications</h3>
+							{% endif %}
 						</div>
 					{% endif %}
+
+					<p class="inline text-base xsm:text-lg">By Pritansh Sahsani</p>
+				</div>
+				<hr class="w-100% m-0 p-0 border-slate-900" />
+			</nav>
+			
+			<!-- phone navbar -->
+			<div id="phone_top_navbar" class="block md:hidden">
+				<div class="flex justify-between items-center">
+					<a href="/" class="ml-6">
+						<img src="../static/assets/logo.png" class="w-12 inline" alt="" />
+					</a>
+					
+					<p class="inline text-base xsm:text-lg">By Pritansh Sahsani</p>
+
+					<div class="mr-6 cursor-pointer inline">
+						<svg
+							id="phone_navbar_button"
+							class="w-6 h-6 inline"
+							fill="black"
+							stroke=black
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M4 6h16M4 12h16M4 18h16"
+							></path>
+						</svg>
+					</div>
+				</div>
+
+				<hr class="w-100% m-0 p-0 border-slate-900" />
+				<div class="block">
+					<div id="phone_bottom_navbar" class="block">
+						{% if current_user.is_authenticated %}
+							<div class="max-w-screen-xl items-center mx-auto pt-2 w-80%">
+								<div class=" w-full md:block md:w-auto" id="navbar-default">
+									<ul class="font-medium flex flex-col p-3 m-1 md:p-0 rounded-lg border-solid border-black border-0.5">
+										<li>
+											<a href="/authors_home" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Author's Home</a>
+										</li>
+										<li>
+											<a href="/manage_posts" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Posts</a>
+										</li>
+										<li>
+											<a href="/messages" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Messages</a>
+										</li>
+										<li>
+											<a href="/notifications" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Notifications</a>
+										</li>
+										<li>
+											<a href="/logout" class="w-fit underline-btn mt-0 mx-auto block pt-2 text-black rounded">Log Out</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						{% else %}
+							<div class="max-w-screen-xl items-center mx-auto pt-2 w-80%">
+								<div class=" w-full md:block md:w-auto" id="navbar-default">
+									<ul class="font-medium flex flex-col p-3 m-1 md:p-0 rounded-lg border-solid border-black border-0.5">
+										<li>
+											<a href="/" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Home</a>
+										</li>
+										<li>
+											<a href="/contact" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Contact</a>
+										</li>
+										<li>
+											<a href="/subscribe" class="w-fit underline-btn mt-0 mx-auto block pt-2 text-black rounded">Subscribe</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>

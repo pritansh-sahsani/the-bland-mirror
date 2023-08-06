@@ -4,6 +4,7 @@ module.exports = {
   theme: {
     screens: {
       960: "960px",
+      880: "880px",
       md: "800px",
       sm: "640px", 
       xsm: "500px",
@@ -20,6 +21,7 @@ module.exports = {
         "2%": "2%",
         "5%": "5%",
         "25%": "25%",
+        "50%": "50%",
       },
       height: {
         "15":"4rem",

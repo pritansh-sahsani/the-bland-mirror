@@ -10,6 +10,16 @@ from flask_mail import Message
 from sqlalchemy.sql.expression import func
 import re
 
+# helper functions
+def get_notification_for_navbar():
+    notifications_in_navbar = Notification.query.filter_by(is_read = False)\
+    .order_by(Notification.date.desc())\
+    .limit(5)\
+    .all()
+    no_notifications = True if len(notifications_in_navbar) == 0 else False
+
+    return notifications_in_navbar, no_notifications
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     page = request.args.get('page', 1, type=int)
@@ -231,6 +241,7 @@ def contact():
 @app.route("/create_post", methods=['GET', 'POST'])
 @login_required
 def create_post():
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
     choices = [(post.id, post.title) for post in posts if post.is_draft == False]
@@ -278,7 +289,7 @@ def create_post():
 
         return redirect(url_for('authors_home'))
         
-    return render_template("new_post.html", post_form=post_form)
+    return render_template("new_post.html", post_form=post_form, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 def send_email_for_new_post(post):
     query = Subscribers.query.with_entities(Subscribers.email)
@@ -299,6 +310,7 @@ def send_email_for_new_post(post):
 @app.route("/notifications")
 @login_required
 def view_notifications():
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     notification_query = Notification.query.all()
     
     notifications = []
@@ -309,11 +321,11 @@ def view_notifications():
     unread_flash = "Notification Marked As Unread Successfully!"
 
     if len(notifications) == 0:
-        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, no_notifications=True)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, no_notifications=True, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
     else:
         notifications.sort(key=attrgetter('date'), reverse=True)
         notifications.sort(key=attrgetter('is_read'))
-        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, notifications=notifications, no_notifications=False)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, notifications=notifications, no_notifications=False, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/read_notification/<string:notification_id>', methods=['GET', 'POST'])
 @login_required
@@ -326,6 +338,7 @@ def read_notification(notification_id):
 @app.route("/messages")
 @login_required
 def view_messages():
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     message_query = Messages.query.all()
     reply_query = MessageReply.query.all()
     
@@ -346,7 +359,7 @@ def view_messages():
         unread_flash = 'Message Marked As Unread Successfully!'
         del_flash = "Message Deleted successfully!"
 
-        return render_template("messages.html", del_flash=del_flash, read_flash=read_flash, unread_flash=unread_flash, messages=messages, msg_len=len(messages), replies=replies)
+        return render_template("messages.html", del_flash=del_flash, read_flash=read_flash, unread_flash=unread_flash, messages=messages, msg_len=len(messages), replies=replies, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
     
 @app.route('/delete_message/<int:message_id>', methods=['GET', 'POST'])
 @login_required
@@ -369,6 +382,7 @@ def read_message(message_id):
 @app.route('/reply_message/<string:message_id>', methods=['GET', 'POST'])
 @login_required
 def reply_message(message_id):
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     message = Messages.query.filter_by(id = message_id).first_or_404()
     # reply if exists
     reply = MessageReply.query.filter_by(message_id = message_id).first()
@@ -393,27 +407,17 @@ def reply_message(message_id):
         flash("Reply Sent Sucessfully!")
         return redirect(url_for('view_messages'))
 
-    return render_template("reply_message.html", reply_form = reply_form, message = message, reply= reply)
+    return render_template("reply_message.html", reply_form = reply_form, message = message, reply= reply, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/manage_posts', methods=['GET', 'POST'])
 @login_required
 def manage_posts(): 
-    posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+    posts = Posts.query.order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
     posts_len=len(posts)
     flash = "Post Deleted Successfully!"
-    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash)
-
-@app.route('/manage_drafts', methods=['GET', 'POST'])
-@login_required
-def manage_drafts(): 
-    posts = Posts.query.filter_by(is_draft=True).order_by(Posts.created_at.desc())\
-    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
-    .all()
-    posts_len=len(posts)
-    flash = "Post Deleted Successfully!"
-    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash)
+    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -435,6 +439,8 @@ def delete_post(post_id):
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
+
     old_post = Posts.query.filter_by(id = post_id).first_or_404()
     posts = Posts.query.order_by(Posts.created_at.desc()).all()#
     
@@ -500,7 +506,7 @@ def edit_post(post_id):
 
         return redirect(url_for('manage_posts'))
     
-    return render_template("edit_post.html", post_form=post_form, old_post=old_post)
+    return render_template("edit_post.html", post_form=post_form, old_post=old_post, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -546,10 +552,12 @@ def login():
 @app.route('/authors_home')
 @login_required
 def authors_home():
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
+    
     unread_notifications = Notification.query.filter_by(is_read=False).count()
     flash(f'You Have {unread_notifications} Unread Notifications!')
 
-    return render_template('authors_home.html')
+    return render_template('authors_home.html', notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/logout')
 @login_required
