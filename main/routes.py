@@ -105,9 +105,10 @@ def post(post_url):
 
     # send notification when views reach a particular milestone
     if post.views % 10 == 0:
-        notification_message = f"Your post '{post.title}' has reached {post.views} views!"
-        notification = Notification(message=notification_message)
-        db.session.add(notification)
+        if post.views > 0:
+            notification_message = f"Your post '{post.title}' has reached {post.views} views!"
+            notification = Notification(message=notification_message)
+            db.session.add(notification)
 
     db.session.commit()
     
@@ -158,10 +159,11 @@ def register_like(post_id):
         .first_or_404()
         
         if post.likes % 10 == 0:
-            notification_message = f"Your post '{post.title}' has received {post.likes} likes!"
-            notification = Notification(message=notification_message)
-            db.session.add(notification)
-            db.session.commit()
+            if post.likes > 0:
+                notification_message = f"Your post '{post.title}' has received {post.likes} likes!"
+                notification = Notification(message=notification_message)
+                db.session.add(notification)
+                db.session.commit()
 
     return ('0')
 
@@ -412,7 +414,7 @@ def reply_message(message_id):
 @app.route('/manage_posts', methods=['GET', 'POST'])
 @login_required
 def manage_posts(): 
-    posts = Posts.query.order_by(Posts.created_at.desc())\
+    posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
     posts_len=len(posts)
@@ -555,7 +557,8 @@ def authors_home():
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     
     unread_notifications = Notification.query.filter_by(is_read=False).count()
-    flash(f'You Have {unread_notifications} Unread Notifications!')
+    if unread_notifications > 0:
+        flash(f'You Have {unread_notifications} Unread Notifications!')
 
     return render_template('authors_home.html', notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
