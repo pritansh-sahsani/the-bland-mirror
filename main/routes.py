@@ -421,6 +421,16 @@ def manage_posts():
     flash = "Post Deleted Successfully!"
     return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
+@app.route('/manage_drafts', methods=['GET', 'POST'])
+@login_required
+def manage_drafts(): 
+    posts = Posts.query.filter_by(is_draft=True).order_by(Posts.created_at.desc())\
+    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .all()
+    posts_len=len(posts)
+    flash = "Post Deleted Successfully!"
+    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash)
+
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def delete_post(post_id):
