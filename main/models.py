@@ -45,6 +45,7 @@ class Posts(db.Model):
     related_1 = db.Column(db.Integer, nullable=False, default=0)
     related_2 = db.Column(db.Integer, nullable=False, default=0)
     related_3 = db.Column(db.Integer, nullable=False, default=0)
+    is_draft = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
         return f"Post('{self.id}', '{self.title}', '{self.created_at}', '{self.summary}', '{self.views}', '{self.likes}', '{self.comments}')"

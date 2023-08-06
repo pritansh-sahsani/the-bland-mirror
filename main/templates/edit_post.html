@@ -58,6 +58,13 @@
             {% endfor %}
         {% endif %}
 
+        {% if post_form.is_draft.errors %} 
+            {% for error in post_form.is_draft.errors %}
+                $("#flash_text").text("{{error}}");
+                $("#flash_text_div").show();
+            {% endfor %}
+        {% endif %}
+
     }
     setInterval('raise_error()', 1);
 </script>
@@ -71,7 +78,9 @@
             {{ post_form.cover_img() }} 
             {{ post_form.related_1(value=old_post.related_1) }} 
             {{ post_form.related_2(value=old_post.related_2) }} 
-            {{ post_form.related_3(value=old_post.related_3) }} 
+            {{ post_form.related_3(value=old_post.related_3) }}
+            <input type="checkbox" name="is_draft" {{ "checked" if old_post.is_draft }} >
+            <label for="is_draft">Save as Draft</label>
             {{ post_form.submit(class="my-5 w-20% h-14 ml-40% bg-blue-400 text-white rounded-lg text-2xl") }}
     </form>
     <script>

@@ -14,7 +14,7 @@ import re
 def index():
     page = request.args.get('page', 1, type=int)
     # get posts data
-    posts = Posts.query.order_by(Posts.created_at.desc())\
+    posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .paginate(page=page, per_page=3)
     no_of_pages = int((posts.total / posts.per_page)+1)
@@ -34,7 +34,7 @@ def post(post_url):
     user_ip=request.remote_addr
     
     # get post details
-    post = Posts.query.filter_by(url_title=post_url)\
+    post = Posts.query.filter_by(url_title=post_url, is_draft=False)\
         .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.content, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments, Posts.related_1, Posts.related_2, Posts.related_3)\
         .first_or_404()
 
@@ -233,7 +233,7 @@ def contact():
 def create_post():
     posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
-    choices = [(post.id, post.title) for post in posts]
+    choices = [(post.id, post.title) for post in posts if post.is_draft == False]
 
     if len(choices) == 0:
         choices = [(0, 'No posts available')]
@@ -249,7 +249,14 @@ def create_post():
 
 
     if post_form.validate_on_submit():
-        flash("Post Created Successfully!", 'success')
+        is_draft = 'is_draft' in request.form
+
+        print(is_draft)
+
+        if is_draft:
+            flash("Post saved as draft!", 'info')
+        else:
+            flash("Post created successfully!", 'success')
 
         url_title = post_form.title.data
         url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
@@ -259,10 +266,11 @@ def create_post():
             filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
         else:
-            flash("Please Provide A Cover Image!")
-            return redirect(url_for("create_post", post_form=post_form))
+            if not is_draft:
+                flash("Please provide a cover image!")
+                return redirect(url_for("create_post", post_form=post_form))            
 
-        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
+        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
         db.session.add(post)
         db.session.commit()
 
@@ -390,7 +398,17 @@ def reply_message(message_id):
 @app.route('/manage_posts', methods=['GET', 'POST'])
 @login_required
 def manage_posts(): 
-    posts = Posts.query.order_by(Posts.created_at.desc())\
+    posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .all()
+    posts_len=len(posts)
+    flash = "Post Deleted Successfully!"
+    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash)
+
+@app.route('/manage_drafts', methods=['GET', 'POST'])
+@login_required
+def manage_drafts(): 
+    posts = Posts.query.filter_by(is_draft=True).order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
     posts_len=len(posts)
@@ -427,14 +445,12 @@ def edit_post(post_id):
     s = []
 
     for a in range(0, 3):
-        s.append([(post.id, post.title) for post in posts if post.id != post_id])
+        s.append([(post.id, post.title) for post in posts if post.id != post_id and post.is_draft == False])
         if len(s[a]) == 0:
             s[a].insert(0, (0, 'No posts available'))
         else:
             s[a].insert(0, (0, 'Random Post'))
 
-        print(s[a])
-        print(r[a])
         if r[a] is not None:
             s[a].remove((r[a].id, r[a].title))
             s[a].insert(0, (r[a].id, r[a].title))
@@ -467,7 +483,7 @@ def edit_post(post_id):
                     flash("Please Select Unique Related Posts!")
                     return render_template("edit_post.html", post_form=post_form, old_post=old_post)
 
-        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data)
+        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = post_form.is_draft.data)
         
         likes = Likes.query.filter_by(post_no=old_post.id).all()
         comments =  Comment.query.filter_by(post_no=old_post.id).all()
