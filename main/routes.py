@@ -414,6 +414,7 @@ def reply_message(message_id):
 @app.route('/manage_posts', methods=['GET', 'POST'])
 @login_required
 def manage_posts(): 
+    notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
