@@ -37,7 +37,7 @@
 
     <body class="w-100%">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<!-- script for likes -->
+		<!-- script for phone navbar -->
 		<script type=text/javascript>
 			$(function() {
 				$('#phone_navbar_button').on('click', function(e) {		
@@ -61,9 +61,6 @@
 							</a>
 							<a class="navbar-link" href="/manage_posts">
 								<button class="underline-btn ml-8 960:ml-14">Posts</button>
-							</a>
-							<a class="navbar-link" href="/manage_drafts">
-								<button class="underline-btn">Drafts</button>
 							</a>
 							<a class="navbar-link" href="/messages">
 								<button class="underline-btn ml-8 960:ml-14">Messages</button>
@@ -160,42 +157,39 @@
 				<div class="block">
 					<div id="phone_bottom_navbar" class="block">
 						{% if current_user.is_authenticated %}
-							<div class="max-w-screen-xl items-center mx-auto pt-2 w-80%">
-								<div class=" w-full md:block md:w-auto" id="navbar-default">
-									<ul class="font-medium flex flex-col p-3 m-1 md:p-0 rounded-lg border-solid border-black border-0.5">
+						<div class="z-20 fixed items-center w-screen h-screen mobile-navbar-background">
+							<div class="w-50% xsm:w-30% h-screen bg-white float-right rounded-lg" id="navbar-default">
+								<ul class="font-medium flex flex-col p-3">
 										<li>
-											<a href="/authors_home" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Author's Home</a>
+											<a href="/authors_home" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Author's Home</a>
 										</li>
 										<li>
-											<a href="/manage_posts" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Posts</a>
+											<a href="/manage_posts" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Posts</a>
 										</li>
 										<li>
-											<a href="/manage_drafts" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Drafts</a>
+											<a href="/messages" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Messages</a>
 										</li>
 										<li>
-											<a href="/messages" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Messages</a>
+											<a href="/notifications" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Notifications</a>
 										</li>
 										<li>
-											<a href="/notifications" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Notifications</a>
-										</li>
-										<li>
-											<a href="/logout" class="w-fit underline-btn mt-0 mx-auto block pt-2 text-black rounded">Log Out</a>
+											<a href="/logout" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Log Out</a>
 										</li>
 									</ul>
 								</div>
 							</div>
 						{% else %}
-							<div class="max-w-screen-xl items-center mx-auto pt-2 w-80%">
-								<div class=" w-full md:block md:w-auto" id="navbar-default">
-									<ul class="font-medium flex flex-col p-3 m-1 md:p-0 rounded-lg border-solid border-black border-0.5">
+							<div class="fixed items-center w-screen h-screen mobile-navbar-background">
+								<div class="w-50% xsm:w-30% h-screen bg-white float-right rounded-lg" id="navbar-default">
+									<ul class="font-medium flex flex-col p-3">
 										<li>
-											<a href="/" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Home</a>
+											<a href="/" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Home</a>
 										</li>
 										<li>
-											<a href="/contact" class="w-fit underline-btn mt-0 mx-auto block py-2 text-black rounded">Contact</a>
+											<a href="/contact" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Contact</a>
 										</li>
 										<li>
-											<a href="/subscribe" class="w-fit underline-btn mt-0 mx-auto block pt-2 text-black rounded">Subscribe</a>
+											<a href="/subscribe" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Subscribe</a>
 										</li>
 									</ul>
 								</div>
