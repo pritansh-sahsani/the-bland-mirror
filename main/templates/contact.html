@@ -41,9 +41,9 @@
             <div class="w-100%">
             {{ contact_form.hidden_tag() }}
             
-                {{ contact_form.name(class="   form-control text-base xsm:text-xl w-100% sm:w-50% border-0 text-center sm:inline", placeholder="Name") }} 
-                {{ contact_form.email(class="  form-control text-base xsm:text-xl w-100% sm:w-50% border-0 text-center sm:inline mt-2% sm:mt-0  sm:float-right", placeholder="Email Address") }} 
-                {{ contact_form.message(class="form-control text-base xsm:text-xl w-100% border-0 text-center h-1 mt-2% ", placeholder="Type your message here", rows="1") }} 
+                {{ contact_form.name(class="   text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg sm:w-47.5% sm:inline", placeholder="Name") }} 
+                {{ contact_form.email(class="  text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg mt-3% sm:mt-0 sm:w-47.5% sm:inline sm:float-right", placeholder="Email Address") }} 
+                {{ contact_form.message(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg mt-3% sm:mt-2% ", placeholder="Type your message here", rows="1") }} 
                 {{ contact_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl bg-customblue") }}
             </div>
         </form>

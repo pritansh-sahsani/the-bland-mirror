@@ -227,3 +227,7 @@ input:focus, textarea:focus, select:focus{
 #notification_icon:hover + #notifications {
     display: block;
   }
+
+.mobile-navbar-background{
+    background-color: rgba(0, 0, 0, 0.2);
+}

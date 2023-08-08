@@ -27,7 +27,7 @@
             <p>{{ message.date.strftime("%d %B %Y") }}</p>
             <p>{{ message.email }}</p>
             <p>{{ message.message }}</p>
-            <hr class="border-black mx-auto my-3% sm:my-2%" />
+            <hr class="border-black mx-auto my-3%" />
 
             {% if message.replied == True %}
                 <p>You have already replied to the message.</p>
@@ -36,7 +36,7 @@
             {% else %}
                     {{ reply_form.hidden_tag() }}
 
-                    {{ reply_form.reply(rows="1", class="form-control text-base xsm:text-xl w-100% border-0 text-center h-1 mt-2%", placeholder="Reply") }} 
+                    {{ reply_form.reply(rows="1", class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg", placeholder="Reply") }} 
                     {{ reply_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl bg-customblue") }}
             {% endif %}
         </div>
