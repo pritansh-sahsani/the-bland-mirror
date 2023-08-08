@@ -10,6 +10,7 @@
     <!-- script for likes -->
     <script type=text/javascript>
     
+        var p_posts_len = {{ p_posts_len }}
         var d_posts_len = {{ d_posts_len }}
         var is_draft_posts = false
         {% for post in draft_posts %}
@@ -24,7 +25,7 @@
                     d_posts_len = d_posts_len-1;
                     if(d_posts_len==0)
                     {
-                        $('#no_published_posts').text("No Draft Posts");
+                        $('#no_draft_posts').text("No Draft Posts");
                     }
                 });
             });
@@ -39,6 +40,7 @@
                     $("#flash_text_div").show();
 
                     p_posts_len = p_posts_len-1;
+                    console.log(p_posts_len)
                     if(p_posts_len==0)
                     {
                         $('#no_published_posts').text("No Published Posts");
@@ -106,7 +108,7 @@
         
         <div id="draft_posts">
             {% if d_posts_len != 0 %}
-                <h3 id="no_posts">Draft Posts</h3>
+                <h3 id="no_draft_posts">Draft Posts</h3>
                 {% for post in draft_posts %}
                     <div id="post{{ post.id }}">
                         <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
@@ -137,7 +139,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-                    <h3 id="no_posts">No Draft Posts</h3>
+                    <h3 id="no_draft_posts">No Draft Posts</h3>
             {% endif %}
         </div>
     </center>
