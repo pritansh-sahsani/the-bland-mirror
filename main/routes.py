@@ -415,22 +415,18 @@ def reply_message(message_id):
 @login_required
 def manage_posts(): 
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
-    posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+    
+    draft_posts = Posts.query.filter_by(is_draft=True).order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
-    posts_len=len(posts)
+    d_posts_len=len(draft_posts)
     flash = "Post Deleted Successfully!"
-    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
-@app.route('/manage_drafts', methods=['GET', 'POST'])
-@login_required
-def manage_drafts(): 
-    posts = Posts.query.filter_by(is_draft=True).order_by(Posts.created_at.desc())\
+    published_posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
-    posts_len=len(posts)
-    flash = "Post Deleted Successfully!"
-    return render_template("manage_posts.html", posts=posts, posts_len=posts_len, flash=flash)
+    p_posts_len=len(published_posts)
+    return render_template("manage_posts.html", published_posts = published_posts, draft_posts=draft_posts, d_posts_len=d_posts_len, p_posts_len=p_posts_len, flash=flash, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required

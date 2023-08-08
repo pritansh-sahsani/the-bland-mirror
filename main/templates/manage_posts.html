@@ -10,8 +10,9 @@
     <!-- script for likes -->
     <script type=text/javascript>
     
-        var posts_len = {{ posts_len }}
-        {% for post in posts %}
+        var d_posts_len = {{ d_posts_len }}
+        var is_draft_posts = false
+        {% for post in draft_posts %}
             $(function() {
                 $('#delete_post{{ post.id }}').on('click', function(e) {
                     e.preventDefault()
@@ -20,54 +21,129 @@
                     $("#flash_text").text("{{ flash }}");
                     $("#flash_text_div").show();
 
-                    posts_len = posts_len-1;
-                    if(posts_len==0)
+                    d_posts_len = d_posts_len-1;
+                    if(d_posts_len==0)
                     {
-                        $('#no_posts').text("No Posts");
+                        $('#no_published_posts').text("No Draft Posts");
                     }
                 });
             });
         {% endfor %}
+        {% for post in published_posts %}
+            $(function() {
+                $('#delete_post{{ post.id }}').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("delete_post", post_id=post.id) }}',function(data) {});
+                    $("#post{{ post.id }}").hide();
+                    $("#flash_text").text("{{ flash }}");
+                    $("#flash_text_div").show();
+
+                    p_posts_len = p_posts_len-1;
+                    if(p_posts_len==0)
+                    {
+                        $('#no_published_posts').text("No Published Posts");
+                    }
+                });
+            });
+        {% endfor %}
+
+			$(function() {
+				$('#switch_post_type').on('click', function(e) {		
+					$("#published_posts").toggle();		
+					$("#draft_posts").toggle();
+                    if(is_draft_posts)
+                    {
+                        $('#switch_post_type').text("Show Draft Posts");
+                        is_draft_posts = false
+                    }
+                    else
+                    {
+                        $('#switch_post_type').text("Show Published Posts");
+                        is_draft_posts = true
+                    }
+				});
+			});
     </script>
     <center>
-        {% if posts_len != 0 %}
-            <h3 id="no_posts"></h3>
-            {% for post in posts %}
-                <div id="post{{ post.id }}">
-                    <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
-                    <p>{{ post.title }}</p>
-                    <p>{{ post.summary }}</p>
-                    
-                    {% if post.views == 1 %}
-                        <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
-                    {% else %}
-                        <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
-                    {% endif %}
+        <button class="mb-5" id="switch_post_type">Show Draft Posts</button>
 
-                    {% if post.comments == 1 %}
-                        <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
-                    {% else %}
-                        <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
-                    {% endif %} 
-                    
-                    {% if post.comments == 1 %}
-                        <p class="ml-5 inline-block text-sm">{{ post.likes }} like</p>
-                    {% else %}
-                        <p class="ml-5 inline-block text-sm">{{ post.likes }} likes</p>
-                    {% endif %} 
-                    <br>
-                    <button id="delete_post{{ post.id }}">Delete Post</button>
-                    <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button></a>
-                    <hr>
-                </div>
-            {% endfor %}
-        {% else %}
-                <h3 id="no_posts">No Published Posts</h3>
-        {% endif %}
+        <div id="published_posts">
+            {% if p_posts_len != 0 %}
+                <h3 id="no_published_posts">Published Posts</h3>
+                {% for post in published_posts %}
+                    <div id="post{{ post.id }}">
+                        <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
+                        <p>{{ post.title }}</p>
+                        <p>{{ post.summary }}</p>
+                        
+                        {% if post.views == 1 %}
+                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
+                        {% else %}
+                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
+                        {% endif %}
+
+                        {% if post.comments == 1 %}
+                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
+                        {% else %}
+                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
+                        {% endif %} 
+                        
+                        {% if post.comments == 1 %}
+                            <p class="ml-5 inline-block text-sm">{{ post.likes }} like</p>
+                        {% else %}
+                            <p class="ml-5 inline-block text-sm">{{ post.likes }} likes</p>
+                        {% endif %} 
+                        <br>
+                        <button id="delete_post{{ post.id }}">Delete Post</button>
+                        <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button></a>
+                        <hr>
+                    </div>
+                {% endfor %}
+            {% else %}
+                    <h3 id="no_published_posts">No Published Posts</h3>
+            {% endif %}
+        </div>
+        
+        <div id="draft_posts">
+            {% if d_posts_len != 0 %}
+                <h3 id="no_posts">Draft Posts</h3>
+                {% for post in draft_posts %}
+                    <div id="post{{ post.id }}">
+                        <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
+                        <p>{{ post.title }}</p>
+                        <p>{{ post.summary }}</p>
+                        
+                        {% if post.views == 1 %}
+                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
+                        {% else %}
+                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
+                        {% endif %}
+
+                        {% if post.comments == 1 %}
+                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
+                        {% else %}
+                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
+                        {% endif %} 
+                        
+                        {% if post.comments == 1 %}
+                            <p class="ml-5 inline-block text-sm">{{ post.likes }} like</p>
+                        {% else %}
+                            <p class="ml-5 inline-block text-sm">{{ post.likes }} likes</p>
+                        {% endif %} 
+                        <br>
+                        <button id="delete_post{{ post.id }}">Delete Post</button>
+                        <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button></a>
+                        <hr>
+                    </div>
+                {% endfor %}
+            {% else %}
+                    <h3 id="no_posts">No Draft Posts</h3>
+            {% endif %}
+        </div>
     </center>
 
     <!-- create new post button -->
-    <div class="fixed bottom-5 right-5% bg-blue-600 w-15 h-15 rounded-2xl">
+    <div class="z-10 fixed bottom-5 right-5% bg-blue-600 w-15 h-15 rounded-2xl">
         <a class="navbar-link" href="/create_post">
             <img src="../static/assets/new_post_button.svg">
 		</a>
