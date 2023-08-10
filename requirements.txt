@@ -37,3 +37,4 @@ typing-extensions==4.7.1
 Werkzeug==2.2.0
 WTForms==3.0.1
 zipp==3.8.1
+flask_msearch==0.2.9.2
