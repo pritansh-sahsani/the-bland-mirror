@@ -582,7 +582,7 @@ def w_search():
     
     keyword = request.args.get('keyword')
 
-    if keyword == '':
+    if keyword == '' or keyword is None:
         posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
         .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
         .paginate(page=page, per_page=3)
@@ -600,5 +600,8 @@ def w_search():
             liked[post.id]=False
         else:
             liked[post.id]=True
+
+    if posts.total == 0:
+        flash('No posts found!', 'info')
 
     return render_template('index.html', posts=posts, no_of_pages=no_of_pages, liked=liked)
