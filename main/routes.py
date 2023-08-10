@@ -575,3 +575,30 @@ def logout():
     logout_user()
     flash("Logged Out Successfully!")
     return redirect(url_for('index'))
+
+@app.route("/search")
+def w_search():
+    page = request.args.get('page', 1, type=int)
+    
+    keyword = request.args.get('keyword')
+
+    if keyword == '':
+        posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .paginate(page=page, per_page=3)
+    else:
+        posts = Posts.query.msearch(keyword).filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .paginate(page=page, per_page=3)
+
+    no_of_pages = int((posts.total / posts.per_page)+1)
+
+    liked={}
+    for post in posts.items:
+        like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = request.remote_addr).first()
+        if like is None:
+            liked[post.id]=False
+        else:
+            liked[post.id]=True
+
+    return render_template('index.html', posts=posts, no_of_pages=no_of_pages, liked=liked)

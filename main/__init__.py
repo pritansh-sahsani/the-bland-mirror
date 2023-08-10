@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 from flask_admin import Admin, AdminIndexView
+from flask_msearch import Search
 from flask_admin.contrib.sqla import ModelView
 from main.config import Config
 from flask_mail import Mail
@@ -14,6 +15,8 @@ bcrypt = Bcrypt(app)
 
 # Initiate database
 db = SQLAlchemy(app)
+
+search = Search(app, db=db)
 
 migrate = Migrate(app, db)
 

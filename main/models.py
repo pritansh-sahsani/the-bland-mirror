@@ -1,4 +1,4 @@
-from main import db, app, login_manager, bcrypt
+from main import db, app, login_manager, bcrypt, search
 from datetime import datetime
 from flask_login import UserMixin
 from flask import current_app
@@ -32,6 +32,8 @@ class User(db.Model, UserMixin):
         return f"User('{self.username}', '{self.email}')"
 
 class Posts(db.Model):
+    __searchable__ = ['title', 'content', 'summary']
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False, unique=True)
     url_title = db.Column(db.String(100), nullable=False, unique=True) 
