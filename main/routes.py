@@ -1,5 +1,4 @@
 import os
-import json
 from operator import attrgetter
 from flask import render_template, url_for, flash, redirect, request
 from main import db, mail, app, bcrypt
