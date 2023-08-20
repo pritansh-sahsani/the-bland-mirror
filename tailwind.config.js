@@ -9,10 +9,13 @@ module.exports = {
       sm: "640px", 
       xsm: "500px",
     },
-    borderWidth: {
-      0.5: "0.5px",
-    },
     extend: {
+      borderWidth: {
+        0.5: "0.5px",
+      },  
+      space: {
+        '5%': '5%',
+      },
       colors: {
         customblue: "#007bff",
       },
@@ -45,6 +48,7 @@ module.exports = {
         "22%": "22%",
         "25%": "25%",
         "30%": "30%",
+        "40%": "40%",
         "47.5%": "47.5%",
         "57%": "57%",
         "50%": "50%",

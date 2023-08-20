@@ -29,14 +29,16 @@
                 $('#read_message{{ message.id }}').on('click', function(e) {
                     e.preventDefault()
                     $.getJSON('{{ url_for("read_message", message_id = message.id) }}',function(data) {});
-                    if ( $('#read_message{{ message.id }}').text() == "Mark As Unread")
+                    
+                    var ImageSrc = $('#read_message_img{{ message.id }}').attr('src');
+                    if ( ImageSrc == '../static/assets/mark_as_read_white.svg')
                     {
-                        $('#read_message{{ message.id }}').text("Mark As Read");
+                            $('#read_message_img{{ message.id }}').attr('src', '../static/assets/mark_as_unread_white.svg');
                         $("#flash_text").text("{{ read_flash }}");
                     }
                     else
                     {
-                        $('#read_message{{ message.id }}').text("Mark As Unread");
+                        $('#read_message_img{{ message.id }}').attr('src', '../static/assets/mark_as_read_white.svg');
                         $("#flash_text").text("{{ unread_flash }}");
                     }
                     $("#flash_text_div").show();
@@ -46,30 +48,30 @@
     </script>
 
     <center>
-        <div class="w-95% hidden md:block">
+        <div>
             {% if msg_len != 0 %}
                 <h3 id="no_msg"></h3>
                 {% for message in messages %}
-                        <div id="message{{ message.id }}">
-                            <p>{{ message.name }}</p>
-                            <p>{{ message.date.strftime("%d %B %Y") }}</p>
-                            <p>{{ message.email }}</p>
-                            <p>{{ message.message }}</p>
+                    <div class="inline-block w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md">
+                        <div class="m-2" id="message{{ message.id }}">
+                            <p class="float-left">By: {{ message.name }}</p>
+                            <p class="float-right">{{ message.date.strftime("%d %B %Y") }}</p><br>
+                            <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ message.message }}</p>
 
                             {% if message.replied == True %}
                                 <p>reply: {{ replies[message.id] }}</p>
                             {% else %}
-                                <a href="{{ url_for('reply_message', message_id = message.id) }}"><button>reply</button></a><br>
+                                <a href="{{ url_for('reply_message', message_id = message.id) }}"><button class="btn btn-primary w-100% xsm:w-fit my-1 xsm:my-0"><p class="h-7">reply</p></button></a>
                                 {% if message.read == True %}
-                                    <button id="read_message{{ message.id }}">Mark As Unread</button><br>
+                                    <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_message{{ message.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_unread_white.svg" id="read_message_img{{ message.id }}"></button>
                                 {% else %}
-                                    <button id="read_message{{ message.id }}">Mark As Read</button><br>
+                                    <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_message{{ message.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_read_white.svg" id="read_message_img{{ message.id }}"></button>
                                 {% endif %}
                             {% endif %}
 
-                            <button id="delete_message{{ message.id }}">Delete Message</button><br>
-                            <hr>
+                            <button class="btn btn-danger w-100% xsm:w-fit my-1 xsm:my-0" id="delete_message{{ message.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/delete-button-white.png"></button>
                         </div>
+                    </div>
                 {% endfor %}
             {% else %}
                 <h3 id="no_msg">No Messages</h3>
