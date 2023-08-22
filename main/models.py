@@ -98,7 +98,8 @@ class MessageReply(db.Model):
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    message = db.Column(db.String(255))
+    url = db.Column(db.String(255), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
 

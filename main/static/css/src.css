@@ -217,12 +217,12 @@ input:focus, textarea:focus, select:focus{
     border-radius: 50%;
   }
   
-  a:link { text-decoration: none; }
-  a:visited { text-decoration: none; }
-  a:hover { text-decoration: none; }
-  a:active { text-decoration: none; }
+  a:link { text-decoration: none !important; }
+  a:visited { text-decoration: none !important; }
+  a:hover { text-decoration: none !important; color:inherit }
+  a:active { text-decoration: none !important; }
   
-  #phone_bottom_navbar{display: none;}
+  #phone_bottom_navbar{display: none !important;}
 
 #notification_icon:hover + #notifications {
     display: block;

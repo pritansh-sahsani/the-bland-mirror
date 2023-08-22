@@ -106,7 +106,7 @@ def post(post_url):
     if post.views % 10 == 0:
         if post.views > 0:
             notification_message = f"Your post '{post.title}' has reached {post.views} views!"
-            notification = Notification(message=notification_message)
+            notification = Notification(message=notification_message, url = url_for('post', post_url = post_url))
             db.session.add(notification)
 
     db.session.commit()
@@ -120,7 +120,7 @@ def post(post_url):
         db.session.add(comment)
 
         notification_message = f"New comment on your post: {post.title}"
-        notification = Notification(message=notification_message)
+        notification = Notification(message=notification_message, url = url_for('post', post_url = post_url))
 
         db.session.add(notification)
 
@@ -154,13 +154,13 @@ def register_like(post_id):
         db.session.commit()
 
         post = Posts.query.filter_by(id=post_id)\
-        .with_entities(Posts.title, Posts.likes)\
+        .with_entities(Posts.title, Posts.likes, Posts.url_title)\
         .first_or_404()
         
         if post.likes % 10 == 0:
             if post.likes > 0:
                 notification_message = f"Your post '{post.title}' has received {post.likes} likes!"
-                notification = Notification(message=notification_message)
+                notification = Notification(message=notification_message, url = url_for('post', post_url = post.url_title))
                 db.session.add(notification)
                 db.session.commit()
 
@@ -196,7 +196,7 @@ def subscribe():
 
             if existing_notification is None:
                 notification_message = "You got 1 new subscriber!"
-                notification = Notification(message=notification_message)
+                notification = Notification(message=notification_message, url ='')
                 db.session.add(notification)
                 db.session.commit()
             else:
@@ -227,7 +227,7 @@ def contact():
 
         if existing_notification is None:
             notification_message = "You got 1 new message!"
-            notification = Notification(message=notification_message)
+            notification = Notification(message=notification_message, url = url_for('view_messages'))
             db.session.add(notification)
             db.session.commit()
         else:
