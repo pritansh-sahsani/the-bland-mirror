@@ -125,21 +125,26 @@
     </div>
     
     <!-- comments -->
+    
     <div class="border-solid border-black rounded-md my-5% items-center border-0.5">
             {% if post.comments == 0 %}
                 <p class="text-center text-base xsm:text-2xl w-80% mt-5% mx-auto"> No Comments Yet. Be The First One To!</p>
             {% else %}
                 <p class="text-center text-base xsm:text-2xl w-80% mt-5% mx-auto">Comments</p>
                 {% for comment in comments %}
-                    <div id="{{comment.id}}comment">
-                        <p class="mt-1 ml-2 text-lg inline">{{ comment.name }}</p>
-                        <p class="text-sm inline">  -  {{ comment.date.strftime("%d %B %Y") }}</p>
-                        
-                        {% if by_user[comment.id] %}
-                            <button  class="float-right mr-1"><img class="h-3" id="delete_comment{{ comment.id }}" src="../static/assets/delete button.png" /></button>
-                        {% endif %}
-
-                        <p class="ml-5 mb-4 text-xl">{{ comment.comment }}</p>
+                    <div class="mx-auto block align-top w-80% md:w-75% mt-2 border-0.5 border-black rounded-md" id="{{comment.id}}comment">
+                        <div class="my-2 mx-3 relative">
+                            <p class="absolute right-0 w-40% break-words text-right">{{ comment.date.strftime("%d %b %Y") }}</p>
+                            <p class="w-40% break-words">{{ comment.name }}</p>
+                            
+                            <div class="my-2 border-0.5 border-black rounded-md relative">
+                                <p class="block inline-block align-top py-2 px-3 text-left w-90% break-words">{{ comment.comment }}</p>
+                                
+                                {% if by_user[comment.id] %}
+                                    <button class="btn btn-danger absolute -top-px -right-px inline-block w-fit max-w-5% align-top mx-auto" id="delete_comment{{ comment.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/delete-button-white.png" /></button>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
             {% endif %}
