@@ -336,6 +336,14 @@ def read_notification(notification_id):
     db.session.commit()
     return redirect(url_for('view_notifications'))
 
+@app.route('/delete_notification/<int:notification_id>', methods=['GET', 'POST'])
+@login_required
+def delete_notification(notification_id):
+    notification = Notification.query.filter_by(id = notification_id).first_or_404()
+    db.session.delete(notification)
+    db.session.commit()
+    return redirect(url_for('view_notifications'))
+
 @app.route("/messages")
 @login_required
 def view_messages():
