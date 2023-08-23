@@ -24,7 +24,7 @@ def index():
     page = request.args.get('page', 1, type=int)
     # get posts data
     posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
-    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .with_entities(Posts.id, Posts.title, Posts.content, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .paginate(page=page, per_page=3)
     no_of_pages = int((posts.total / posts.per_page)+1)
 
@@ -592,11 +592,11 @@ def w_search():
 
     if keyword == '' or keyword is None:
         posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
-        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .with_entities(Posts.id, Posts.title, Posts.content, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
         .paginate(page=page, per_page=3)
     else:
         posts = Posts.query.msearch(keyword).filter_by(is_draft=False).order_by(Posts.created_at.desc())\
-        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .with_entities(Posts.id, Posts.title, Posts.content, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
         .paginate(page=page, per_page=3)
 
     no_of_pages = int((posts.total / posts.per_page)+1)
