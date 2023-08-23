@@ -44,6 +44,47 @@
 					$("#phone_bottom_navbar").toggle();
 				});
 			});
+
+			{% for notification in notifications_in_navbar %}
+				$(function() {
+					$('#read_notification_in_navbar{{ notification.id }}').on('click', function(e) {
+						e.preventDefault()
+						$.getJSON('{{ url_for("read_notification", notification_id = notification.id) }}',function(data) {});
+						var ImageSrc = $('#read_notification_in_navbar_img{{ notification.id }}').attr('src');
+						if ( ImageSrc == '../static/assets/mark_as_read.svg')
+						{
+							$('#read_notification_in_navbar_img{{ notification.id }}').attr('src', '../static/assets/mark_as_unread.svg');
+							$("#flash_text").text("Notification Marked As Unread!");
+						}
+						else
+						{
+							$('#read_notification_in_navbar_img{{ notification.id }}').attr('src', '../static/assets/mark_as_read.svg');
+							$("#flash_text").text("Notification Marked As Read!");
+						}
+						$("#flash_text_div").show();
+					});
+				});
+			{% endfor %}
+			{% for notification in notifications_in_navbar %}
+				$(function() {
+					$('#read_notification_in_pnavbar{{ notification.id }}').on('click', function(e) {
+						e.preventDefault()
+						$.getJSON('{{ url_for("read_notification", notification_id = notification.id) }}',function(data) {});
+						var ImageSrc = $('#read_notification_in_pnavbar_img{{ notification.id }}').attr('src');
+						if ( ImageSrc == '../static/assets/mark_as_read.svg')
+						{
+							$('#read_notification_in_pnavbar_img{{ notification.id }}').attr('src', '../static/assets/mark_as_unread.svg');
+							$("#flash_text").text("Notification Marked As Unread!");
+						}
+						else
+						{
+							$('#read_notification_in_pnavbar_img{{ notification.id }}').attr('src', '../static/assets/mark_as_read.svg');
+							$("#flash_text").text("Notification Marked As Read!");
+						}
+						$("#flash_text_div").show();
+					});
+				});
+			{% endfor %}
 		</script>
 
 
@@ -106,9 +147,7 @@
 												<a href='/notifications' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
 											</td>
 											<td>
-												<a href='{{ url_for("read_notification", notification_id = notification.id) }}'>
-													<img src="../static/assets/mark_as_read.svg" class="inline w-5 ml-4 mr-2 mb-0.5">
-												</a>
+												<button id="read_notification_in_navbar{{ notification.id }}"><img src="../static/assets/mark_as_unread.svg" class="inline w-5 ml-4 mr-2 mb-0.5" id="read_notification_in_navbar_img{{ notification.id }}"></button>
 											</td>
 										</tr>
 									{% endfor %}
@@ -196,9 +235,7 @@
 															<a href='/notifications' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
 														</td>
 														<td>
-															<a href='{{ url_for("read_notification", notification_id = notification.id) }}'>
-																<img src="../static/assets/mark_as_read.svg" class="inline w-5 ml-4 mr-2 mb-0.5">
-															</a>
+															<button id="read_notification_in_pnavbar{{ notification.id }}"><img src="../static/assets/mark_as_unread.svg" class="inline w-5 ml-4 mr-2 mb-0.5" id="read_notification_in_pnavbar_img{{ notification.id }}"></button>
 														</td>
 													</tr>
 												{% endfor %}

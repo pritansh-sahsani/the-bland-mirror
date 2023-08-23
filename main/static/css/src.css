@@ -222,7 +222,7 @@ input:focus, textarea:focus, select:focus{
   a:hover { text-decoration: none !important; color:inherit }
   a:active { text-decoration: none !important; }
   
-  #phone_bottom_navbar{display: none !important;}
+  #phone_bottom_navbar{display: none;}
 
 #notification_icon:hover + #notifications {
     display: block;

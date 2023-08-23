@@ -34,12 +34,12 @@
                     if ( ImageSrc == '../static/assets/mark_as_read_white.svg')
                     {
                             $('#read_message_img{{ message.id }}').attr('src', '../static/assets/mark_as_unread_white.svg');
-                        $("#flash_text").text("{{ read_flash }}");
+                        $("#flash_text").text("{{ unread_flash }}");
                     }
                     else
                     {
                         $('#read_message_img{{ message.id }}').attr('src', '../static/assets/mark_as_read_white.svg');
-                        $("#flash_text").text("{{ unread_flash }}");
+                        $("#flash_text").text("{{ read_flash }}");
                     }
                     $("#flash_text_div").show();
                 });

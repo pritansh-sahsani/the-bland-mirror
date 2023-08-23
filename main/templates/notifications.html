@@ -17,12 +17,12 @@
                 if ( ImageSrc == '../static/assets/mark_as_read_white.svg')
                 {
                     $('#read_notification_img{{ notification.id }}').attr('src', '../static/assets/mark_as_unread_white.svg');
-                    $("#flash_text").text("{{ read_flash }}");
+                    $("#flash_text").text("{{ unread_flash }}");
                 }
                 else
                 {
                     $('#read_notification_img{{ notification.id }}').attr('src', '../static/assets/mark_as_read_white.svg');
-                    $("#flash_text").text("{{ unread_flash }}");
+                    $("#flash_text").text("{{ read_flash }}");
                 }
                 $("#flash_text_div").show();
             });
@@ -35,19 +35,18 @@
         {% if no_notifications == False %}
             {% for notification in notifications %}
                 <div class="block align-top w-100% md:w-50% mt-2 border-0.5 border-black rounded-md" id="notification{{ notification.id }}">
-                    <a href="{{ notification.url }}">
-                        <div class="m-2">
+                    <div class="m-2">
+                        <a href="{{ notification.url }}">
                             <p class="float-right">{{ notification.date.strftime("%d %B %Y") }}</p></br>
 
                             <p class="my-2 py-2 px-2 text-left border-0.5 border-black rounded-md">{{ notification.message }}</p>
-                            
-                            {% if notification.is_read == True %}
-                                <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_notification{{ notification.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_unread_white.svg" id="read_notification_img{{ notification.id }}"></button>
-                            {% else %}
-                                <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_notification{{ notification.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_read_white.svg" id="read_notification_img{{ notification.id }}"></button>
-                            {% endif %}
-                        </div>
-                    </a>
+                        </a>
+                        {% if notification.is_read == True %}
+                            <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_notification{{ notification.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_read_white.svg" id="read_notification_img{{ notification.id }}"></button>
+                        {% else %}
+                            <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_notification{{ notification.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_unread_white.svg" id="read_notification_img{{ notification.id }}"></button>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
         {% else %}
