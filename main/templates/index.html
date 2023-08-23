@@ -7,6 +7,11 @@
 {% block main %}
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">  
+    </script>  
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">  
+    </script>
     <!-- script for likes -->
     <script type=text/javascript>
         $(function() {
@@ -29,6 +34,17 @@
                     return false;
                 });
             {% endfor %}
+        });
+        $(function() {
+            var availableTags = [];
+            {% for post in posts.items %}
+                var plainContent = $("<div>").html('{{ post.content|safe }}').text();  // Extract plain text from HTML content
+                p = "{{ post.title | safe }}: " + plainContent;
+                availableTags.push(p);
+            {% endfor %}
+            $( "#search-navbar" ).autocomplete({
+            source: availableTags
+            });
         });
     </script>
 
