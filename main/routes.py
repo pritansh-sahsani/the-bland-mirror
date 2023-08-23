@@ -320,13 +320,14 @@ def view_notifications():
 
     read_flash = "Notification Marked As Read Successfully!"
     unread_flash = "Notification Marked As Unread Successfully!"
+    del_flash = "Notification Deleted successfully!"
 
     if len(notifications) == 0:
-        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, no_notifications=True, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, del_flash=del_flash, no_notifications=True, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
     else:
         notifications.sort(key=attrgetter('date'), reverse=True)
         notifications.sort(key=attrgetter('is_read'))
-        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, notifications=notifications, no_notifications=False, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, del_flash=del_flash, notifications=notifications, no_notifications=False, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/read_notification/<string:notification_id>', methods=['GET', 'POST'])
 @login_required

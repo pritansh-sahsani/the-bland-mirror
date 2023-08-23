@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Messages
+    Notifications
 {% endblock %}
 
 {% block main %}
@@ -27,11 +27,28 @@
                 $("#flash_text_div").show();
             });
         });
+        $(function() {
+                $('#delete_notification{{ notification.id }}').on('click', function(e) {
+                    e.preventDefault()
+                    $.getJSON('{{ url_for("delete_notification", notification_id = notification.id) }}',function(data) {});
+                    $("#notification{{ notification.id }}").hide();
+                    
+                    $("#flash_text").text("{{ del_flash }}");
+                    $("#flash_text_div").show();
+                    
+                    msg_len = msg_len-1;
+                    if(msg_len==0)
+                    {
+                        $('#no_msg').text("No notifications");
+                    }
+                });
+            });
     {% endfor %}
 </script>
 
 <center>
     <div class="w-95%">
+        <h3 id="no_msg"></h3>
         {% if no_notifications == False %}
             {% for notification in notifications %}
                 <div class="block align-top w-100% md:w-50% mt-2 border-0.5 border-black rounded-md" id="notification{{ notification.id }}">
@@ -46,6 +63,7 @@
                         {% else %}
                             <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_notification{{ notification.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_unread_white.svg" id="read_notification_img{{ notification.id }}"></button>
                         {% endif %}
+                        <button class="btn btn-danger w-100% xsm:w-fit my-1 xsm:my-0" id="delete_notification{{ notification.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/delete-button-white.png"></button>
                     </div>
                 </div>
             {% endfor %}
