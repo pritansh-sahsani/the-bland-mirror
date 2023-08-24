@@ -108,39 +108,54 @@
         {% endfor %}
         <div>
             {% if no_of_pages > 7 %}
-                {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
-                    {% if page_num %}
+                <ul class="pagination justify-content-center">
+                    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+                        {% if page_num %}
 
-                        {% if page_num == no_of_pages and posts.page != no_of_pages %}
-                            <a href="{{ url_for('index', page=posts.page+1) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pb-1 pagination_font_arrows">></button></a>
-                            <a href="{{ url_for('index', page=page_num) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pagination_font">{{ page_num }}</button></a>
-                        {% else %}
-
-                            {% if posts.page == page_num %}
-                                <button class="bg-slate-900 border-0.5 rounded-lg h-10 w-10 text-white mx-1 border-none pagination_font">{{ page_num }}</button>
+                            {% if page_num == no_of_pages-1 and posts.page != no_of_pages-1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('index', page=posts.page+1) }}">&rarr;</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                                </li>
                             {% else %}
-                                <a href="{{ url_for('index', page=page_num) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pagination_font">{{ page_num }}</button></a>
+
+                                {% if posts.page == page_num %}
+                                <li class="page-item active" aria-current="page">
+                                    <button class="page-link">{{ page_num }}</button>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                                {% endif %}
+
+                            {% endif %}
+
+                            {% if page_num == 1 and posts.page != 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('index', page=posts.page-1) }}">&larr;</a>
+                                </li>
                             {% endif %}
 
                         {% endif %}
-
-                        {% if page_num == 1 and posts.page != 1 %}
-                            <a href="{{ url_for('index', page=posts.page-1) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pb-1 pagination_font_arrows">&lt</button></a>
-                        {% endif %}
-
-                    {% endif %}
-                {% endfor %}
-
+                    {% endfor %}
+                </ul>
             {% else %}
-            
-                {% for page_num in posts.iter_pages(left_current=7, right_current=8) %}
-                    {% if posts.page == page_num %}
-                        <button class="bg-slate-900 border-0.5 rounded-lg h-10 w-10 text-white mx-1 border-none pagination_font">{{ page_num }}</button>
-                    {% else %}
-                        <a href="{{ url_for('index', page=page_num) }}"><button class="border-slate-900 border-0.5 rounded-lg h-10 w-10 mx-1 pagination_font">{{ page_num }}</button></a>
-                    {% endif %}
-                {% endfor %}
-                
+                <ul class="pagination justify-content-center">
+                    {% for page_num in posts.iter_pages(left_current=7, right_current=8) %}
+                        {% if posts.page == page_num %}
+                            <li class="page-item active" aria-current="page">
+                                <button class="page-link">{{ page_num }}</button>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a href="{{ url_for('index', page=page_num) }}"><button class="page-link">{{ page_num }}</button></a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
             {% endif %}
 
         </div>
