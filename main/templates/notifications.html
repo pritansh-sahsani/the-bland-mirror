@@ -8,6 +8,7 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type=text/javascript>
+    var notif_len = {{ notif_len }};
     {% for notification in notifications %}
         $(function() {
             $('#read_notification{{ notification.id }}').on('click', function(e) {
@@ -36,10 +37,11 @@
                     $("#flash_text").text("{{ del_flash }}");
                     $("#flash_text_div").show();
                     
-                    msg_len = msg_len-1;
-                    if(msg_len==0)
+                    notif_len = notif_len-1;
+                    if(notif_len==0)
                     {
-                        $('#no_msg').text("No notifications");
+                        $('#no_notif').text("No notifications");
+					    $("#no_notif").toggle();
                     }
                 });
             });
@@ -48,7 +50,7 @@
 
 <center>
     <div class="w-95%">
-        <h3 id="no_msg"></h3>
+        <h3 id="no_notif" class="hidden my-3 text-4xl"></h3>
         {% if no_notifications == False %}
             {% for notification in notifications %}
                 <div class="block align-top w-100% md:w-50% mt-2 border-0.5 border-black rounded-md" id="notification{{ notification.id }}">
@@ -68,7 +70,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <h3>No Notifications</h3>
+            <h3 class="my-3 text-4xl">No Notifications</h3>
         {% endif %}
     </div>
 </center>

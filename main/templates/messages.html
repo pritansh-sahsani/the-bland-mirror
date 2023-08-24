@@ -22,6 +22,7 @@
                     if(msg_len==0)
                     {
                         $('#no_msg').text("No Messages");
+					    $("#no_msg").toggle();
                     }
                 });
             });
@@ -50,7 +51,7 @@
     <center>
         <div>
             {% if msg_len != 0 %}
-                <h3 id="no_msg"></h3>
+                <h3 id="no_msg" class="hidden my-3 text-4xl"></h3>
                 {% for message in messages %}
                     <div class="inline-block w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md">
                         <div class="m-2" id="message{{ message.id }}">
@@ -74,7 +75,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <h3 id="no_msg">No Messages</h3>
+                <h3 class="my-3 text-4xl">No Messages</h3>
             {% endif %}
         </div>
     </center>
