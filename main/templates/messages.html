@@ -53,14 +53,14 @@
             {% if msg_len != 0 %}
                 <h3 id="no_msg" class="hidden my-3 text-4xl"></h3>
                 {% for message in messages %}
-                    <div class="inline-block w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md">
-                        <div class="m-2" id="message{{ message.id }}">
+                    <div class="inline-block w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md" id="message{{ message.id }}">
+                        <div class="m-2">
                             <p class="float-left">By: {{ message.name }}</p>
                             <p class="float-right">{{ message.date.strftime("%d %B %Y") }}</p><br>
                             <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ message.message }}</p>
 
                             {% if message.replied == True %}
-                                <p>reply: {{ replies[message.id] }}</p>
+                                <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ replies[message.id] }}</p>
                             {% else %}
                                 <a href="{{ url_for('reply_message', message_id = message.id) }}"><button class="btn btn-primary w-100% xsm:w-fit my-1 xsm:my-0"><p class="h-7">reply</p></button></a>
                                 {% if message.read == True %}
