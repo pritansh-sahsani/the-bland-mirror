@@ -12,7 +12,7 @@
     
         var p_posts_len = {{ p_posts_len }}
         var d_posts_len = {{ d_posts_len }}
-        var is_draft_posts = false
+        var published_shown = true
         {% for post in draft_posts %}
             $(function() {
                 $('#delete_post{{ post.id }}').on('click', function(e) {
@@ -26,6 +26,7 @@
                     if(d_posts_len==0)
                     {
                         $('#no_draft_posts').text("No Draft Posts");
+                        $('#no_draft_posts').toggle();
                     }
                 });
             });
@@ -44,109 +45,119 @@
                     if(p_posts_len==0)
                     {
                         $('#no_published_posts').text("No Published Posts");
+                        $('#no_published_posts').toggle();
                     }
                 });
             });
         {% endfor %}
 
 			$(function() {
-				$('#switch_post_type').on('click', function(e) {		
-					$("#published_posts").toggle();		
-					$("#draft_posts").toggle();
-                    if(is_draft_posts)
-                    {
-                        $('#switch_post_type').text("Show Draft Posts");
-                        is_draft_posts = false
+				$('#show_published').on('click', function(e) {
+                    if(! published_shown)
+                    {		
+                        $("#published_posts").toggle();		
+                        $("#draft_posts").toggle();
                     }
-                    else
-                    {
-                        $('#switch_post_type').text("Show Published Posts");
-                        is_draft_posts = true
+				});
+				$('#show_drafts').on('click', function(e) {
+                    if(published_shown)
+                    {		
+                        $("#published_posts").toggle();		
+                        $("#draft_posts").toggle();
+                        published_shown = false;
                     }
 				});
 			});
     </script>
-    <center>
-        <button class="mb-5" id="switch_post_type">Show Draft Posts</button>
 
-        <div id="published_posts">
+    
+    <div class="my-5">
+        <button class="underline-btn text-2xl ml-0" id="show_published">Published</button>
+        <button class="underline-btn text-2xl ml-8 960:ml-14" id="show_drafts">Drafts</button>
+        <hr class="mx-auto border-black">
+    </div>
+
+    <div id="published_posts">
+        <h3 id="no_published_posts" class="hidden w-100% text-center my-3 text-4xl"></h3>
             {% if p_posts_len != 0 %}
-                <h3 id="no_published_posts">Published Posts</h3>
                 {% for post in published_posts %}
-                    <div id="post{{ post.id }}">
-                        <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
-                        <p>{{ post.title }}</p>
-                        <p>{{ post.summary }}</p>
-                        
-                        {% if post.views == 1 %}
-                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
-                        {% else %}
-                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
-                        {% endif %}
+                    <div class="w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md mx-auto" id="post{{ post.id }}">
+                        <div class="m-2"><a href="{{ url_for('post', post_url=post.url_title) }}">
+                            <p class="float-right">{{ post.created_at.strftime("%d %B %Y") }}</p>
+                            <p class="">{{ post.title }}</p>
+                            <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ post.summary }}</p></a>
+                            <div class="w-100% flex mb-2">
+                                {% if post.views == 1 %}
+                                    <p class="m-0 w-1/3">{{ post.views }} view</p>
+                                {% else %}
+                                    <p class="m-0 w-1/3">{{ post.views }} views</p>
+                                {% endif %}
+                                    {% if post.comments == 1 %}
+                                        <p class="m-0 w-1/3 text-center">{{ post.comments }} comment</p>
+                                    {% else %}
+                                        <p class="m-0 w-1/3 text-center">{{ post.comments }} comments</p>
+                                    {% endif %} 
+                                {% if post.likes == 1 %}
+                                    <p class="m-0 w-1/3 text-right">{{ post.likes }} like</p>
+                                {% else %}
+                                    <p class="m-0 w-1/3 text-right">{{ post.likes }} likes</p>
+                                {% endif %}
+                            </div>
 
-                        {% if post.comments == 1 %}
-                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
-                        {% else %}
-                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
-                        {% endif %} 
-                        
-                        {% if post.comments == 1 %}
-                            <p class="ml-5 inline-block text-sm">{{ post.likes }} like</p>
-                        {% else %}
-                            <p class="ml-5 inline-block text-sm">{{ post.likes }} likes</p>
-                        {% endif %} 
-                        <br>
-                        <button id="delete_post{{ post.id }}">Delete Post</button>
-                        <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button></a>
-                        <hr>
+                            <div class="w-100% text-center">
+                                <button  class="btn btn-danger w-100% xsm:w-fit my-1 xsm:my-0" id="delete_post{{ post.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/delete-button-white.png"></button>
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}"><button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0"><img class="w-7 h-7 mx-auto" src="../static/assets/edit-icon-white.svg"></button></a>
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
             {% else %}
-                    <h3 id="no_published_posts">No Published Posts</h3>
-            {% endif %}
-        </div>
+                    <h3 id="no_published_posts" class="w-100% text-center text-4xl">No Published Posts</h3>
+        {% endif %}
+    </div>
         
-        <div id="draft_posts">
-            {% if d_posts_len != 0 %}
-                <h3 id="no_draft_posts">Draft Posts</h3>
-                {% for post in draft_posts %}
-                    <div id="post{{ post.id }}">
-                        <p>{{ post.created_at.strftime("%d %B %Y") }}</p>
-                        <p>{{ post.title }}</p>
-                        <p>{{ post.summary }}</p>
-                        
-                        {% if post.views == 1 %}
-                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
-                        {% else %}
-                            <p class="ml-0.5 inline-block text-sm">{{ post.views }} views</p>
-                        {% endif %}
+    <div id="draft_posts">
+        <h3 class="hidden w-100% text-center text-4xl" id="no_draft_posts"></h3>
+        {% if d_posts_len != 0 %}
+            {% for post in draft_posts %}
+                <div class="w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md mx-auto" id="post{{ post.id }}">
+                    <div class="m-2"><a href="{{ url_for('post', post_url=post.url_title) }}">
+                        <p class="float-right">{{ post.created_at.strftime("%d %B %Y") }}</p>
+                        <p class="">{{ post.title }}</p>
+                        <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ post.summary }}</p></a>
+                        <div class="w-100% flex mb-2">
+                            {% if post.views == 1 %}
+                                <p class="m-0 w-1/3">{{ post.views }} view</p>
+                            {% else %}
+                                <p class="m-0 w-1/3">{{ post.views }} views</p>
+                            {% endif %}
+                                {% if post.comments == 1 %}
+                                    <p class="m-0 w-1/3 text-center">{{ post.comments }} comment</p>
+                                {% else %}
+                                    <p class="m-0 w-1/3 text-center">{{ post.comments }} comments</p>
+                                {% endif %} 
+                            {% if post.likes == 1 %}
+                                <p class="m-0 w-1/3 text-right">{{ post.likes }} like</p>
+                            {% else %}
+                                <p class="m-0 w-1/3 text-right">{{ post.likes }} likes</p>
+                            {% endif %}
+                        </div>
 
-                        {% if post.comments == 1 %}
-                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comment</p>
-                        {% else %}
-                            <p class="ml-5 inline-block text-sm">{{ post.comments }} comments</p>
-                        {% endif %} 
-                        
-                        {% if post.comments == 1 %}
-                            <p class="ml-5 inline-block text-sm">{{ post.likes }} like</p>
-                        {% else %}
-                            <p class="ml-5 inline-block text-sm">{{ post.likes }} likes</p>
-                        {% endif %} 
-                        <br>
-                        <button id="delete_post{{ post.id }}">Delete Post</button>
-                        <a href="{{ url_for('edit_post', post_id=post.id) }}"><button>Edit Post</button></a>
-                        <hr>
+                        <div class="w-100% text-center">
+                            <button  class="btn btn-danger w-100% xsm:w-fit my-1 xsm:my-0" id="delete_post{{ post.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/delete-button-white.png"></button>
+                            <a href="{{ url_for('edit_post', post_id=post.id) }}"><button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0"><img class="w-7 h-7 mx-auto" src="../static/assets/edit-icon-white.svg"></button></a>
+                        </div>
                     </div>
-                {% endfor %}
-            {% else %}
-                    <h3 id="no_draft_posts">No Draft Posts</h3>
-            {% endif %}
-        </div>
-    </center>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h3 class="w-100% text-center text-4xl">No Draft Posts</h3>
+        {% endif %}
+    </div>
 
     <!-- create new post button -->
     <div class="z-10 fixed bottom-5 right-5% bg-blue-600 w-15 h-15 rounded-2xl">
-        <a class="navbar-link" href="/create_post">
+        <a href="/create_post">
             <img src="../static/assets/new_post_button.svg">
 		</a>
     </div>
