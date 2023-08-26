@@ -5,31 +5,30 @@
 {% endblock %}
 
 {% block main %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type=text/javascript>
-    
-    function raise_error() {
-        {% if subscriber_form.email.errors %} 
-            {% for error in subscriber_form.email.errors %}
-                $("#flash_text").text("{{error}}");
-                $("#flash_text_div").show();
-            {% endfor %}
-        {% endif %}
-    }
-    setInterval('raise_error()', 1);
-</script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        
+        function raise_error() {
+            {% if subscriber_form.email.errors %} 
+                {% for error in subscriber_form.email.errors %}
+                    $("#flash_text").text("{{error}}");
+                    $("#flash_text_div").show();
+                {% endfor %}
+            {% endif %}
+        }
+        setInterval('raise_error()', 1);
+    </script>
 
-<!-- subscribe form -->
-<div class="border-solid border-black rounded-md my-5% items-center border-0.5">
-    <p class="text-center text-base xsm:text-2xl w-80% mt-5% mb-2% mx-auto">Subscribe to the blog to receive updates on the latest posts!</p>
-    <form action='' method="POST" class="w-80% mx-auto">
-        <div class="w-100%">
-                        {{ subscriber_form.hidden_tag() }}
-
-                        {{ subscriber_form.email(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg", placeholder="Email Address") }} 
-                        {{ subscriber_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl bg-customblue") }}
-                    </div>
-                </form>
+    <!-- subscribe form -->
+    <div class="border-solid border-black rounded-md my-5% items-center border-0.5">
+        <p class="text-center text-base xsm:text-2xl w-80% mt-5% mb-2% mx-auto">Subscribe to the blog to receive updates on the latest posts!</p>
+        <form action='' method="POST" class="w-80% mx-auto">
+            <div class="w-100%">
+                {{ subscriber_form.hidden_tag() }}
+                {{ subscriber_form.email(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg", placeholder="Email Address") }} 
+                {{ subscriber_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl bg-customblue") }}
             </div>
-            
+        </form>
+    </div>
+                
 {% endblock main %}
