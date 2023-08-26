@@ -40,8 +40,7 @@
         $(function() {
             var availableTags = [];
             {% for post in posts.items %}
-                var plainContent = $("<div>").html('{{ post.content|safe }}').text();  // Extract plain text from HTML content
-                p = "{{ post.title | safe }}: " + plainContent;
+                p = "{{ post.title | safe }}"
                 availableTags.push(p);
             {% endfor %}
             $( "#search-navbar" ).autocomplete({
