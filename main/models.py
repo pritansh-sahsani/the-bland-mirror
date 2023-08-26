@@ -38,7 +38,7 @@ class Posts(db.Model):
     title = db.Column(db.String(100), nullable=False, unique=True)
     url_title = db.Column(db.String(100), nullable=False, unique=True) 
     content = db.Column(db.String(1000000), nullable=False)
-    summary= db.Column(db.String(140), nullable=False)
+    summary= db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     cover_img = db.Column(db.String(104), nullable=False)
     views = db.Column(db.Integer, nullable=False, default=0)

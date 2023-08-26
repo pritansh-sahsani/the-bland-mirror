@@ -36,7 +36,7 @@ class LoginForm(FlaskForm):
 class CommentForm(FlaskForm):
     text=StringField('Comment', validators=[Length(min=1, max=200, message=min_max_error_message.format(field='Comment', min='%(min)d', max='%(max)d'))])
     name=StringField('Name', validators=[Length(min=1, max=50, message=min_max_error_message.format(field='Name', min='%(min)d', max='%(max)d'))])
-    submit = SubmitField('Send')
+    submit = SubmitField('Comment')
 
 class SubscribeForm(FlaskForm):
     email = StringField('Email', validators=[Length(min=1, max=120, message=min_max_error_message.format(field='Message', min='%(min)d', max='%(max)d')), Email()])
