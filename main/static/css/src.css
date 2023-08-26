@@ -234,3 +234,12 @@ input:focus, textarea:focus, select:focus{
 
 
 #draft_posts{display: none;}
+
+@-moz-document url-prefix() {
+    #website-logo {
+        margin-top:-38px;
+    }
+    #navbar-hr {
+        margin: -6px !important;
+    }
+}
