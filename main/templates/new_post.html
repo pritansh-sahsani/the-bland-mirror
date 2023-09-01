@@ -6,11 +6,8 @@
 
 {% block main %}
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type=text/javascript>
-    $("#img_input").change(function() {
-        $("#img_input_label").text();
-    });
     function raise_error() {
         {% if post_form.content.errors %} 
             {% for error in post_form.content.errors %}
@@ -63,6 +60,13 @@
 
     }
     setInterval('raise_error()', 1);
+
+    $(document).ready(function() {
+            $('input[type="file"]').change(function(e) {
+                var filename = e.target.files[0].name;
+               $("#file-upload_label").text(filename); 
+            });
+        });
 </script>
 
     <div class="border-solid border-black rounded-md my-5% items-center border-0.5">
@@ -77,8 +81,8 @@
                 {{ post_form.summary(class="text-base w-100% border-0.5 border-black text-center py-1% rounded-lg mt-3% sm:mt-2% ", placeholder="Summary (max 200 characters)" )}} 
                 
                 <div class="custom-file mt-3% sm:mt-2%">
-                    {{ post_form.cover_img(class="custom-file-input", id="img_input") }}
-                    <label class="custom-file-label" id="img_input_label" for="img_input">Upload Cover Image</label>
+                    <label class="custom-file-label" id="file-upload_label" for="file-upload">Upload Cover Image</label>
+                    {{ post_form.cover_img(class="custom-file-input", id="file-upload", type="file") }}
                 </div>
 
                 <h3 class="w-100% text-center text-xl mt-3% sm:mt-2%">Related Posts</h3>

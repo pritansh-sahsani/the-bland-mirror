@@ -153,13 +153,10 @@
 
             <form action='' method="POST" class="w-80% mx-auto">
                 {{ comment_form.hidden_tag() }}
-                <!-- <div class="border-slate-500 border-0.5"> -->
-            
                     {{ comment_form.name(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg sm:w-47.5% sm:inline", placeholder="Name") }} 
                     {{ comment_form.text(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg mt-3% sm:mt-0 sm:w-47.5% sm:inline sm:float-right", placeholder="Add a comment...") }} 
                     
                     {{ comment_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl bg-customblue") }}
-                <!-- </div> -->
               </form>
         </div>
     </div>
