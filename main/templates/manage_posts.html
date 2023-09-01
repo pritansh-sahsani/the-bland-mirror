@@ -70,11 +70,28 @@
 			});
     </script>
 
-    
+
     <div class="my-5">
         <button class="underline-btn text-2xl ml-0" id="show_published">Published</button>
         <button class="underline-btn text-2xl ml-8 960:ml-14" id="show_drafts">Drafts</button>
-        <hr class="mx-auto border-black">
+        <hr class="mx-auto border-black mb-3">
+        <div class="w-100% items-right">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="sort_by">Sort By</label>
+                </div>
+                <select class="custom-select" id="sort_by">
+                    <option selected value="latest">Latest</option>
+                    <option value="views">Views</option>
+                    <option value="likes">Likes</option> 
+                    <option value="comments">Comments</option>  
+                </select>
+                <select class="custom-select" id="sort_by_direction">
+                    <option selected value="ascending">Ascending</option>
+                    <option value="decending">Decending</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <div id="published_posts">

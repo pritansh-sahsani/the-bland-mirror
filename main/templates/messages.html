@@ -48,6 +48,38 @@
         {% endfor %}
     </script>
 
+<div class="w-100% items-right">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text" for="sort_by">Sort By</label>
+        </div>
+        <select class="custom-select" id="sort_by">
+            <option selected value="latest">Latest</option>
+            <option value="read">Read</option>
+            <option value="replied">Replied</option>  
+        </select>
+        <select class="custom-select" id="sort_by_direction">
+            <option selected value="ascending">Ascending</option>
+            <option value="decending">Decending</option>
+        </select>
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text" for="filter_by">Filter By</label>
+        </div>
+        <select class="custom-select" id="filter_by">
+            <option value="all">None</option>
+            <option value="latest">Latest</option>
+            <option value="oldest">Oldest</option>
+            <option value="read">Read</option>
+            <option value="unread">Unread</option>
+            <option value="replied">Replied</option>
+            <option value="notreplied">Not replied</option>
+        </select>
+    </div>
+</div>
+
+
     <center>
         <div>
             {% if msg_len != 0 %}
