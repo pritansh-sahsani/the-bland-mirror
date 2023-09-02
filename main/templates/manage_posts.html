@@ -53,10 +53,11 @@
 
 			$(function() {
 				$('#show_published').on('click', function(e) {
-                    if(! published_shown)
+                    if(!published_shown)
                     {		
                         $("#published_posts").toggle();		
                         $("#draft_posts").toggle();
+                        published_shown = true;
                     }
 				});
 				$('#show_drafts').on('click', function(e) {
