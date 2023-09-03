@@ -72,7 +72,6 @@
             {% for relatedPost in related_posts %}
                 $(function() {
                     $('#like_button_{{ relatedPost.id }}').on('click', function(e) {
-                        console.log("hello")
                         e.preventDefault();
                         $.getJSON('{{ url_for("register_like", post_id=relatedPost.id) }}', function(data) {});
 
