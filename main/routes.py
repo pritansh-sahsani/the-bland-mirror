@@ -5,19 +5,10 @@ from main import db, mail, app, bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
 from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User, Notification
 from main.forms import CommentForm, SubscribeForm, ContactForm, PostForm, MessageReplyForm, RegistrationForm, LoginForm
+from main.helpers import get_notification_for_navbar
 from flask_mail import Message
 from sqlalchemy.sql.expression import func
 import re
-
-# helper functions
-def get_notification_for_navbar():
-    notifications_in_navbar = Notification.query.filter_by(is_read = False)\
-    .order_by(Notification.date.desc())\
-    .limit(5)\
-    .all()
-    no_notifications = True if len(notifications_in_navbar) == 0 else False
-
-    return notifications_in_navbar, no_notifications
 
 @app.route("/", methods=["GET", "POST"])
 def index():
