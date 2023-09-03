@@ -46,39 +46,71 @@
                 });
             });
     {% endfor %}
+    
+    function getUrlVars(){
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        $(function() {
+            $('#apply').on('click', function(e) {
+                var sort = $("#sort").val();
+                var sort_direction = $("#sort_direction").val();
+                var filter = $("#filter").val();
+                window.location = "/notifications?sort="+sort+"&sort_direction="+sort_direction+"&filter="+filter;
+            });
+        });
+        $(document).ready(function(){
+            vars= getUrlVars();
+            $("#sort").val(vars['sort']).change();
+            $("#filter").val(vars['filter']).change();
+            $("#sort_direction").val(vars['sort_direction']).change();
+        });
+        $(function() {
+            $('#show_sort_div').on('click', function(e) {
+                if ($("#sort_div").css("display") == "none")
+                {
+                    $("#sort_div").css("display", "flex");
+                    $("#apply").css("display", "inline-block");
+                    $("#show_sort_div").addClass("xsm:float-right");
+                    $("#show_sort_div").addClass("xsm:w-47.5%");
+                    $("#show_sort_div").text("Hide Sort and Filter");
+                }
+                else{
+                    $("#sort_div").css("display", "none");
+                    $("#apply").css("display", "none");
+                    $("#show_sort_div").removeClass("xsm:float-right");
+                    $("#show_sort_div").removeClass("xsm:w-47.5%");
+                    $("#show_sort_div").text("Show Sort and Filter");
+                }
+            });
+        });
 </script>
 
-<div class="w-100% items-right">
-    <div class="input-group mb-3">
+<div class="w-100% md:w-80% 880:w-47.5% md:mx-auto">
+    <div class="input-group mb-2" id="sort_div">
         <div class="input-group-prepend">
-            <label class="input-group-text" for="sort_by">Sort By</label>
+            <label class="input-group-text" for="sort">Sort By</label>
         </div>
-        <select class="custom-select" id="sort_by">
-            <option selected value="latest">Latest</option>
-            <option value="read">Read</option>
+        <select class="custom-select" id="sort">
+            <option value="date">Latest</option>
+            <option value="is_read">Read</option>
         </select>
-        <select class="custom-select" id="sort_by_direction">
-            <option selected value="ascending">Ascending</option>
-            <option value="decending">Decending</option>
+        <select class="custom-select" id="sort_direction">
+            <option value="false">Ascending</option>
+            <option value="true">Decending</option>
         </select>
     </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <label class="input-group-text" for="filter_by">Filter By</label>
-        </div>
-        <select class="custom-select" id="filter_by">
-            <option value="all">None</option>
-            <option value="latest">Latest</option>
-            <option value="oldest">Oldest</option>
-            <option value="read">Read</option>
-            <option value="unread">Unread</option>
-            <option value="replied">Views Notification</option>
-            <option value="replied">Likes Notification</option>
-            <option value="notreplied">Comments Notification</option>
-            <option value="notreplied">Subscriber Notification</option>
-            <option value="notreplied">Messages Notification</option>
-        </select>
-    </div>
+    <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sort and Filter</button>
+
+    <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sort and Filter</button>
 </div>
 
 <center>

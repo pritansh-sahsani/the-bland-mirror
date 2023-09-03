@@ -51,47 +51,98 @@
             });
         {% endfor %}
 
-			$(function() {
-				$('#show_published').on('click', function(e) {
-                    if(!published_shown)
-                    {		
-                        $("#published_posts").toggle();		
-                        $("#draft_posts").toggle();
-                        published_shown = true;
-                    }
-				});
-				$('#show_drafts').on('click', function(e) {
-                    if(published_shown)
-                    {		
-                        $("#published_posts").toggle();		
-                        $("#draft_posts").toggle();
-                        published_shown = false;
-                    }
-				});
+		$(function() {
+		    $('#show_published').on('click', function(e) {
+                if(!published_shown){		
+                    $("#published_posts").toggle();		
+                    $("#draft_posts").toggle();
+                    published_shown = true;
+                }
 			});
+        });
+
+        $(function() {
+			$('#show_drafts').on('click', function(e) {
+                if(published_shown){		
+                    $("#published_posts").toggle();		
+                    $("#draft_posts").toggle();
+                    published_shown = false;
+                }
+			});
+        });
+        
+        function getUrlVars(){
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        $(function() {
+            $('#apply').on('click', function(e) {
+                var sort = $("#sort").val();
+                var sort_direction = $("#sort_direction").val();
+                var filter = $("#filter").val();
+                window.location = "/manage_posts?sort="+sort+"&sort_direction="+sort_direction+"&filter="+filter;
+            });
+        });
+        $(document).ready(function(){
+            vars= getUrlVars();
+            $("#sort").val(vars['sort']).change();
+            $("#filter").val(vars['filter']).change();
+            $("#sort_direction").val(vars['sort_direction']).change();
+        });
+        $(function() {
+            $('#show_sort_div').on('click', function(e) {
+                if ($("#sort_div").css("display") == "none")
+                {
+                    $("#sort_div").css("display", "flex");
+                    $("#apply").css("display", "inline-block");
+                    $("#show_sort_div").addClass("xsm:float-right");
+                    $("#show_sort_div").addClass("xsm:w-47.5%");
+                    $("#show_sort_div").text("Hide Sort and Filter");
+                }
+                else{
+                    $("#sort_div").css("display", "none");
+                    $("#apply").css("display", "none");
+                    $("#show_sort_div").removeClass("xsm:float-right");
+                    $("#show_sort_div").removeClass("xsm:w-47.5%");
+                    $("#show_sort_div").text("Show Sort and Filter");
+                }
+            });
+        });
     </script>
 
 
-    <div class="my-5">
+    <div class="mt-5 mb-3">
         <button class="underline-btn text-2xl ml-0" id="show_published">Published</button>
         <button class="underline-btn text-2xl ml-8 960:ml-14" id="show_drafts">Drafts</button>
         <hr class="mx-auto border-black mb-3">
-        <div class="w-100% items-right">
-            <div class="input-group mb-3">
+        
+        <div class="w-100% md:w-80% 880:w-47.5% md:mx-auto">
+            <div class="input-group mb-2" id="sort_div">
                 <div class="input-group-prepend">
-                    <label class="input-group-text" for="sort_by">Sort By</label>
+                    <label class="input-group-text" for="sort">Sort By</label>
                 </div>
-                <select class="custom-select" id="sort_by">
-                    <option selected value="latest">Latest</option>
+                <select class="custom-select" id="sort">
+                    <option value="created_at">Latest</option>
                     <option value="views">Views</option>
                     <option value="likes">Likes</option> 
-                    <option value="comments">Comments</option>  
+                    <option value="comments">Comments</option>
                 </select>
-                <select class="custom-select" id="sort_by_direction">
-                    <option selected value="ascending">Ascending</option>
-                    <option value="decending">Decending</option>
+                <select class="custom-select" id="sort_direction">
+                    <option value="false">Ascending</option>
+                    <option value="true">Decending</option>
                 </select>
             </div>
+            <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sort and Filter</button>
+
+            <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sort and Filter</button>
         </div>
     </div>
 

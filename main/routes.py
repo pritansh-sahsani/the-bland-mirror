@@ -311,6 +311,11 @@ def send_email_for_new_post(post):
 @app.route("/notifications")
 @login_required
 def view_notifications():
+    sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
+    filter = request.args.get('filter') if request.args.get('filter')!=None else "all"
+    sort_direction = True if request.args.get('sort_direction')=="true" else False
+    
+
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     notification_query = Notification.query.all()
     
@@ -325,8 +330,11 @@ def view_notifications():
     if len(notifications) == 0:
         return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, del_flash=del_flash, no_notifications=True, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
     else:
-        notifications.sort(key=attrgetter('date'), reverse=True)
-        notifications.sort(key=attrgetter('is_read'))
+        for category, reverse in [('date', True), ('is_read', False)]:
+            if category != sort:
+                notifications.sort(key=attrgetter(category), reverse=reverse)
+                
+        notifications.sort(key=attrgetter(sort), reverse=sort_direction)
         return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, del_flash=del_flash, notifications=notifications, notif_len=len(notifications), no_notifications=False, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/read_notification/<string:notification_id>', methods=['GET', 'POST'])
@@ -348,6 +356,10 @@ def delete_notification(notification_id):
 @app.route("/messages")
 @login_required
 def view_messages():
+    sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
+    filter = request.args.get('filter') if request.args.get('filter')!=None else "all"
+    sort_direction = True if request.args.get('sort_direction')=="true" else False
+    
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     message_query = Messages.query.all()
     reply_query = MessageReply.query.all()
@@ -358,12 +370,15 @@ def view_messages():
         messages.append(message)
     for reply in reply_query:
         replies[reply.message_id] = reply.reply
+    
     if len(messages) == 0:
         return render_template("messages.html", msg_len=len(messages))
     else:
-        messages.sort(key=attrgetter('date'), reverse=True)
-        messages.sort(key=attrgetter('replied'))
-        messages.sort(key=attrgetter('read'))
+        for category, reverse in [('date', True), ('replied', False), ('read', False)]:
+            if category != sort:
+                messages.sort(key=attrgetter(category), reverse=reverse)
+                
+        messages.sort(key=attrgetter(sort), reverse=sort_direction)
         
         read_flash = 'Message Marked As Read Successfully!'
         unread_flash = 'Message Marked As Unread Successfully!'
@@ -423,18 +438,38 @@ def reply_message(message_id):
 @app.route('/manage_posts', methods=['GET', 'POST'])
 @login_required
 def manage_posts(): 
+    sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
+    filter = request.args.get('filter') if request.args.get('filter')!=None else "all"
+    sort_direction = True if request.args.get('sort_direction')=="true" else False
+    
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     
-    draft_posts = Posts.query.filter_by(is_draft=True).order_by(Posts.created_at.desc())\
+    draft_posts_query = Posts.query.filter_by(is_draft=True)\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
-    d_posts_len=len(draft_posts)
+    d_posts_len=len(draft_posts_query)
     flash = "Post Deleted Successfully!"
 
-    published_posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+    published_posts_query = Posts.query.filter_by(is_draft=False)\
     .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
-    p_posts_len=len(published_posts)
+    p_posts_len=len(published_posts_query)
+
+    draft_posts = []
+    published_posts = []
+    for post in draft_posts_query:
+        draft_posts.append(post)
+    for post in published_posts_query:
+        published_posts.append(post)
+
+    for category, reverse in [('comments', True), ('likes', True), ('views', True), ('created_at', True)]:
+        if category != sort:
+            draft_posts.sort(key=attrgetter(category), reverse=reverse)
+            published_posts.sort(key=attrgetter(category), reverse=reverse)
+
+    draft_posts.sort(key=attrgetter(sort), reverse=sort_direction)
+    published_posts.sort(key=attrgetter(sort), reverse=sort_direction)
+
     return render_template("manage_posts.html", published_posts = published_posts, draft_posts=draft_posts, d_posts_len=d_posts_len, p_posts_len=p_posts_len, flash=flash, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])

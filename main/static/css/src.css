@@ -243,3 +243,6 @@ input:focus, textarea:focus, select:focus{
         margin: -6px !important;
     }
 }
+
+#sort_div{display: none;}
+#apply{display: none;}

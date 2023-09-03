@@ -32,7 +32,7 @@
             {% if message.replied == True %}
                 <p>You have already replied to the message.</p>
                 <p>reply: {{ reply.reply }}</p>
-                <a href="{{ url_for('view_messages') }}"><button>Back To Messages</button></a><br>
+                <a href="/messages?sort=read&sort_direction=false&filter=all"><button>Back To Messages</button></a><br>
             {% else %}
                     {{ reply_form.hidden_tag() }}
 

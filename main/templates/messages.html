@@ -46,46 +46,80 @@
                 });
             });
         {% endfor %}
+
+        function getUrlVars(){
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        $(function() {
+            $('#apply').on('click', function(e) {
+                var sort = $("#sort").val();
+                var sort_direction = $("#sort_direction").val();
+                var filter = $("#filter").val();
+                window.location = "/messages?sort="+sort+"&sort_direction="+sort_direction+"&filter="+filter;
+            });
+        });
+        $(document).ready(function(){
+            vars= getUrlVars();
+            $("#sort").val(vars['sort']).change();
+            $("#filter").val(vars['filter']).change();
+            $("#sort_direction").val(vars['sort_direction']).change();
+        });
+        $(function() {
+            $('#show_sort_div').on('click', function(e) {
+                if ($("#sort_div").css("display") == "none")
+                {
+                    $("#sort_div").css("display", "flex");
+                    $("#apply").css("display", "inline-block");
+                    $("#show_sort_div").addClass("xsm:float-right");
+                    $("#show_sort_div").addClass("xsm:w-47.5%");
+                    $("#show_sort_div").text("Hide Sort and Filter");
+                }
+                else{
+                    $("#sort_div").css("display", "none");
+                    $("#apply").css("display", "none");
+                    $("#show_sort_div").removeClass("xsm:float-right");
+                    $("#show_sort_div").removeClass("xsm:w-47.5%");
+                    $("#show_sort_div").text("Show Sort and Filter");
+                }
+            });
+        });
     </script>
 
-<div class="w-100% items-right">
-    <div class="input-group mb-3">
+<div class="w-100% md:w-80% 880:w-47.5% md:mx-auto">
+    <div class="input-group mb-2" id="sort_div">
         <div class="input-group-prepend">
-            <label class="input-group-text" for="sort_by">Sort By</label>
+            <label class="input-group-text" for="sort">Sort By</label>
         </div>
-        <select class="custom-select" id="sort_by">
-            <option selected value="latest">Latest</option>
-            <option value="read">Read</option>
+        <select class="custom-select" id="sort">
             <option value="replied">Replied</option>  
-        </select>
-        <select class="custom-select" id="sort_by_direction">
-            <option selected value="ascending">Ascending</option>
-            <option value="decending">Decending</option>
-        </select>
-    </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <label class="input-group-text" for="filter_by">Filter By</label>
-        </div>
-        <select class="custom-select" id="filter_by">
-            <option value="all">None</option>
-            <option value="latest">Latest</option>
-            <option value="oldest">Oldest</option>
+            <option value="date">Latest</option>
             <option value="read">Read</option>
-            <option value="unread">Unread</option>
-            <option value="replied">Replied</option>
-            <option value="notreplied">Not replied</option>
+        </select>
+        <select class="custom-select" id="sort_direction">
+            <option value="false">Ascending</option>
+            <option value="true">Decending</option>
         </select>
     </div>
-</div>
+    <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sort and Filter</button>
 
+    <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sort and Filter</button>
+</div>
 
     <center>
         <div>
             {% if msg_len != 0 %}
                 <h3 id="no_msg" class="hidden my-3 text-4xl"></h3>
                 {% for message in messages %}
-                    <div class="inline-block w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md" id="message{{ message.id }}">
+                    <div class="w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md" id="message{{ message.id }}">
                         <div class="m-2">
                             <p class="float-left">By: {{ message.name }}</p>
                             <p class="float-right">{{ message.date.strftime("%d %B %Y") }}</p><br>
@@ -95,7 +129,7 @@
                                 <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ replies[message.id] }}</p>
                             {% else %}
                                 <a href="{{ url_for('reply_message', message_id = message.id) }}"><button class="btn btn-primary w-100% xsm:w-fit my-1 xsm:my-0"><p class="h-7">reply</p></button></a>
-                                {% if message.read == True %}
+                                {% if message.read != True %}
                                     <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_message{{ message.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_unread_white.svg" id="read_message_img{{ message.id }}"></button>
                                 {% else %}
                                     <button class="btn btn-dark w-100% xsm:w-fit my-1 xsm:my-0" id="read_message{{ message.id }}"><img class="w-7 h-7 mx-auto" src="../static/assets/mark_as_read_white.svg" id="read_message_img{{ message.id }}"></button>

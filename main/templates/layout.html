@@ -101,10 +101,10 @@
 							<a class="navbar-link" href="/authors_home">
 								<button class="underline-btn ml-8 960:ml-14">Author's Home</button>
 							</a>
-							<a class="navbar-link" href="/manage_posts">
+							<a class="navbar-link" href="/manage_posts?sort=created_at&sort_direction=true&filter=all">
 								<button class="underline-btn ml-8 960:ml-14">Posts</button>
 							</a>
-							<a class="navbar-link" href="/messages">
+							<a class="navbar-link" href="/messages?sort=read&sort_direction=false&filter=all">
 								<button class="underline-btn ml-8 960:ml-14">Messages</button>
 							</a>
 							<a class="navbar-link" href="/logout">
@@ -131,7 +131,7 @@
 						<div id="notification-div" class="inline">
 							<!-- icons -->
 							<div class="inline">
-								<a href="/notifications"><img class="w-8 h-8 inline" id="notification_icon" src="../static/assets/notification-bell.svg"></a>
+								<a href="/notifications?sort=is_read&sort_direction=false&filter=all"><img class="w-8 h-8 inline" id="notification_icon" src="../static/assets/notification-bell.svg"></a>
 							</div>
 							<div class="inline">
 								<img class="w-4 h-4 mr-4 inline" data-dropdown-toggle="dropdownHover" data-dropdown-trigger="click"  id="DropdownNotifications" src="../static/assets/dropdown-icon.svg">
@@ -145,7 +145,7 @@
 									{% for notification in notifications_in_navbar %}
 										<tr class="hover:bg-gray-100 border-slate-900">
 											<td>
-												<a href='/notifications' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
+												<a href='/notifications?sort=is_read&sort_direction=false&filter=all' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
 											</td>
 											<td>
 												<button id="read_notification_in_navbar{{ notification.id }}"><img src="../static/assets/mark_as_unread.svg" class="inline w-5 ml-4 mr-2 mb-0.5" id="read_notification_in_navbar_img{{ notification.id }}"></button>
@@ -203,13 +203,10 @@
 											<a href="/authors_home" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Author's Home</a>
 										</li>
 										<li>
-											<a href="/manage_posts" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Posts</a>
+											<a href="/manage_posts?sort=created_at&sort_direction=true&filter=all" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Posts</a>
 										</li>
 										<li>
-											<a href="/messages" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Messages</a>
-										</li>
-										<li>
-											<a href="/notifications" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Notifications</a>
+											<a href="/messages?sort=read&sort_direction=false&filter=all" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Messages</a>
 										</li>
 										<li>
 											<a href="/logout" class="w-fit mt-0 mx-auto block py-3 text-black rounded">Log Out</a>
@@ -222,7 +219,7 @@
 											<img class="w-4 h-4 inline" data-dropdown-toggle="PhoneDropdownHover" data-dropdown-trigger="click"  id="DropdownNotifications" src="../static/assets/phone-dropdown.svg">
 										</div>
 										<div class="inline">
-											<a href="/notifications"><img class="w-8 h-8  mr-4 inline" id="notification_icon" src="../static/assets/notification-bell.svg"></a>
+											<a href="/notifications?sort=is_read&sort_direction=false&filter=all"><img class="w-8 h-8  mr-4 inline" id="notification_icon" src="../static/assets/notification-bell.svg"></a>
 										</div>
 									</div>
 										
@@ -233,7 +230,7 @@
 												{% for notification in notifications_in_navbar %}
 													<tr class="hover:bg-gray-100 border-slate-900">
 														<td>
-															<a href='/notifications' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
+															<a href='/notifications?sort=is_read&sort_direction=false&filter=all' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
 														</td>
 														<td>
 															<button id="read_notification_in_pnavbar{{ notification.id }}"><img src="../static/assets/mark_as_unread.svg" class="inline w-5 ml-4 mr-2 mb-0.5" id="read_notification_in_pnavbar_img{{ notification.id }}"></button>
