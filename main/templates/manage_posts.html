@@ -86,14 +86,12 @@
             $('#apply').on('click', function(e) {
                 var sort = $("#sort").val();
                 var sort_direction = $("#sort_direction").val();
-                var filter = $("#filter").val();
-                window.location = "/manage_posts?sort="+sort+"&sort_direction="+sort_direction+"&filter="+filter;
+                window.location = "/manage_posts?sort="+sort+"&sort_direction="+sort_direction;
             });
         });
         $(document).ready(function(){
             vars= getUrlVars();
             $("#sort").val(vars['sort']).change();
-            $("#filter").val(vars['filter']).change();
             $("#sort_direction").val(vars['sort_direction']).change();
         });
         $(function() {
@@ -104,14 +102,14 @@
                     $("#apply").css("display", "inline-block");
                     $("#show_sort_div").addClass("xsm:float-right");
                     $("#show_sort_div").addClass("xsm:w-47.5%");
-                    $("#show_sort_div").text("Hide Sort and Filter");
+                    $("#show_sort_div").text("Hide Sorting");
                 }
                 else{
                     $("#sort_div").css("display", "none");
                     $("#apply").css("display", "none");
                     $("#show_sort_div").removeClass("xsm:float-right");
                     $("#show_sort_div").removeClass("xsm:w-47.5%");
-                    $("#show_sort_div").text("Show Sort and Filter");
+                    $("#show_sort_div").text("Show Sorting");
                 }
             });
         });
@@ -139,9 +137,9 @@
                     <option value="true">Decending</option>
                 </select>
             </div>
-            <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sort and Filter</button>
+            <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sorting</button>
 
-            <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sort and Filter</button>
+            <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sorting</button>
         </div>
     </div>
 

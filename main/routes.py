@@ -303,7 +303,6 @@ def send_email_for_new_post(post):
 @login_required
 def view_notifications():
     sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
-    filter = request.args.get('filter') if request.args.get('filter')!=None else "all"
     sort_direction = True if request.args.get('sort_direction')=="true" else False
     
 
@@ -348,7 +347,6 @@ def delete_notification(notification_id):
 @login_required
 def view_messages():
     sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
-    filter = request.args.get('filter') if request.args.get('filter')!=None else "all"
     sort_direction = True if request.args.get('sort_direction')=="true" else False
     
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
@@ -430,7 +428,6 @@ def reply_message(message_id):
 @login_required
 def manage_posts(): 
     sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
-    filter = request.args.get('filter') if request.args.get('filter')!=None else "all"
     sort_direction = True if request.args.get('sort_direction')=="true" else False
     
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
