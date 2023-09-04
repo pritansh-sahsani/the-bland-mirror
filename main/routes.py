@@ -302,9 +302,17 @@ def send_email_for_new_post(post):
 @app.route("/notifications")
 @login_required
 def view_notifications():
-    sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
-    sort_direction = True if request.args.get('sort_direction')=="true" else False
-    
+    sort = request.args.get('sort') if request.args.get('sort')!=None else None
+    sort_direction = request.args.get('sort_direction')
+    if sort_direction == "true":
+        sort_direction = True
+    elif sort_direction == "false":
+        sort_direction = False
+    else:
+        sort_direction = None
+
+    if sort is None or sort_direction is None:
+        return redirect("/notifications?sort=is_read&sort_direction=false")
 
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     notification_query = Notification.query.all()
@@ -346,8 +354,17 @@ def delete_notification(notification_id):
 @app.route("/messages")
 @login_required
 def view_messages():
-    sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
-    sort_direction = True if request.args.get('sort_direction')=="true" else False
+    sort = request.args.get('sort') if request.args.get('sort')!=None else None
+    sort_direction = request.args.get('sort_direction')
+    if sort_direction == "true":
+        sort_direction = True
+    elif sort_direction == "false":
+        sort_direction = False
+    else:
+        sort_direction = None
+    
+    if sort is None or sort_direction is None:
+        return redirect("/messages?sort=read&sort_direction=false")
     
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     message_query = Messages.query.all()
@@ -427,8 +444,17 @@ def reply_message(message_id):
 @app.route('/manage_posts', methods=['GET', 'POST'])
 @login_required
 def manage_posts(): 
-    sort = request.args.get('sort') if request.args.get('sort')!=None else "date"
-    sort_direction = True if request.args.get('sort_direction')=="true" else False
+    sort = request.args.get('sort') if request.args.get('sort')!=None else None
+    sort_direction = request.args.get('sort_direction')
+    if sort_direction == "true":
+        sort_direction = True
+    elif sort_direction == "false":
+        sort_direction = False
+    else:
+        sort_direction = None
+    
+    if sort is None or sort_direction is None:
+        return redirect("/manage_posts?sort=created_at&sort_direction=true")
     
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     
