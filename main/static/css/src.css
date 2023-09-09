@@ -242,6 +242,9 @@ input:focus, textarea:focus, select:focus{
     #navbar-hr {
         margin: -6px !important;
     }
+    #manage-posts-hr {
+        margin: -6px !important
+    }
 }
 
 #sort_div{display: none;}
