@@ -241,6 +241,7 @@ input:focus, textarea:focus, select:focus{
     }
     #navbar-hr {
         margin: -6px !important;
+        margin-bottom: 0px !important;
     }
     #manage-posts-hr {
         margin: -6px !important
