@@ -4,28 +4,6 @@
     --main: white;
     --antimain: #1a1a1d;
 }
-  
-.heading_font {
-    font-family: 'Bebas Neue', cursive;
-	color: gradient;
-    line-height: 1.3;
-    font-size: 3rem;
-}
-
-.pagination_font_arrows{
-    font-family: 'Bebas Neue', cursive;
-	color: gradient;
-    font-size: 1.5rem;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.pagination_font{
-    font-family: 'Bebas Neue', cursive;
-	color: gradient;
-    vertical-align: middle;
-    text-align: center;
-}
 
 #home_container{
     display: table;
@@ -40,9 +18,8 @@
     text-align: left;
 }
 
-#home_heading{
-  font-family: 'Kaushan Script', cursive;  
-  color:gradient;
+.ZummeRough{
+  font-family: 'zumme bold';
 }
   
 .body_font {

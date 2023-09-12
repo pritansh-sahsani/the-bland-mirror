@@ -78,6 +78,14 @@ module.exports = {
       padding:{
         "1%": "1%",
       },
+      fontSize: {
+        "12rem": "12rem",
+      },
+      colors:{
+        "gradient":"#003764",
+        "main": "white",
+        "antimain": "#1a1a1d",
+      },
     },
   },
   plugins: [],
