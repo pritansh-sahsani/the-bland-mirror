@@ -35,12 +35,12 @@ class Posts(db.Model):
     __searchable__ = ['title', 'content', 'summary']
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False, unique=True)
+    title = db.Column(db.String(100), unique=True)
     url_title = db.Column(db.String(100), nullable=False, unique=True) 
-    content = db.Column(db.String(1000000), nullable=False)
-    summary= db.Column(db.String(200), nullable=False)
+    content = db.Column(db.String(1000000))
+    summary= db.Column(db.String(200))
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    cover_img = db.Column(db.String(104), nullable=False)
+    cover_img = db.Column(db.String(104))
     views = db.Column(db.Integer, nullable=False, default=0)
     likes = db.Column(db.Integer, nullable=False, default=0)
     comments = db.Column(db.Integer, nullable=False, default=0)

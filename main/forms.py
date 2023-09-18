@@ -49,9 +49,9 @@ class ContactForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[Length(min=1, max=100, message=min_max_error_message.format(field='Title', min='%(min)d', max='%(max)d'))])
-    content = TextAreaField('Content', validators=[Length(min=1, max=100000, message=min_max_error_message.format(field='Content', min='%(min)d', max='%(max)d'))])
-    summary= StringField('Summary', validators=[Length(min=1, max=140, message=min_max_error_message.format(field='Summary', min='%(min)d', max='%(max)d'))])
+    title = StringField('Title', validators=[Length(min=0, max=100, message=min_max_error_message.format(field='Title', min='1', max='%(max)d'))])
+    content = TextAreaField('Content', validators=[Length(min=0, max=100000, message=min_max_error_message.format(field='Content', min='1', max='%(max)d'))])
+    summary= StringField('Summary', validators=[Length(min=0, max=140, message=min_max_error_message.format(field='Summary', min='1', max='%(max)d'))])
     cover_img = FileField('Cover image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only .jpg, .png and .jpeg file formats are supported.')])
     is_draft = BooleanField('Save as Draft', default=False)
     related_1 = SelectField('Post 1', choices=[], validators=[DataRequired()])

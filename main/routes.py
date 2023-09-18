@@ -250,21 +250,21 @@ def create_post():
             flash("This title already exists!", 'danger')
             return redirect(url_for('create_post'))
 
-
     if post_form.validate_on_submit():
-        is_draft = 'is_draft' in request.form
-
-        print(is_draft)
-
-        if is_draft:
-            flash("Post saved as draft!", 'info')
+        if not post_form.cover_img.data or not post_form.summary.data or not post_form.title.data or not post_form.content.data:
+            is_draft = True
         else:
-            flash("Post created successfully!", 'success')
+            is_draft = False
+
+        if is_draft == False:
+            is_draft = 'is_draft' in request.form
 
         url_title = post_form.title.data
         url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
-        
+
         f = post_form.cover_img.data
+        filename = None 
+
         if f:
             filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
@@ -276,6 +276,11 @@ def create_post():
         post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
         db.session.add(post)
         db.session.commit()
+
+        if is_draft:
+            flash("Post saved as draft!", 'info')
+        else:
+            flash("Post created successfully!", 'success')
 
         send_email_for_new_post(post)
 
@@ -534,11 +539,20 @@ def edit_post(post_id):
     post_form = PostForm(s1 = s[0], s2 = s[1], s3 = s[2])
 
     if post_form.validate_on_submit():
+        if not post_form.cover_img.data or not post_form.summary.data or not post_form.title.data or not post_form.content.data:
+            is_draft = True
+        else:
+            is_draft = False
+
+        if is_draft == False:
+            is_draft = 'is_draft' in request.form
 
         url_title = post_form.title.data
         url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
         
         f = post_form.cover_img.data
+        filename = None
+
         if f:
             os.remove(os.path.join(app.root_path + 'static','post_img', old_post.cover_img))
             filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
@@ -556,7 +570,7 @@ def edit_post(post_id):
                     flash("Please Select Unique Related Posts!")
                     return render_template("edit_post.html", post_form=post_form, old_post=old_post)
 
-        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = post_form.is_draft.data)
+        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
         
         likes = Likes.query.filter_by(post_no=old_post.id).all()
         comments =  Comment.query.filter_by(post_no=old_post.id).all()
@@ -569,7 +583,10 @@ def edit_post(post_id):
         db.session.add(new_post)
         db.session.commit()
 
-        flash("Post Updated Successfully!", 'success')
+        if is_draft:
+            flash("Post saved as draft!", 'info')
+        else:
+            flash("Post Updated Successfully!", 'success')
 
         return redirect(url_for('manage_posts'))
     
