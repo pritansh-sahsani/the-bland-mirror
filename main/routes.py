@@ -554,9 +554,10 @@ def edit_post(post_id):
         filename = None
 
         if f:
-            os.remove(os.path.join(app.root_path + 'static','post_img', old_post.cover_img))
-            filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
-            f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
+            if filename:
+                os.remove(os.path.join(app.root_path + 'static','post_img', old_post.cover_img))
+                filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
+                f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
         else:
             filename=old_post.cover_img
 
