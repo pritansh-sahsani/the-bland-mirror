@@ -49,39 +49,47 @@
         });
     </script>
 
-<center>
-    <div class="block border-0.5 rounded-lg text-left z-10">
-        <form method="GET" action="search">
-          <input type="text" name="keyword" id="search-navbar" class="form-control border-0 inline-block w-80% md:w-95% text-sm" placeholder="Search...">
-          <button type="submit" class="float-right">
-              <svg class="inline-block w-100% h-4 mt-1 pr-3 text-gray-500 dark:text-gray-40" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-              </svg>
-          </button>
-        </form>
-      </div>
-    <div class="w-100% mt-5">
-        <h1 class="w-fit px-2 pt-2 border-8 border-gradient text-8xl ZummeRough ">THE BLAND MIRROR</h1>
-        <p class="body_font pb-10 md:text-lg">With the aim of dusting up the issues buried within our minds and societies, my opinions in the form of this blog aims to force open the eyes of the world to the ugly truth. Shape your understanding of the world around you and improve our lives through it, with a variety of topics, spanning from emotions to politics to morals to education.</p>
-        <hr class="w-100% m-0 p-0 border-slate-900"/>
+    <div class="w-100% pt-2 mt-3.75rem">
+        <center>
+            <div>
+                <div class="relative -mt-3.75rem w-100% 1180:w-80% z-20">
+                    <h1 class="inline-block px-2 pt-2 border-8 border-gradient bg-white text-3xl xsm:text-4xl sm:text-5xl 725:text-6xl 880:text-7xl 1180:text-8xl ZummeRough">THE BLAND MIRROR</h1>
+                    <a href="https://www.instagram.com/the_bland_mirror/" class="absolute top-0 w-4 880:w-6 right-0 mt-0.7rem 880:mt-3 "><img src='../static/assets/insta_icon.svg'/></a>
+                    <a href="mailto:pritanshsahsani@gmail.com" class="absolute top-0 w-6 880:w-9 right-6 880:right-8 mt-2 880:mt-0.65rem "><img src='../static/assets/email-icon.svg '/></a>
+                </div>
+                <img class="relative -mt-1.87rem xsm:-mt-8 sm:-mt-2.25rem 725:-mt-2.6rem 880:-mt-12 1180:-mt-3.75rem w-100% 1180:w-80% z-10" src='../static/assets/banner.png'/>
+                <div class="relative w-80% xsm:w-56 sm:w-72 725:w-22rem 880:w-26rem 1180:w-34rem -mt-1.09rem border-0.5 border-gradient rounded-lg text-left z-10 bg-white">
+                    <form method="GET" action="search">
+                    <input type="text" name="keyword" id="search-navbar" class="form-control border-0 inline-block w-80% text-sm" placeholder="Search...">
+                    <button type="submit" class="float-right">
+                        <svg class="inline-block w-100% h-4 mt-1 pr-3 text-gray-500 dark:text-gray-40" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                    </button>
+                    </form>
+                </div>
+            </div>
+        </center>
+        <hr class="w-100% mt-6 mb-7 p-0 border-gradient"/>
+        <p class="  text-center md:text-lg">With the aim of dusting up the issues buried within our minds and societies, my opinions in the form of this blog aims to force open the eyes of the world to the ugly truth. Shape your understanding of the world around you and improve our lives through it, with a variety of topics, spanning from emotions to politics to morals to education.</p>
     </div>
     
-    <div class="w-95% hidden md:block">
+    <div class="w-95% mx-auto">
         {% for post in posts.items %}
-            <div id="home_container" class="border-solid border-0.5 border-slate-900 my-6">
-                <a href="{{ url_for('post', post_url=post.url_title) }}"><img class="home_section float-left border-r-0.5 border-slate-900 object-cover" src= "/static/post_img/{{ post.cover_img }}"></a>
+            <div class="hidden md:table border-solid rounded-lg border-0.5 border-gradient my-6 w-100%">
+                <a href="{{ url_for('post', post_url=post.url_title) }}"><img class="home_section float-left border-solid border-r-0.5 border-gradient object-cover rounded-lg" src= "/static/post_img/{{ post.cover_img }}"></a>
                 
                 <div class="home_section float-right">
                     <a href="{{ url_for('post', post_url=post.url_title) }}">
                         <div class="mt-5% ml-5% h-80% w-90%">
-                            <p class="text-sm">{{ post.created_at.strftime("%d %B %Y") }}</p>
-                            <p class="pt-1 text-3xl">{{ post.title }}</p>
+                            <p class="inline-block whitespace-pre-line w-47.5% text-3xl">{{ post.title }}</p>
+                            <p class="inline-block whitespace-pre-line w-47.5% text-right mt-2 text-sm float-right">{{ post.created_at.strftime("%d %B %Y") }}</p>
                             <p class="pt-1.5 text-lg">{{ post.summary }}</p>
                         </div>
                     </a>
 
                     <div class="ml-5% h-10% w-90%">
-                        <hr class="mb-2 border-slate-400"/>
+                        <hr class="mb-2 border-gradient"/>
                         {% if post.views == 1 %}
                             <p class="ml-0.5 inline-block text-sm">{{ post.views }} view</p>
                         {% else %}
@@ -104,6 +112,18 @@
 
                 </div>
 			</div>
+
+            <div class="block md:hidden">
+                <a href="{{ url_for('post', post_url=post.url_title) }}">
+                    <div class="relative mx-auto sm:w-80% border-solid border-0.5 border-gradient rounded-lg my-4">
+                        <img class="object-cover rounded-lg" src= "/static/post_img/{{ post.cover_img }}">
+                        <div class="w-100% absolute bottom-0 pb-2 bg-white rounded-lg">
+                            <p class="ml-2 mt-2 text-left text-2xl xsm:text-3xl">{{ post.title }}</p>
+                            <p class="hidden xsm:block mr-2 text-right w-47.5% float-right">{{ post.created_at.strftime("%d %b %Y") }}<p>
+                        </div>
+                    </div>
+                </a>
+            </div>
         {% endfor %}
         <div>
             {% if no_of_pages > 7 %}
@@ -156,13 +176,10 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-
         </div>
-        
-		<div>
-			<hr class="mt-10 w-90% mx-auto border-black"/>
-            <p class="my-5 text-4xl text-center mx-5"><a class="" href="/subscribe">Click here to subscribe and receive updates on the latest posts!</a></p>
-		</div>
     </div>
-</center>
+    <div>
+        <hr class="mt-10 w-90% mx-auto border-black"/>
+        <p class="my-3 md:my-5 text-2xl md:text-4xl text-center md:mx-5"><a class="" href="/subscribe">Click here to subscribe and receive updates on the latest posts!</a></p>
+    </div>
 {% endblock main %}

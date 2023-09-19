@@ -3,9 +3,11 @@ module.exports = {
   content: ["./main/templates/*.html"],
   theme: {
     screens: {
+      1180:"1180px",
       960: "960px",
       880: "880px",
       md: "800px",
+      725: "725px",
       sm: "640px", 
       xsm: "500px",
     },
@@ -40,6 +42,11 @@ module.exports = {
       },
       width: {
         "15":"4rem",
+        "4.25rem":"4.25rem",
+        "17rem":"17rem",
+        "22rem":"22rem",
+        "26rem":"26rem",
+        "34rem":"34rem",
 
         "3%": "3%",
         "10%": "10%",
@@ -74,6 +81,15 @@ module.exports = {
         "15%": "15%",
         "35%": "35%",
         "40%": "40%",
+        "50%": "50%",
+
+        '0.65rem': '0.65rem',
+        '0.7rem': '0.7rem',
+        "1.09rem": "1.09rem",
+        "1.87rem": "1.87rem",
+        "2.25rem": "2.25rem",
+        "2.6rem": "2.6rem",
+        "3.75rem": "3.75rem",
       },
       padding:{
         "1%": "1%",
@@ -85,7 +101,9 @@ module.exports = {
         "gradient":"#003764",
         "main": "white",
         "antimain": "#1a1a1d",
-      },
+      },maxHeight: {
+        '50%': '50%',
+      } 
     },
   },
   plugins: [],

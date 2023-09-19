@@ -141,7 +141,7 @@
 							{% if no_notifications_in_navbar == False %}
 								<table class="text-sm text-gray-700" aria-labelledby="dropdownHoverButton">
 									{% for notification in notifications_in_navbar %}
-										<tr class="hover:bg-gray-100 border-slate-900">
+										<tr class="hover:bg-gray-100 border-gradient">
 											<td>
 												<a href='/notifications' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
 											</td>
@@ -159,7 +159,7 @@
 
 					<p class="inline text-base xsm:text-lg">By Pritansh Sahsani</p>
 				</div>
-				<hr class="w-100% m-0 p-0 border-slate-900" id="navbar-hr"/>
+				<hr class="w-100% m-0 p-0 border-gradient" id="navbar-hr"/>
 			</nav>
 			
 			<!-- phone navbar -->
@@ -190,7 +190,7 @@
 					</div>
 				</div>
 
-				<hr class="w-100% m-0 p-0 border-slate-900" />
+				<hr class="w-100% m-0 p-0 border-gradient" />
 				<div class="block">
 					<div id="phone_bottom_navbar" class="block">
 						{% if current_user.is_authenticated %}
@@ -226,7 +226,7 @@
 										{% if no_notifications_in_navbar == False %}
 											<table class="text-sm text-gray-700" aria-labelledby="dropdownHoverButton">
 												{% for notification in notifications_in_navbar %}
-													<tr class="hover:bg-gray-100 border-slate-900">
+													<tr class="hover:bg-gray-100 border-gradient">
 														<td>
 															<a href='/notifications' class="inline py-2 pl-2 hover:text-black">{{ notification.message }}</a>
 														</td>

@@ -5,11 +5,6 @@
     --antimain: #1a1a1d;
 }
 
-#home_container{
-    display: table;
-    width: 100%;
-}
-
 .home_section{
     display: table-cell;
     vertical-align: middle;
