@@ -92,7 +92,7 @@
                 
                 {{ post_form.content(id="blog_post") }} 
                     
-                {{ post_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl bg-customblue") }}
+                {{ post_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl") }}
                 
                 <input type="checkbox" name="is_draft" {{ "checked" if old_post.is_draft }} >
                 <label for="is_draft">Save as Draft</label>

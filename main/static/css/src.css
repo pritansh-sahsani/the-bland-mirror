@@ -193,6 +193,10 @@ input:focus, textarea:focus, select:focus{
   a:visited { text-decoration: none !important; }
   a:hover { text-decoration: none !important; color:inherit }
   a:active { text-decoration: none !important; }
+
+  .btn-primary{
+    background-color: #007bff !important;
+  }
   
   #phone_bottom_navbar{display: none;}
 
