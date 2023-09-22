@@ -39,8 +39,8 @@ def post(post_url):
         .first_or_404()
 
     # get related posts
-    related_posts = Posts.query.filter(
-        Posts.id.in_([post.related_1, post.related_2, post.related_3])
+    related_posts = Posts.query.filter_by(is_draft=False).filter(
+        Posts.id.in_([post.related_1, post.related_2, post.related_3]),
     ).with_entities(
         Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
         Posts.views, Posts.comments, Posts.likes
@@ -51,7 +51,7 @@ def post(post_url):
     if len(related_posts) < 3:
         num_random_posts = 3 - len(related_posts)
         exclude_post_ids = [post.id] + [related_post.id for related_post in related_posts]
-        random_posts = Posts.query.filter(
+        random_posts = Posts.query.filter_by(is_draft=False).filter(
             ~Posts.id.in_(exclude_post_ids)  # Exclude the current post and related posts
         ).with_entities(
             Posts.id, Posts.title, Posts.url_title, Posts.cover_img,

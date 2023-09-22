@@ -160,6 +160,7 @@
         </div>
     </div>
 
+    {% if related_post %}
 
     <!-- other posts -->
     <div class="mx-auto w-80% mt-10">
@@ -195,6 +196,10 @@
             {% endfor %}
         </div>
     </div>
+
+    {% else %}
+
+    {% endif %}
 
     <!-- subscribe link -->
 	<div>
