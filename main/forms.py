@@ -53,10 +53,10 @@ class PostForm(FlaskForm):
     content = TextAreaField('Content', validators=[Length(min=0, max=100000, message=min_max_error_message.format(field='Content', min='1', max='%(max)d'))])
     summary= StringField('Summary', validators=[Length(min=0, max=140, message=min_max_error_message.format(field='Summary', min='1', max='%(max)d'))])
     cover_img = FileField('Cover image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only .jpg, .png and .jpeg file formats are supported.')])
-    is_draft = BooleanField('Save as Draft', default=False)
     related_1 = SelectField('Post 1', choices=[], validators=[DataRequired()])
     related_2 = SelectField('Post 2', choices=[], validators=[DataRequired()])
     related_3 = SelectField('Post 3', choices=[], validators=[DataRequired()])
+    save_draft = SubmitField('Save As Draft')
     submit = SubmitField('Post')
     
     def __init__(self, s1, s2, s3):

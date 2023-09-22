@@ -630,10 +630,6 @@ video {
   z-index: 30;
 }
 
-.z-40 {
-  z-index: 40;
-}
-
 .float-right {
   float: right;
 }
@@ -1546,6 +1542,10 @@ video {
     margin-bottom: 4%;
   }
 
+  .sm\:ml-30\% {
+    margin-left: 30%;
+  }
+
   .sm\:ml-35\% {
     margin-left: 35%;
   }
@@ -1568,6 +1568,14 @@ video {
 
   .sm\:mt-3\% {
     margin-top: 3%;
+  }
+
+  .sm\:mb-5 {
+    margin-bottom: 1.25rem;
+  }
+
+  .sm\:mb-5\% {
+    margin-bottom: 5%;
   }
 
   .sm\:inline-block {
@@ -1611,6 +1619,11 @@ video {
   .sm\:text-base {
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+
+  .sm\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 }
 

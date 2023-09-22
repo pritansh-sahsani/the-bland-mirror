@@ -91,11 +91,10 @@
                 <div class="inline-block w-100% md:w-30% my-3% sm:mb-2% sm:mt-2 md:float-right">{{ post_form.related_3(class="custom-select") }} </div>
 
                 {{ post_form.content(id="blog_post") }}
-
-                {{ post_form.submit(class="btn btn-primary mt-2% sm:ml-35% w-100% sm:w-30% mb-5% text-base xsm:text-xl sm:text-2xl") }}
-                
-                {{ post_form.is_draft() }}
-                <label for="is_draft">Save as Draft</label> 
+                <center>
+                    {{ post_form.save_draft(class="inline-block btn btn-primary mt-2% w-100% sm:w-30% sm:mb-5% text-base sm:text-lg xsm:text-xl sm:text-2xl") }}
+                    {{ post_form.submit(class="inline_block btn btn-primary mt-2% w-100% sm:w-30% mb-5% text-base sm:text-lg xsm:text-xl sm:text-2xl") }}
+                </center>
             </form>
         </div>
     </div>
