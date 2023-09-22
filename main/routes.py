@@ -254,10 +254,14 @@ def create_post():
         if not post_form.cover_img.data or not post_form.summary.data or not post_form.title.data or not post_form.content.data:
             is_draft = True
         else:
-            is_draft = False
+            is_draft = 'save_draft' in request.form
+        
+        if post_form.summary.data == '':
+            post_form.summary.data = 'No summary'
 
-        if is_draft == False:
-            is_draft = 'is_draft' in request.form
+        if post_form.title.data == '':
+            untitled_post_count = Posts.query.filter(Posts.title.startswith('Untitled Post (')).count()
+            post_form.title.data = f'Untitled Post ({untitled_post_count})'
 
         url_title = post_form.title.data
         url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
