@@ -452,6 +452,8 @@ def reply_message(message_id):
 def manage_posts(): 
     sort = request.args.get('sort') if request.args.get('sort')!=None else None
     sort_direction = request.args.get('sort_direction')
+    keyword = request.args.get('keyword')
+
     if sort_direction == "true":
         sort_direction = True
     elif sort_direction == "false":
@@ -464,15 +466,29 @@ def manage_posts():
     
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     
-    draft_posts_query = Posts.query.filter_by(is_draft=True)\
-    .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
-    .all()
+    if keyword is None or keyword == '':
+        draft_posts_query = Posts.query.filter_by(is_draft=True)\
+        .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .all()
+    else:
+        draft_posts_query = Posts.query.msearch(keyword)\
+        .filter_by(is_draft=True)\
+        .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .all()
+
     d_posts_len=len(draft_posts_query)
     flash = "Post Deleted Successfully!"
 
-    published_posts_query = Posts.query.filter_by(is_draft=False)\
-    .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
-    .all()
+    if keyword is None or keyword == '':
+        published_posts_query = Posts.query.filter_by(is_draft=False)\
+        .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .all()
+    else:
+        published_posts_query = Posts.query.msearch(keyword)\
+        .filter_by(is_draft=False)\
+        .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+        .all()
+        
     p_posts_len=len(published_posts_query)
 
     draft_posts = []

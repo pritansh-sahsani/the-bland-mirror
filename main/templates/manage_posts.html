@@ -7,7 +7,10 @@
 {% block main %}
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <!-- script for likes -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <script type=text/javascript>
     
         var p_posts_len = {{ p_posts_len }}
@@ -25,7 +28,7 @@
                     d_posts_len = d_posts_len-1;
                     if(d_posts_len==0)
                     {
-                        $('#no_draft_posts').text("No Draft Posts");
+                        $('#no_draft_posts').text("No Draft Posts Found");
                         $('#no_draft_posts').toggle();
                     }
                 });
@@ -43,7 +46,7 @@
                     p_posts_len = p_posts_len-1;
                     if(p_posts_len==0)
                     {
-                        $('#no_published_posts').text("No Published Posts");
+                        $('#no_published_posts').text("No Published Posts Found");
                         $('#no_published_posts').toggle();
                     }
                 });
@@ -86,13 +89,15 @@
             $('#apply').on('click', function(e) {
                 var sort = $("#sort").val();
                 var sort_direction = $("#sort_direction").val();
-                window.location = "/manage_posts?sort="+sort+"&sort_direction="+sort_direction;
+                var keyword = $("#search-input").val();
+                window.location = "/manage_posts?sort="+sort+"&sort_direction="+sort_direction+"&keyword="+keyword;
             });
         });
         $(document).ready(function(){
             vars= getUrlVars();
             $("#sort").val(vars['sort']).change();
             $("#sort_direction").val(vars['sort_direction']).change();
+            $("#search-input").val(decodeURI(vars['keyword'])).change();
         });
         $(function() {
             $('#show_sort_div').on('click', function(e) {
@@ -110,6 +115,33 @@
                     $("#show_sort_div").removeClass("xsm:float-right");
                     $("#show_sort_div").removeClass("xsm:w-47.5%");
                     $("#show_sort_div").text("Show Sorting");
+                }
+            });
+        });
+        
+        $(function() {
+            $('#search_button').on('click', function(e) {
+                var sort = $("#sort").val();
+                var sort_direction = $("#sort_direction").val();
+                var keyword = $("#search-input").val();
+                window.location = "/manage_posts?sort="+sort+"&sort_direction="+sort_direction+"&keyword="+keyword;
+            });
+        });
+        
+        $(function() {
+            var availableTags = [];
+            {% for post in published_posts %}
+                p = "{{ post.title | safe }}"
+                availableTags.push(p);
+            {% endfor %}
+            {% for post in draft_posts %}
+                p = "{{ post.title | safe }}"
+                availableTags.push(p);
+            {% endfor %}
+            $( "#search-input" ).autocomplete({
+                source: availableTags,
+                open: function() {
+                    $("ul.ui-menu").width( $("#search-div").innerWidth() );
                 }
             });
         });
@@ -140,6 +172,13 @@
             <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sorting</button>
 
             <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sorting</button>
+        </div>
+        
+        <div id="search-div" class="w-100% md:w-80% 880:w-47.5% mx-auto border-0.5 border-gradient rounded-lg text-left z-10 bg-white">
+            <input type="text" name="keyword" id="search-input" class="form-control autocomplete border-0 inline-block w-80% text-lg text-gradient focus:text-gradient" placeholder="Search...">
+            <button id="search_button" class="float-right">
+                <img class="inline-block w-100% align-middle mt-9px pr-9px" src="../static/assets/arrow.svg"/>
+            </button>
         </div>
     </div>
 
@@ -178,7 +217,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-                    <h3 id="no_published_posts" class="w-100% text-center text-4xl">No Published Posts</h3>
+                    <h3 id="no_published_posts" class="w-100% text-center text-4xl">No Published Posts Found</h3>
         {% endif %}
     </div>
         
@@ -217,7 +256,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <h3 class="w-100% text-center text-4xl">No Draft Posts</h3>
+            <h3 class="w-100% text-center text-4xl">No Draft Posts Found</h3>
         {% endif %}
     </div>
 
