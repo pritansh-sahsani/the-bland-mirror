@@ -168,11 +168,11 @@
         <div class="flex justify-between">
             {% for post in related_posts %}
                 <div class="small_post_view border w-30% mt-5 inline">
-                    <a href="{{ url_for('post', post_url=post.url_title) }}">
+                    <a href="{{ url_for('post', post_url=post.title) }}">
                         <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src="/static/post_img/{{ post.cover_img }}" />
                     </a>
                         <div class="h-35">
-                            <a href="{{ url_for('post', post_url=post.url_title) }}">
+                            <a href="{{ url_for('post', post_url=post.title) }}">
                                 <p class="pt-2 text-2xl mx-5% h-32">{{ post.title }}</p>
                             </a>
 

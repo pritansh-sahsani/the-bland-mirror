@@ -148,7 +148,7 @@
             {% if p_posts_len != 0 %}
                 {% for post in published_posts %}
                     <div class="w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md mx-auto" id="post{{ post.id }}">
-                        <div class="m-2"><a href="{{ url_for('post', post_url=post.url_title) }}">
+                        <div class="m-2"><a href="{{ url_for('post', post_url=post.title) }}">
                             <p class="float-right">{{ post.created_at.strftime("%d %B %Y") }}</p>
                             <p class="">{{ post.title }}</p>
                             <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ post.summary }}</p></a>
@@ -187,7 +187,7 @@
         {% if d_posts_len != 0 %}
             {% for post in draft_posts %}
                 <div class="w-100% md:w-47.5% mt-2 border-0.5 border-black rounded-md mx-auto" id="post{{ post.id }}">
-                    <div class="m-2"><a href="{{ url_for('post', post_url=post.url_title) }}">
+                    <div class="m-2"><a href="{{ url_for('post', post_url=post.title) }}">
                         <p class="float-right">{{ post.created_at.strftime("%d %B %Y") }}</p>
                         <p class="">{{ post.title }}</p>
                         <p class="my-2 py-2 pl-2 text-left border-0.5 border-black rounded-md">{{ post.summary }}</p></a>

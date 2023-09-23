@@ -84,9 +84,11 @@ module.exports = {
         "40%": "40%",
         "50%": "50%",
 
+        '12.5px': '12.5px',
         '0.65rem': '0.65rem',
         '0.7rem': '0.7rem',
         "1.09rem": "1.09rem",
+        "1.33rem": "1.33rem",
         "1.87rem": "1.87rem",
         "2.25rem": "2.25rem",
         "2.6rem": "2.6rem",
@@ -94,6 +96,7 @@ module.exports = {
       },
       padding:{
         "1%": "1%",
+        '12.5px': '12.5px',
       },
       fontSize: {
         "12rem": "12rem",

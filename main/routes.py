@@ -15,7 +15,7 @@ def index():
     page = request.args.get('page', 1, type=int)
     # get posts data
     posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
-    .with_entities(Posts.id, Posts.title, Posts.content, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .with_entities(Posts.id, Posts.title, Posts.content, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .paginate(page=page, per_page=3)
     no_of_pages = int((posts.total / posts.per_page)+1)
 
@@ -34,15 +34,15 @@ def post(post_url):
     user_ip=request.remote_addr
     
     # get post details
-    post = Posts.query.filter_by(url_title=post_url, is_draft=False)\
-        .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.content, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments, Posts.related_1, Posts.related_2, Posts.related_3)\
+    post = Posts.query.filter_by(title=post_url, is_draft=False)\
+        .with_entities(Posts.id, Posts.title, Posts.content, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments, Posts.related_1, Posts.related_2, Posts.related_3)\
         .first_or_404()
 
     # get related posts
     related_posts = Posts.query.filter_by(is_draft=False).filter(
         Posts.id.in_([post.related_1, post.related_2, post.related_3]),
     ).with_entities(
-        Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
+        Posts.id, Posts.title, Posts.cover_img,
         Posts.views, Posts.comments, Posts.likes
     ).all()
 
@@ -54,7 +54,7 @@ def post(post_url):
         random_posts = Posts.query.filter_by(is_draft=False).filter(
             ~Posts.id.in_(exclude_post_ids)  # Exclude the current post and related posts
         ).with_entities(
-            Posts.id, Posts.title, Posts.url_title, Posts.cover_img,
+            Posts.id, Posts.title, Posts.cover_img,
             Posts.views, Posts.comments, Posts.likes
         ).order_by(func.random()).limit(num_random_posts).all()
 
@@ -116,7 +116,7 @@ def post(post_url):
         db.session.add(notification)
 
         db.session.commit()
-        return redirect(url_for('post', post_url=post.url_title))
+        return redirect(url_for('post', post_url=post.title))
 
     flash = 'Comment Deleted Successfully!'
     return render_template("post_page.html", flash=flash, comment_form=comment_form, post=post, liked=liked, comments=comments, related_posts=related_posts, liked_related_posts=liked_related_posts, by_user=by_user)
@@ -145,13 +145,13 @@ def register_like(post_id):
         db.session.commit()
 
         post = Posts.query.filter_by(id=post_id)\
-        .with_entities(Posts.title, Posts.likes, Posts.url_title)\
+        .with_entities(Posts.title, Posts.likes)\
         .first_or_404()
         
         if post.likes % 10 == 0:
             if post.likes > 0:
                 notification_message = f"Your post '{post.title}' has received {post.likes} likes!"
-                notification = Notification(message=notification_message, url = url_for('post', post_url = post.url_title))
+                notification = Notification(message=notification_message, url = url_for('post', post_url = post.title))
                 db.session.add(notification)
                 db.session.commit()
 
@@ -163,10 +163,10 @@ def delete_comment(comment_id, post_id):
     comment = Comment.query.filter_by(id = comment_id).first_or_404()
     db.session.delete(comment)
     db.session.commit()
-    post = Posts.query.filter_by(id=post_id).with_entities(Posts.comments, Posts.url_title).first_or_404()
+    post = Posts.query.filter_by(id=post_id).with_entities(Posts.comments).first_or_404()
     Posts.query.filter_by(id=post_id).update(dict(comments = post.comments-1))
     db.session.commit()
-    return redirect(url_for('post',  post_url=post.url_title))
+    return redirect(url_for('post',  post_url=post.title))
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -263,21 +263,18 @@ def create_post():
             untitled_post_count = Posts.query.filter(Posts.title.startswith('Untitled Post (')).count()
             post_form.title.data = f'Untitled Post ({untitled_post_count})'
 
-        url_title = post_form.title.data
-        url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
-
         f = post_form.cover_img.data
         filename = None 
 
         if f:
-            filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
+            filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
         else:
             if not is_draft:
                 flash("Please provide a cover image!")
                 return redirect(url_for("create_post", post_form=post_form))            
 
-        post = Posts(title = post_form.title.data, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
+        post = Posts(title = post_form.title.data, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
         db.session.add(post)
         db.session.commit()
 
@@ -468,13 +465,13 @@ def manage_posts():
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     
     draft_posts_query = Posts.query.filter_by(is_draft=True)\
-    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
     d_posts_len=len(draft_posts_query)
     flash = "Post Deleted Successfully!"
 
     published_posts_query = Posts.query.filter_by(is_draft=False)\
-    .with_entities(Posts.id, Posts.title, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+    .with_entities(Posts.id, Posts.title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
     .all()
     p_posts_len=len(published_posts_query)
 
@@ -547,18 +544,14 @@ def edit_post(post_id):
             is_draft = True
         else:
             is_draft = 'save_draft' in request.form
-            print('IS DRAFT:', is_draft)
 
-        url_title = post_form.title.data
-        url_title = re.sub('[^-.~0-9a-zA-Z ]', '', url_title)
-        
         f = post_form.cover_img.data
         filename = None
 
         if f:
             if filename:
                 os.remove(os.path.join(app.root_path + 'static','post_img', old_post.cover_img))
-                filename = url_title + '.' + f.filename.rsplit('.', 1)[1].lower()
+                filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
                 f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
         else:
             filename=old_post.cover_img
@@ -580,7 +573,7 @@ def edit_post(post_id):
             untitled_post_count = Posts.query.filter(Posts.title.startswith('Untitled Post (')).count()
             post_form.title.data = f'Untitled Post ({untitled_post_count})'
 
-        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, url_title = url_title, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
+        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
         
         likes = Likes.query.filter_by(post_no=old_post.id).all()
         comments =  Comment.query.filter_by(post_no=old_post.id).all()
@@ -661,32 +654,32 @@ def logout():
     flash("Logged Out Successfully!")
     return redirect(url_for('index'))
 
-@app.route("/search")
-def w_search():
-    page = request.args.get('page', 1, type=int)
+# @app.route("/search")
+# def w_search():
+#     page = request.args.get('page', 1, type=int)
     
-    keyword = request.args.get('keyword')
+#     keyword = request.args.get('keyword')
 
-    if keyword == '' or keyword is None:
-        posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
-        .with_entities(Posts.id, Posts.title, Posts.content, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
-        .paginate(page=page, per_page=3)
-    else:
-        posts = Posts.query.msearch(keyword).filter_by(is_draft=False).order_by(Posts.created_at.desc())\
-        .with_entities(Posts.id, Posts.title, Posts.content, Posts.url_title, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
-        .paginate(page=page, per_page=3)
+#     if keyword == '' or keyword is None:
+#         posts = Posts.query.filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+#         .with_entities(Posts.id, Posts.title, Posts.content, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+#         .paginate(page=page, per_page=3)
+#     else:
+#         posts = Posts.query.msearch(keyword).filter_by(is_draft=False).order_by(Posts.created_at.desc())\
+#         .with_entities(Posts.id, Posts.title, Posts.content, Posts.summary, Posts.created_at, Posts.cover_img, Posts.views, Posts.likes, Posts.comments)\
+#         .paginate(page=page, per_page=3)
 
-    no_of_pages = int((posts.total / posts.per_page)+1)
+#     no_of_pages = int((posts.total / posts.per_page)+1)
 
-    liked={}
-    for post in posts.items:
-        like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = request.remote_addr).first()
-        if like is None:
-            liked[post.id]=False
-        else:
-            liked[post.id]=True
+#     liked={}
+#     for post in posts.items:
+#         like = Likes.query.filter_by(post_no = post.id).filter_by(ip_address = request.remote_addr).first()
+#         if like is None:
+#             liked[post.id]=False
+#         else:
+#             liked[post.id]=True
 
-    if posts.total == 0:
-        flash('No posts found!', 'info')
+#     if posts.total == 0:
+#         flash('No posts found!', 'info')
 
-    return render_template('index.html', posts=posts, no_of_pages=no_of_pages, liked=liked)
+#     return render_template('index.html', posts=posts, no_of_pages=no_of_pages, liked=liked)

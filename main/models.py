@@ -1,4 +1,4 @@
-from main import db, app, login_manager, bcrypt, search
+from main import db, app, login_manager
 from datetime import datetime
 from flask_login import UserMixin
 from flask import current_app
@@ -36,7 +36,6 @@ class Posts(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True)
-    url_title = db.Column(db.String(100), nullable=False, unique=True) 
     content = db.Column(db.String(1000000))
     summary= db.Column(db.String(200))
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
