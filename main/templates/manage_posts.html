@@ -97,7 +97,9 @@
             vars= getUrlVars();
             $("#sort").val(vars['sort']).change();
             $("#sort_direction").val(vars['sort_direction']).change();
-            $("#search-input").val(decodeURI(vars['keyword'])).change();
+            var keyword = decodeURI(vars['keyword']);
+            if(keyword == 'undefined'){keyword='';}
+            $("#search-input").val(keyword).change();
         });
         $(function() {
             $('#show_sort_div').on('click', function(e) {
