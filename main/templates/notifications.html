@@ -7,8 +7,16 @@
 {% block main %}
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 <script type=text/javascript>
-    var notif_len = {{ notif_len }};
+    var notif_len = 0;
+    {% for notification in notifications %}
+        notif_len +=1;
+    {% endfor %}
+    
     {% for notification in notifications %}
         $(function() {
             $('#read_notification{{ notification.id }}').on('click', function(e) {
@@ -40,7 +48,7 @@
                     notif_len = notif_len-1;
                     if(notif_len==0)
                     {
-                        $('#no_notif').text("No notifications");
+                        $('#no_notif').text("No notifications Found");
 					    $("#no_notif").toggle();
                     }
                 });
@@ -63,13 +71,17 @@
             $('#apply').on('click', function(e) {
                 var sort = $("#sort").val();
                 var sort_direction = $("#sort_direction").val();
-                window.location = "/notifications?sort="+sort+"&sort_direction="+sort_direction;
+                var keyword = $("#search-input").val();
+                window.location = "/notifications?sort="+sort+"&sort_direction="+sort_direction+"&keyword="+keyword;
             });
         });
         $(document).ready(function(){
             vars= getUrlVars();
             $("#sort").val(vars['sort']).change();
             $("#sort_direction").val(vars['sort_direction']).change();
+            var keyword = decodeURI(vars['keyword']);
+            if(keyword == 'undefined'){keyword='';}
+            $("#search-input").val(keyword).change();
         });
         $(function() {
             $('#show_sort_div').on('click', function(e) {
@@ -90,6 +102,29 @@
                 }
             });
         });
+
+        $(function() {
+            $('#search_button').on('click', function(e) {
+                var sort = $("#sort").val();
+                var sort_direction = $("#sort_direction").val();
+                var keyword = $("#search-input").val();
+                window.location = "/notifications?sort="+sort+"&sort_direction="+sort_direction+"&keyword="+keyword;
+            });
+        });
+        
+        $(function() {
+            var availableTags = [];
+            {% for notification in notifications %}
+                p = "{{ notification.message | safe }}"
+                availableTags.push(p);
+            {% endfor %}
+            $( "#search-input" ).autocomplete({
+                source: availableTags,
+                open: function() {
+                    $("ul.ui-menu").width( $("#search-div").innerWidth() );
+                }
+            });
+        });
 </script>
 
 <div class="w-100% md:w-80% 880:w-47.5% md:mx-auto">
@@ -107,8 +142,14 @@
         </select>
     </div>
     <button class="inline-block btn btn-primary w-100% xsm:w-47.5% mb-2" id="apply">Apply Sorting</button>
-
     <button class="inline-block btn btn-primary w-100% mb-2" id="show_sort_div">Show Sorting</button>
+</div>
+
+<div id="search-div" class="w-100% md:w-80% 880:w-47.5% mx-auto border-0.5 border-gradient rounded-lg text-left z-10 bg-white">
+    <input type="text" name="keyword" id="search-input" class="form-control autocomplete border-0 inline-block w-80% text-lg text-gradient focus:text-gradient" placeholder="Search...">
+    <button id="search_button" class="float-right">
+        <img class="inline-block w-100% align-middle mt-9px pr-9px" src="../static/assets/arrow.svg"/>
+    </button>
 </div>
 
 <center>
@@ -133,7 +174,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <h3 class="my-3 text-4xl">No Notifications</h3>
+            <h3 class="my-3 text-4xl">No Notifications Found</h3>
         {% endif %}
     </div>
 </center>

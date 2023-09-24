@@ -79,6 +79,7 @@ class Likes(db.Model):
         return f"Subscriber('{self.id}')"
 
 class Messages(db.Model):
+    __searchable__ = ['message', 'name']
     id= db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
@@ -96,6 +97,7 @@ class MessageReply(db.Model):
 
 
 class Notification(db.Model):
+    __searchable__ = ['message']
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(255), nullable=False)
     message = db.Column(db.String(255), nullable=False)

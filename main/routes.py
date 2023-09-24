@@ -310,6 +310,8 @@ def send_email_for_new_post(post):
 def view_notifications():
     sort = request.args.get('sort') if request.args.get('sort')!=None else None
     sort_direction = request.args.get('sort_direction')
+    keyword = request.args.get('keyword')
+
     if sort_direction == "true":
         sort_direction = True
     elif sort_direction == "false":
@@ -321,7 +323,11 @@ def view_notifications():
         return redirect("/notifications?sort=is_read&sort_direction=false")
 
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
-    notification_query = Notification.query.all()
+
+    if keyword is None or keyword=='':
+        notification_query = Notification.query.all()
+    else: 
+        notification_query = Notification.query.msearch(keyword).all()
     
     notifications = []
     for notification in notification_query:
@@ -339,7 +345,7 @@ def view_notifications():
                 notifications.sort(key=attrgetter(category), reverse=reverse)
                 
         notifications.sort(key=attrgetter(sort), reverse=sort_direction)
-        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, del_flash=del_flash, notifications=notifications, notif_len=len(notifications), no_notifications=False, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
+        return render_template("notifications.html", read_flash=read_flash, unread_flash=unread_flash, del_flash=del_flash, notifications=notifications, no_notifications=False, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 @app.route('/read_notification/<string:notification_id>', methods=['GET', 'POST'])
 @login_required
@@ -362,6 +368,8 @@ def delete_notification(notification_id):
 def view_messages():
     sort = request.args.get('sort') if request.args.get('sort')!=None else None
     sort_direction = request.args.get('sort_direction')
+    keyword = request.args.get('keyword')
+
     if sort_direction == "true":
         sort_direction = True
     elif sort_direction == "false":
@@ -373,7 +381,11 @@ def view_messages():
         return redirect("/messages?sort=read&sort_direction=false")
     
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
-    message_query = Messages.query.all()
+    
+    if keyword is None or keyword=='':
+        message_query = Messages.query.all()
+    else:
+        message_query = Messages.query.msearch(keyword).all()
     reply_query = MessageReply.query.all()
     
     messages = []
@@ -384,7 +396,7 @@ def view_messages():
         replies[reply.message_id] = reply.reply
     
     if len(messages) == 0:
-        return render_template("messages.html", msg_len=len(messages))
+        return render_template("messages.html", no_msg=True)
     else:
         for category, reverse in [('date', True), ('replied', False), ('read', False)]:
             if category != sort:
@@ -396,7 +408,7 @@ def view_messages():
         unread_flash = 'Message Marked As Unread Successfully!'
         del_flash = "Message Deleted successfully!"
 
-        return render_template("messages.html", del_flash=del_flash, read_flash=read_flash, unread_flash=unread_flash, messages=messages, msg_len=len(messages), replies=replies, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
+        return render_template("messages.html", no_msg=False, del_flash=del_flash, read_flash=read_flash, unread_flash=unread_flash, messages=messages, replies=replies, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
     
 @app.route('/delete_message/<int:message_id>', methods=['GET', 'POST'])
 @login_required
