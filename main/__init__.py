@@ -8,10 +8,14 @@ from flask_msearch import Search
 from flask_admin.contrib.sqla import ModelView
 from main.config import Config
 from flask_mail import Mail
+from main.dash_application import create_dash_application
+
 
 app = Flask(__name__, instance_relative_config=False)
 app.config.from_object(Config)
 bcrypt = Bcrypt(app)
+
+dashapp = create_dash_application(app)
 
 # Initiate database
 db = SQLAlchemy(app)

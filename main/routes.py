@@ -663,6 +663,8 @@ def login():
 
     return render_template('login.html', form=form)
 
+from main import dashapp
+
 @app.route('/authors_home')
 @login_required
 def authors_home():
@@ -672,7 +674,7 @@ def authors_home():
     if unread_notifications > 0:
         flash(f'You Have {unread_notifications} Unread Notifications!')
 
-    return render_template('authors_home.html', notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
+    return render_template('authors_home.html', dashapp=dashapp.index())
 
 @app.route('/logout')
 @login_required

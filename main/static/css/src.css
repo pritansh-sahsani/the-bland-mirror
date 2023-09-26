@@ -288,7 +288,9 @@ input:focus, textarea:focus, select:focus{
   width: 1px;
 }
 
-
+.modebar{
+  display: none !important;
+}
 
 #sort_div{display: none;}
 #apply{display: none;}
