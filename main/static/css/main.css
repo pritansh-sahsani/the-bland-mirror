@@ -1445,11 +1445,6 @@ video {
     --tw-bg-opacity: 1;
     background-color: rgb(55 65 81 / var(--tw-bg-opacity));
   }
-
-  .dark\:text-gradient {
-    --tw-text-opacity: 1;
-    color: rgb(0 55 100 / var(--tw-text-opacity));
-  }
 }
 
 @media (min-width: 500px) {

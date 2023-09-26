@@ -264,12 +264,12 @@ def create_post():
             post_form.title.data = f'Untitled Post ({untitled_post_count})'
 
         f = post_form.cover_img.data
-        filename = None 
 
         if f:
             filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
         else:
+            filename = None
             if not is_draft:
                 flash("Please provide a cover image!")
                 return redirect(url_for("create_post", post_form=post_form))            
@@ -574,13 +574,12 @@ def edit_post(post_id):
             is_draft = 'save_draft' in request.form
 
         f = post_form.cover_img.data
-        filename = None
 
-        if f:
-            if filename:
-                os.remove(os.path.join(app.root_path + 'static','post_img', old_post.cover_img))
-                filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
-                f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
+        if f != None:
+            if old_post.cover_img:
+                os.remove(os.path.join(app.root_path, 'static', 'post_img', old_post.cover_img))
+            filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
+            f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
         else:
             filename=old_post.cover_img
 
