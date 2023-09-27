@@ -85,7 +85,7 @@
     <div class="w-95% mx-auto">
         {% for post in posts.items %}
             <div class="hidden md:table border-solid rounded-lg border-0.5 border-gradient my-6 w-100%">
-                <a href="{{ url_for('post', post_url=post.title) }}"><img class="home_section float-left border-solid border-r-0.5 border-gradient object-cover rounded-lg" src= "/static/post_img/{{ post.cover_img }}"></a>
+                <a href="{{ url_for('post', post_url=post.title) }}"><img class="home_section float-left border-solid border-r-0.5 border-gradient object-cover rounded-l-lg" src= "/static/post_img/{{ post.cover_img }}"></a>
                 
                 <div class="home_section float-right">
                     <a href="{{ url_for('post', post_url=post.title) }}">
@@ -124,10 +124,9 @@
             <div class="block md:hidden">
                 <a href="{{ url_for('post', post_url=post.title) }}">
                     <div class="relative mx-auto sm:w-80% border-solid border-0.5 border-gradient rounded-lg my-4">
-                        <img class="object-cover rounded-lg" src= "/static/post_img/{{ post.cover_img }}">
-                        <div class="w-100% absolute bottom-0 pb-2 bg-white rounded-lg">
+                        <img class="rounded-lg h-80 w-100% object-cover" src= "/static/post_img/{{ post.cover_img }}">
+                        <div class="w-100% absolute bottom-0 pb-2 bg-white rounded-b-lg  border-t-0.5 border-t-solid border-t-gradient">
                             <p class="ml-2 mt-2 text-left text-2xl xsm:text-3xl">{{ post.title }}</p>
-                            <p class="hidden xsm:block mr-2 text-right w-47.5% float-right">{{ post.created_at.strftime("%d %b %Y") }}<p>
                         </div>
                     </div>
                 </a>

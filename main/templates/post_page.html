@@ -71,6 +71,8 @@
 
             {% for relatedPost in related_posts %}
                 $(function() {
+                    // $('#related_img{{relatedPost.title}}').css({"background-image": "url(/static/post_img/{{ relatedPost.cover_img }})"});
+                    // console.log('/static/post_img/{{ relatedPost.cover_img }}');
                     $('#like_button_{{ relatedPost.id }}').on('click', function(e) {
                         e.preventDefault();
                         $.getJSON('{{ url_for("register_like", post_id=relatedPost.id) }}', function(data) {});
@@ -93,39 +95,54 @@
     </script>
 
     <!-- post -->
-    <div class="mx-auto w-80% post border bg-cover">
+    <div class="mx-auto w-95% 880:w-90% 1180:w-80% mt-5% border-solid border-0.5 border-black rounded-md">
         <div class="w-90% mx-auto mt-5% mb-5%">
-            <p class="text-base mb-5 ">{{ post.created_at.strftime("%d %B %Y") }}</p>
-            <p class="text-6xl -ml-2 post_font">{{ post.title }}</p>
-            <p class="text-2xl mt-4 post_font">{{ post.content | safe }}</p>
-            <div class="h-10% mt-10%">
+            <p class="text-base mb-2 ">{{ post.created_at.strftime("%d %B %Y") }}</p>
+            <p class="text-2xl xsm:text-4xl md:text-6xl">{{ post.title }}</p>
+            <div class="mt-4 mb-4">{{ post.content | safe }}</div>
+            <div class="h-10%">
                 <hr class="mb-2 border-slate-400"/>
                 {% if post.views == 1 %}
-                    <p class="ml-0.5 inline-block text-base">{{ post.views }} view</p>
+                    <p class="ml-0.5 inline-block mt-0.5 text-base">{{ post.views }} view</p>
                 {% else %}
-                    <p class="ml-0.5 inline-block text-base">{{ post.views }} views</p>
+                    <p class="ml-0.5 inline-block mt-0.5 text-base">{{ post.views }} views</p>
                 {% endif %}
                 {% if post.comments == 1 %}
-                    <p class="ml-5 inline-block text-base">{{ post.comments }} comment</p>
+                    <p class="hidden xsm:inline-block ml-3 md:ml-5 mt-0.5 text-base">{{ post.comments }} comment</p>
                 {% else %}
-                    <p class="ml-5 inline-block text-base">{{ post.comments }} comments</p>
+                    <p class="hidden xsm:inline-block ml-3 md:ml-5 mt-0.5 text-base">{{ post.comments }} comments</p>
                 {% endif %}
-                <div class="w-50% m-0 inline-block">
-                    <div class="sharethis-inline-share-buttons inline-block"></div>
-                </div>
+
                 {% if liked %}
-                    <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button_clicked.svg" /></button>
+                    <button id='like_button' class="float-right mr-0.5" style="margin-top: 6px;"><img id="like_image" src="../static/assets/like_button_clicked.svg" /></button>
                 {% else %}
-                    <button id='like_button' class="float-right mr-0.5" style="margin-top: 4px;"><img id="like_image" src="../static/assets/like_button.svg" /></button>
+                    <button id='like_button' class="float-right mr-0.5" style="margin-top: 6px;"><img id="like_image" src="../static/assets/like_button.svg" /></button>
                 {% endif %}
-                <p class="inline-block float-right mr-1 text-base" id="like_display">{{ post.likes }}</p>
+                <p class="inline-block mt-0.5 float-right mr-1 text-base" id="like_display">{{ post.likes }}</p>
+
+                <div class="hidden md:inline-block m-0 mr-2  float-right">
+                    <button class="btn border-0.5 border-black"><img class='h-4' src='../static/assets/share-icon.svg'/></button>
+                    <button class="btn border-0.5 border-black" >
+                        <a href="https://www.instagram.com/the_bland_mirror/">
+                            <img class='h-4' src='../static/assets/insta_icon.svg'/>
+                        </a>
+                    </button>
+                </div>
+                <div class="block md:hidden m-0 mt-2">
+                    <button class="btn w-47.5% border-0.5 border-black"><img class='h-4 mx-auto' src='../static/assets/share-icon.svg'/></button>
+                    <button class="btn w-47.5% border-0.5 border-black float-right" >
+                        <a href="https://www.instagram.com/the_bland_mirror/">
+                            <img class='h-4 mx-auto' src='../static/assets/insta_icon.svg'/>
+                        </a>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- comments -->
     
-    <div class="border-solid border-black rounded-md my-5% items-center border-0.5">
+    <div class="w-90% w-95% 880:w-90% 1180:w-80% mx-auto border-solid border-black rounded-md my-5 items-center border-0.5">
             {% if post.comments == 0 %}
                 <p class="text-center text-base xsm:text-2xl w-80% mt-5% mx-auto"> No Comments Yet. Be The First One To!</p>
             {% else %}
@@ -136,7 +153,7 @@
                             <p class="absolute right-0 w-40% break-words text-right">{{ comment.date.strftime("%d %b %Y") }}</p>
                             <p class="w-40% break-words">{{ comment.name }}</p>
                             
-                            <div class="my-2 border-0.5 border-black rounded-md relative">
+                            <div class="my-2 border-solid border-0.5 border-black rounded-md relative">
                                 <p class="block inline-block align-top py-2 px-3 text-left w-90% break-words">{{ comment.comment }}</p>
                                 
                                 {% if by_user[comment.id] %}
@@ -160,23 +177,22 @@
         </div>
     </div>
 
-    {% if related_post %}
 
     <!-- other posts -->
-    <div class="mx-auto w-80% mt-10">
+    <div class="mx-auto w-90% w-95% 880:w-90% 1180:w-80% mt-10">
         <p class="text-2xl">Other Posts</p>
-        <div class="flex justify-between">
+        <div class="block 960:flex justify-between">
             {% for post in related_posts %}
-                <div class="small_post_view border w-30% mt-5 inline">
+                <div class="hidden 960:table 960:w-30% border-0.5 border-black border-solid rounded-lg h-fit mt-5 inline">
                     <a href="{{ url_for('post', post_url=post.title) }}">
-                        <img class="table-cell w-100% h-45 object-cover border-b-black border-b-0.5" src="/static/post_img/{{ post.cover_img }}" />
+                        <img class="block object-cover h-40 h-10 rounded-t-lg w-100%" src="/static/post_img/{{ post.cover_img }}" />
                     </a>
-                        <div class="h-35">
+                        <div class="h-40">
                             <a href="{{ url_for('post', post_url=post.title) }}">
                                 <p class="pt-2 text-2xl mx-5% h-32">{{ post.title }}</p>
                             </a>
 
-                            <hr class="border-slate-400 w-90% mx-auto" />
+                            <hr class="w-90% mx-auto border-black" />
                             <img class="inline w-auto h-3 ml-5% object-cover mb-1" src="../static/assets/views_icon.png">
                             <p class="ml-1 inline">{{ post.views }}</p>
                             <img class="inline w-auto y h-4 ml-2 object-cover mb-1" src="../static/assets/comment_icon.png">
@@ -193,18 +209,26 @@
                             <p class="float-right inline" id="like_display_{{ post.id }}">{{ post.likes }}</p>
                         </div>
                 </div>
+                <div class="block 960:hidden">
+                    <a href="{{ url_for('post', post_url=post.title) }}">
+                        <div class="relative mx-auto border-solid border-0.5 border-gradient rounded-lg my-4">
+                            <img class="rounded-lg h-40 xsm:h-80 w-100% object-cover" src= "/static/post_img/{{ post.cover_img }}">
+                            <div class="w-100% absolute bottom-0 pb-2 bg-white rounded-b-lg  border-t-0.5 border-t-solid border-t-gradient">
+                                <p class="ml-2 mt-2 text-left text-2xl xsm:text-3xl">{{ post.title }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             {% endfor %}
         </div>
     </div>
 
-    {% else %}
-
-    {% endif %}
 
     <!-- subscribe link -->
-	<div>
-			<hr class="mt-10 w-70% mx-auto border-black"/>
-            <p class="my-5 text-4xl text-center mx-5 text-blue-700"><a class="" href="/subscribe">Click here to subscribe and receive updates on the latest posts!</a></p>
-	</div>
+	
+    <div>
+        <hr class="mt-10 w-90% mx-auto border-black"/>
+        <p class="my-3 md:my-5 text-2xl md:text-4xl text-center md:mx-5"><a class="" href="/subscribe">Click here to subscribe and receive updates on the latest posts!</a></p>
+    </div>
     
 {% endblock %}

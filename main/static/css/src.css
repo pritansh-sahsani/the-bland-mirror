@@ -93,10 +93,6 @@ body{
   
     transition: all ease-in-out 250ms;
 }
-.post{
-    background-image: url('../assets/post_background.jpg');
-    height:fit-content;
-}
 
 .post_font{
     font-family: 'Caveat', cursive;

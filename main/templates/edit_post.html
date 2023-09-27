@@ -60,6 +60,15 @@
 
     }
     setInterval('raise_error()', 1);
+    
+    $(document).ready(function() {
+            $('input[type="file"]').change(function(e) {
+                var filename = e.target.files[0].name;
+                console.log(filename);
+                $("#file-upload_label").text(filename); 
+                return true;
+            });
+        });
 </script>
     <div class="border-solid border-black rounded-md my-5% items-center border-0.5">
         <p class="text-center text-base xsm:text-4xl w-80% mt-3% mx-auto">Edit Post: {{old_post.title}}</p>
@@ -75,7 +84,7 @@
                 
                 <div class="custom-file mt-3% sm:mt-2%">
                     {{ post_form.cover_img(class="custom-file-input", id="img_input") }}
-                    <label class="custom-file-label" id="img_input_label" for="img_input">Upload Cover Image</label>
+                    <label class="custom-file-label" id="file-upload_label" for="img_input">{{ old_post.cover_img }}</label>
                 </div>
 
                 <h3 class="w-100% text-center text-xl mt-3% sm:mt-2%">Related Posts</h3>
