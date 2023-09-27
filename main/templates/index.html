@@ -42,7 +42,7 @@
         });
         $(function() {
             var availableTags = [];
-            {% for post in posts.items %}
+            {% for post in posts_for_autocomplete %}
                 p = "{{ post.title | safe }}"
                 availableTags.push(p);
             {% endfor %}
