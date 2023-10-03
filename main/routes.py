@@ -1,14 +1,16 @@
 import os
 from operator import attrgetter
 from flask import render_template, url_for, flash, redirect, request
-from main import db, mail, app, bcrypt
+from main import bcrypt
+from main.setup import app, db, login_manager
 from flask_login import current_user, login_user, logout_user, login_required
-from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User, Notification
+from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User, Notification, PageViews
 from main.forms import CommentForm, SubscribeForm, ContactForm, PostForm, MessageReplyForm, RegistrationForm, LoginForm
 from main.helpers import get_notification_for_navbar
 from flask_mail import Message
 from sqlalchemy.sql.expression import func
 import re
+from datetime import date
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -35,6 +37,18 @@ def index():
 
 @app.route("/post/<string:post_url>", methods=['GET', 'POST'])
 def post(post_url):
+    # Log page view for the current date
+    current_date = date.today()
+    page_view = PageViews.query.filter_by(date=current_date).first()
+
+    if page_view:
+        page_view.count += 1
+    else:
+        page_view = PageViews(date=current_date, count=1)
+        db.session.add(page_view)
+
+    db.session.commit()
+
     user_ip=request.remote_addr
     
     # get post details
