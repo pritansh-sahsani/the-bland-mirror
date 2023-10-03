@@ -108,6 +108,13 @@ class Notification(db.Model):
         return f"<Notification {self.id}>"
 
 
+class PageViews(db.Model):
+    __bind_key__ = 'statsdb'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    count = db.Column(db.Integer, default=0)
+
+
 with app.app_context():
     db.create_all()
     db.session.commit()

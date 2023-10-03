@@ -50,6 +50,7 @@ admin.add_view(MyModelView(Likes, db.session))
 admin.add_view(MyModelView(Messages, db.session))
 admin.add_view(MyModelView(MessageReply, db.session))
 admin.add_view(MyModelView(Notification, db.session))
+admin.add_view(MyModelView(PageViews, db.session))
 
 mail = Mail(app)
 
