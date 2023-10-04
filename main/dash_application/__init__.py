@@ -13,18 +13,9 @@ def create_dash_application(flask_app):
     # Code for the UI
     def app_layout():
         pageviews = PageViews.query.order_by(PageViews.date.desc()).all()
-
         dates = [pageview.date for pageview in pageviews]
         count = [pageview.count for pageview in pageviews]
 
-        pageviewdf = pd.DataFrame(
-            {
-                "Dates": dates,
-                "Count": count,
-            }
-        )
-
-        print("\nDF: \n", pageviewdf, "\n\n\n")
         return html.Div(
             className="container mt-4",
             children=[
@@ -35,7 +26,26 @@ def create_dash_application(flask_app):
             """
                 ),
                 html.Hr(className="mt-2"),
-                dcc.Graph(id="page-views-graph", figure=px.bar(pageviewdf, x="Dates", y="Count", title="Post Views Per Day")),
+                dcc.Graph(id="page-views-graph", figure={
+                'data': [
+                    {
+                        'x': dates,
+                        'y': count,
+                        'type': 'bar',
+                    }
+                ],
+                'layout': {
+                    'xaxis': {
+                        'title': "Days",
+                        'type': 'date',
+                        'tickformat': '%b %d, %Y',
+                        'dtick': 86400000.0
+                    },
+                    'yaxis': {
+                        'title': "Count",
+                    },
+                    'title': 'Post Views Per Day',
+                }}),
             ]
         )
         
