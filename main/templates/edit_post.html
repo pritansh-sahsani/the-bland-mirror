@@ -84,7 +84,11 @@
                 
                 <div class="custom-file mt-3% sm:mt-2%">
                     {{ post_form.cover_img(class="custom-file-input", id="img_input") }}
-                    <label class="custom-file-label" id="file-upload_label" for="img_input">{{ old_post.cover_img }}</label>
+                    {% if old_post.cover_img == None %}
+                        <label class="custom-file-label" id="file-upload_label" for="img_input">Upload Cover Image</label>
+                    {% else %}
+                        <label class="custom-file-label" id="file-upload_label" for="img_input">{{ old_post.cover_img }}</label>
+                    {% endif %}
                 </div>
 
                 <h3 class="w-100% text-center text-xl mt-3% sm:mt-2%">Related Posts</h3>

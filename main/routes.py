@@ -290,7 +290,7 @@ def create_post():
             filename = None
             if not is_draft:
                 flash("Please provide a cover image!")
-                return redirect(url_for("create_post", post_form=post_form))            
+                return redirect(url_for("create_post", post_form=post_form))       
 
         post = Posts(title = post_form.title.data, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
         db.session.add(post)
@@ -592,14 +592,18 @@ def edit_post(post_id):
             is_draft = 'save_draft' in request.form
 
         f = post_form.cover_img.data
-
         if f != None:
             if old_post.cover_img:
                 os.remove(os.path.join(app.root_path, 'static', 'post_img', old_post.cover_img))
             filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
             f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
         else:
-            filename=old_post.cover_img
+            if old_post.cover_img == None:
+                filename= None
+                is_draft = True
+            else:
+                filename=old_post.cover_img
+                is_draft = 'save_draft' in request.form
 
         # check if related posts are same by check if every post is not equal other posts
         related_post = [post_form.related_1.data, post_form.related_2.data, post_form.related_3.data]
