@@ -53,17 +53,17 @@ class PostForm(FlaskForm):
     content = TextAreaField('Content', validators=[Length(min=0, max=100000, message=min_max_error_message.format(field='Content', min='1', max='%(max)d'))])
     summary= StringField('Summary', validators=[Length(min=0, max=140, message=min_max_error_message.format(field='Summary', min='1', max='%(max)d'))])
     cover_img = FileField('Cover image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only .jpg, .png and .jpeg file formats are supported.')])
-    related_1 = SelectField('Post 1', choices=[], validators=[DataRequired()])
-    related_2 = SelectField('Post 2', choices=[], validators=[DataRequired()])
-    related_3 = SelectField('Post 3', choices=[], validators=[DataRequired()])
+    related_1 = SelectField('Post 1', choices=[])
+    related_2 = SelectField('Post 2', choices=[])
+    related_3 = SelectField('Post 3', choices=[])
     save_draft = SubmitField('Save As Draft')
     submit = SubmitField('Post')
     
-    def __init__(self, s1, s2, s3):
-        super(PostForm, self).__init__()
-        self.related_1.choices = s1
-        self.related_2.choices = s2
-        self.related_3.choices = s3
+    def __init__(self, formdata=None, **kwargs):
+        super(PostForm, self).__init__(formdata=formdata, **kwargs)
+        self.related_1.choices = kwargs['s1']
+        self.related_2.choices = kwargs['s2']
+        self.related_3.choices = kwargs['s3']
 
 class MessageReplyForm(FlaskForm):
     reply = TextAreaField('reply', validators=[Length(min=1, max=4000, message=min_max_error_message.format(field='Reply', min='%(min)d', max='%(max)d'))])

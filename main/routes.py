@@ -261,13 +261,13 @@ def create_post():
     else:
         choices.insert(0, (0, 'Random Post'))
 
-    post_form = PostForm(s1 = choices, s2 = choices, s3 = choices)
+    post_form = PostForm(formdata = request.form, s1 = choices, s2 = choices, s3 = choices)
 
     for post in posts:
         if post.title == post_form.title.data:
             flash("This title already exists!", 'danger')
-            return redirect(url_for('create_post'))
-
+            return redirect(url_for("create_post", post_form=post_form))
+    
     if post_form.validate_on_submit():
         if not post_form.cover_img.data or not post_form.summary.data or not post_form.title.data or not post_form.content.data:
             is_draft = True
@@ -303,8 +303,8 @@ def create_post():
 
         send_email_for_new_post(post)
 
-        return redirect(url_for('authors_home'))
-        
+        return redirect(url_for('manage_posts'))
+
     return render_template("new_post.html", post_form=post_form, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
 def send_email_for_new_post(post):
@@ -583,7 +583,12 @@ def edit_post(post_id):
             s[a].remove((0, 'Random Post'))
             s[a].insert(0, (0, 'Random Post'))
         
-    post_form = PostForm(s1 = s[0], s2 = s[1], s3 = s[2])
+    post_form = PostForm(formdata = request.form, s1 = s[0], s2 = s[1], s3 = s[2])
+
+    for post in posts:
+        if post.title == post_form.title.data and post.id != old_post.id:
+            flash("This title already exists!", 'danger')
+            return redirect(url_for("edit_post", post_id=post_id, post_form=post_form))
 
     if post_form.validate_on_submit():
         if not post_form.cover_img.data or not post_form.summary.data or post_form.summary.data == 'No summary' or post_form.title.data.startswith("Untitled Post (") or not post_form.title.data or not post_form.content.data:
@@ -604,6 +609,12 @@ def edit_post(post_id):
             else:
                 filename=old_post.cover_img
                 is_draft = 'save_draft' in request.form
+
+        if old_post.title != post_form.title.data and post_form.title.data != '':
+            filename = post_form.title.data + '.' + old_post.cover_img.rsplit('.', 1)[1].lower()
+            old_name = os.path.join(app.root_path, 'static', 'post_img', old_post.cover_img)
+            new_name = os.path.join(app.root_path, 'static', 'post_img', filename)
+            os.rename(old_name, new_name)
 
         # check if related posts are same by check if every post is not equal other posts
         related_post = [post_form.related_1.data, post_form.related_2.data, post_form.related_3.data]
