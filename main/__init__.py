@@ -3,7 +3,6 @@ from flask_migrate import Migrate
 from flask_admin import Admin, AdminIndexView
 from flask_msearch import Search
 from flask_admin.contrib.sqla import ModelView
-from main.config import Config
 from flask_mail import Mail
 from flask_login import current_user
 from main.setup import app, db

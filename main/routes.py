@@ -1,7 +1,7 @@
 import os
 from operator import attrgetter
 from flask import render_template, url_for, flash, redirect, request
-from main import bcrypt
+from main import bcrypt, mail
 from main.setup import app, db, login_manager
 from flask_login import current_user, login_user, logout_user, login_required
 from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageReply, User, Notification, PageViews
@@ -300,8 +300,7 @@ def create_post():
             flash("Post saved as draft!", 'info')
         else:
             flash("Post created successfully!", 'success')
-
-        send_email_for_new_post(post)
+            send_email_for_new_post(post)
 
         return redirect(url_for('manage_posts'))
 
@@ -313,15 +312,13 @@ def send_email_for_new_post(post):
     for recipient in query:
         recipients.append(recipient[0])
     
-    if len(recipients) != 0:
-        subject = "New Post - "+post.title
-        body = f"""New post out!
-        {post.title}
-        <hr>
-        {post.summary}"""
-        
-        msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], recipients = recipients, body=body)
-        mail.send(msg)
+    if len(recipients) == 0:
+        return
+    
+    subject = "New Post - "+post.title
+    msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], recipients = recipients)
+    msg.html = render_template('emails/new_post.html', post=post)
+    mail.send(msg)
 
 @app.route("/notifications")
 @login_required
@@ -457,13 +454,11 @@ def reply_message(message_id):
     reply_form = MessageReplyForm()
 
     if reply_form.validate_on_submit():
-        subject = "Reply to your message"
-        body = f"""Hello { message.name }!
-        I am mailing regarding your message on my blog, The Bland Mirror.
-        
-        { reply_form.reply.data }"""
-        
-        msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], body=body, recipients=[message.email])
+        # send email
+        recipient = [message.email]
+        subject = "Reply to your message on The Bland Mirror"
+        msg = Message(subject = subject, sender=app.config['MAIL_USERNAME'], recipients = recipient)
+        msg.html = render_template('emails/reply.html', message=message, reply = reply_form.reply.data)
         mail.send(msg)
 
         Messages.query.filter_by(id = message_id).update(dict(replied = True, read = True))
@@ -649,7 +644,11 @@ def edit_post(post_id):
         if is_draft:
             flash("Post saved as draft!", 'info')
         else:
-            flash("Post Updated Successfully!", 'success')
+            if old_post.is_draft:
+                flash("Post Published Successfully!", 'success')
+                send_email_for_new_post(post)
+            else:
+                flash("Post Updated Successfully!", 'success')
 
         return redirect(url_for('manage_posts'))
     
