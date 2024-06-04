@@ -34,8 +34,8 @@
         <form action='' method="POST" class="w-80% mx-auto">
             <div class="w-100% items-center">
             {{ form.hidden_tag() }}
-                {{ form.email(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg sm:w-47.5% sm:inline") }}
-                {{ form.password(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg mt-3% sm:mt-0 sm:w-47.5% sm:inline sm:float-right") }}
+                {{ form.email(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg sm:w-47.5% sm:inline", placeholder="Email Address") }}
+                {{ form.password(class="text-base xsm:text-xl w-100% border-0.5 border-black text-center py-1% rounded-lg mt-3% sm:mt-0 sm:w-47.5% sm:inline sm:float-right", placeholder="Password") }}
                 
                 <div class="w-100% md:w-30% sm:inline-block relative bottom-0 mt-2% md:mt-0">
                     <!-- <div class="mx-auto"> -->

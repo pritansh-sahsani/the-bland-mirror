@@ -40,16 +40,16 @@ def post(post_url):
     # Log page view for the current date
     current_date = date.today()
     page_view = PageViews.query.filter_by(date=current_date).first()
+    user_ip=request.remote_addr
 
     if page_view:
         page_view.count += 1
     else:
-        page_view = PageViews(date=current_date, count=1)
+        page_view = PageViews(date=current_date, ip_address=user_ip, count=1)
         db.session.add(page_view)
 
     db.session.commit()
 
-    user_ip=request.remote_addr
     
     # get post details
     post = Posts.query.filter_by(title=post_url, is_draft=False)\
@@ -695,8 +695,6 @@ def login():
 
     return render_template('login.html', form=form)
 
-from main import dashapp
-
 @app.route('/authors_home')
 @login_required
 def authors_home():
@@ -706,7 +704,22 @@ def authors_home():
     if unread_notifications > 0:
         flash(f'You Have {unread_notifications} Unread Notifications!')
 
-    return render_template('authors_home.html', dashapp=dashapp.index())
+    most_viewed_post = Posts.query.order_by(Posts.views.desc()).first()
+    most_commented_post = Posts.query.order_by(Posts.comments.desc()).first()
+    most_liked_post = Posts.query.order_by(Posts.likes.desc()).first()
+
+    total_views = db.session.query(db.func.sum(Posts.views)).scalar() or 0
+    total_likes = db.session.query(db.func.sum(Posts.likes)).scalar() or 0
+    
+    unique_viewers = db.session.query(PageViews.ip_address).distinct().count()
+    unique_likers = db.session.query(Likes.ip_address).distinct().count()
+    unique_commenters = db.session.query(Comment.ip_address).distinct().count()
+
+    return render_template('authors_home.html', notifications_in_navbar=notifications_in_navbar, 
+        no_notifications_in_navbar=no_notifications_in_navbar, most_viewed_post=most_viewed_post, 
+        most_commented_post=most_commented_post, most_liked_post=most_liked_post, 
+        total_views=total_views, total_likes=total_likes, unique_viewers=unique_viewers,
+        unique_likers=unique_likers, unique_commenters=unique_commenters)
 
 @app.route('/logout')
 @login_required

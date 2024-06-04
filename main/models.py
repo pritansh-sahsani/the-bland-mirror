@@ -58,7 +58,7 @@ class Comment(db.Model):
     comment = db.Column(db.String(200), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    ip_address = db.Column(db.Integer, nullable=False)
+    ip_address = db.Column(db.String(50), nullable=False)
     
     def __repr__(self):
         return f"Comment('{self.id}', '{self.post_no}', '{self.comment_no}')"
@@ -109,10 +109,10 @@ class Notification(db.Model):
 
 
 class PageViews(db.Model):
-    __bind_key__ = 'statsdb'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     count = db.Column(db.Integer, default=0)
+    ip_address = db.Column(db.String(50), nullable=False)
 
 
 with app.app_context():

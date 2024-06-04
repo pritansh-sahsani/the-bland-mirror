@@ -6,11 +6,9 @@ from flask_admin.contrib.sqla import ModelView
 from flask_mail import Mail
 from flask_login import current_user
 from main.setup import app, db
-from main.dash_application import create_dash_application
 
 bcrypt = Bcrypt(app)
 
-dashapp = create_dash_application(app)
 
 # Initiate database
 
