@@ -8,6 +8,8 @@ from main.models import Posts, Comment, Likes, Subscribers, Messages, MessageRep
 from main.forms import CommentForm, SubscribeForm, ContactForm, PostForm, MessageReplyForm, RegistrationForm, LoginForm
 from main.helpers import get_notification_for_navbar
 from flask_mail import Message
+from werkzeug.utils import secure_filename
+
 from sqlalchemy.sql.expression import func
 import re
 from datetime import date
@@ -254,26 +256,23 @@ def create_post():
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
     posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
-    choices = [(post.id, post.title) for post in posts if post.is_draft == False]
+    choices = [(post.id, post.title) for post in posts if not post.is_draft]
 
     if len(choices) == 0:
         choices = [(0, 'No posts available')]
     else:
         choices.insert(0, (0, 'Random Post'))
 
-    post_form = PostForm(formdata = request.form, s1 = choices, s2 = choices, s3 = choices)
+    post_form = PostForm(formdata=request.form, s1=choices, s2=choices, s3=choices)
 
     for post in posts:
         if post.title == post_form.title.data:
             flash("This title already exists!", 'danger')
             return redirect(url_for("create_post", post_form=post_form))
-    
+
     if post_form.validate_on_submit():
-        if not post_form.cover_img.data or not post_form.summary.data or not post_form.title.data or not post_form.content.data:
-            is_draft = True
-        else:
-            is_draft = 'save_draft' in request.form
-        
+        is_draft = 'save_draft' in request.form or not (post_form.cover_img.data or post_form.summary.data or post_form.title.data or post_form.content.data)
+
         if post_form.summary.data == '':
             post_form.summary.data = 'No summary'
 
@@ -281,18 +280,27 @@ def create_post():
             untitled_post_count = Posts.query.filter(Posts.title.startswith('Untitled Post (')).count()
             post_form.title.data = f'Untitled Post ({untitled_post_count})'
 
-        f = post_form.cover_img.data
-
-        if f:
-            filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
-            f.save(os.path.join(app.root_path + '/static/post_img/' + filename))
+        cover_img = request.files['cover_img']
+        if cover_img:
+            filename = secure_filename(post_form.title.data + '.' + cover_img.filename.rsplit('.', 1)[1].lower())
+            cover_img_path = os.path.join(app.root_path, 'static', 'post_img', filename)
+            cover_img.save(cover_img_path)
         else:
             filename = None
             if not is_draft:
-                flash("Please provide a cover image!")
-                return redirect(url_for("create_post", post_form=post_form))       
+                flash("Please provide a cover image!", 'danger')
+                return render_template("new_post.html", post_form=post_form, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
-        post = Posts(title = post_form.title.data, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
+        post = Posts(
+            title=post_form.title.data,
+            content=post_form.content.data,
+            summary=post_form.summary.data,
+            cover_img=filename,
+            related_1=post_form.related_1.data,
+            related_2=post_form.related_2.data,
+            related_3=post_form.related_3.data,
+            is_draft=is_draft
+        )
         db.session.add(post)
         db.session.commit()
 
@@ -305,7 +313,6 @@ def create_post():
         return redirect(url_for('manage_posts'))
 
     return render_template("new_post.html", post_form=post_form, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
-
 def send_email_for_new_post(post):
     query = Subscribers.query.with_entities(Subscribers.email)
     recipients = []
@@ -555,8 +562,8 @@ def delete_post(post_id):
 def edit_post(post_id):
     notifications_in_navbar, no_notifications_in_navbar = get_notification_for_navbar()
 
-    old_post = Posts.query.filter_by(id = post_id).first_or_404()
-    posts = Posts.query.order_by(Posts.created_at.desc()).all()#
+    old_post = Posts.query.filter_by(id=post_id).first_or_404()
+    posts = Posts.query.order_by(Posts.created_at.desc()).all()
     
     r1 = Posts.query.filter_by(id=old_post.related_1).first()
     r2 = Posts.query.filter_by(id=old_post.related_2).first()
@@ -564,8 +571,8 @@ def edit_post(post_id):
     r = [r1, r2, r3]
     s = []
 
-    for a in range(0, 3):
-        s.append([(post.id, post.title) for post in posts if post.id != post_id and post.is_draft == False])
+    for a in range(3):
+        s.append([(post.id, post.title) for post in posts if post.id != post_id and not post.is_draft])
         if len(s[a]) == 0:
             s[a].insert(0, (0, 'No posts available'))
         else:
@@ -578,7 +585,7 @@ def edit_post(post_id):
             s[a].remove((0, 'Random Post'))
             s[a].insert(0, (0, 'Random Post'))
         
-    post_form = PostForm(formdata = request.form, s1 = s[0], s2 = s[1], s3 = s[2])
+    post_form = PostForm(formdata=request.form, s1=s[0], s2=s[1], s3=s[2])
 
     for post in posts:
         if post.title == post_form.title.data and post.id != old_post.id:
@@ -586,40 +593,33 @@ def edit_post(post_id):
             return redirect(url_for("edit_post", post_id=post_id, post_form=post_form))
 
     if post_form.validate_on_submit():
-        if not post_form.cover_img.data or not post_form.summary.data or post_form.summary.data == 'No summary' or post_form.title.data.startswith("Untitled Post (") or not post_form.title.data or not post_form.content.data:
-            is_draft = True
-        else:
-            is_draft = 'save_draft' in request.form
+        is_draft = 'save_draft' in request.form or not (post_form.cover_img.data or post_form.summary.data or post_form.title.data or post_form.content.data)
 
-        f = post_form.cover_img.data
-        if f != None:
+        cover_img = request.files['cover_img']
+        if cover_img:
             if old_post.cover_img:
                 os.remove(os.path.join(app.root_path, 'static', 'post_img', old_post.cover_img))
-            filename = post_form.title.data + '.' + f.filename.rsplit('.', 1)[1].lower()
-            f.save(os.path.join(app.root_path, 'static', 'post_img', filename))
+            filename = secure_filename(post_form.title.data + '.' + cover_img.filename.rsplit('.', 1)[1].lower())
+            cover_img_path = os.path.join(app.root_path, 'static', 'post_img', filename)
+            cover_img.save(cover_img_path)
         else:
-            if old_post.cover_img == None:
-                filename= None
-                is_draft = True
+            if old_post.cover_img:
+                filename = old_post.cover_img
             else:
-                filename=old_post.cover_img
-                is_draft = 'save_draft' in request.form
+                filename = None
+                is_draft = True
 
-        if old_post.title != post_form.title.data and post_form.title.data != '':
-            filename = post_form.title.data + '.' + old_post.cover_img.rsplit('.', 1)[1].lower()
-            old_name = os.path.join(app.root_path, 'static', 'post_img', old_post.cover_img)
-            new_name = os.path.join(app.root_path, 'static', 'post_img', filename)
-            os.rename(old_name, new_name)
+        if old_post.title != post_form.title.data and old_post.cover_img:
+            new_filename = secure_filename(post_form.title.data + '.' + old_post.cover_img.rsplit('.', 1)[1].lower())
+            old_path = os.path.join(app.root_path, 'static', 'post_img', old_post.cover_img)
+            new_path = os.path.join(app.root_path, 'static', 'post_img', new_filename)
+            os.rename(old_path, new_path)
+            filename = new_filename
 
-        # check if related posts are same by check if every post is not equal other posts
         related_post = [post_form.related_1.data, post_form.related_2.data, post_form.related_3.data]
-        for post_1 in related_post:
-            posts_without_post1 = related_post
-            posts_without_post1.remove(post_1)
-            for post_2 in posts_without_post1:
-                if post_1 == post_2 and post_1 != '0':
-                    flash("Please Select Unique Related Posts!")
-                    return render_template("edit_post.html", post_form=post_form, old_post=old_post)
+        if len(set([rp for rp in related_post if rp != '0'])) != len([rp for rp in related_post if rp != '0']):
+            flash("Please select unique related posts!", 'danger')
+            return render_template("edit_post.html", post_form=post_form, old_post=old_post, notifications_in_navbar=notifications_in_navbar, no_notifications_in_navbar=no_notifications_in_navbar)
 
         if post_form.summary.data == '':
             post_form.summary.data = 'No summary'
@@ -628,27 +628,25 @@ def edit_post(post_id):
             untitled_post_count = Posts.query.filter(Posts.title.startswith('Untitled Post (')).count()
             post_form.title.data = f'Untitled Post ({untitled_post_count})'
 
-        new_post = Posts(id = old_post.id, title = post_form.title.data, created_at = old_post.created_at, content = post_form.content.data, summary = post_form.summary.data, cover_img = filename, related_1 = post_form.related_1.data, related_2 = post_form.related_2.data, related_3 = post_form.related_3.data, is_draft = is_draft)
-        
-        likes = Likes.query.filter_by(post_no=old_post.id).all()
-        comments =  Comment.query.filter_by(post_no=old_post.id).all()
-        db.session.delete(old_post)
-        for like in likes:
-            db.session.delete(like)
-        for comment in comments:
-            db.session.delete(comment)
-            
-        db.session.add(new_post)
+        old_post.title = post_form.title.data
+        old_post.content = post_form.content.data
+        old_post.summary = post_form.summary.data
+        old_post.cover_img = filename
+        old_post.related_1 = post_form.related_1.data
+        old_post.related_2 = post_form.related_2.data
+        old_post.related_3 = post_form.related_3.data
+        old_post.is_draft = is_draft
+
         db.session.commit()
 
         if is_draft:
             flash("Post saved as draft!", 'info')
         else:
             if old_post.is_draft:
-                flash("Post Published Successfully!", 'success')
-                send_email_for_new_post(post)
+                flash("Post published successfully!", 'success')
+                send_email_for_new_post(old_post)
             else:
-                flash("Post Updated Successfully!", 'success')
+                flash("Post updated successfully!", 'success')
 
         return redirect(url_for('manage_posts'))
     
