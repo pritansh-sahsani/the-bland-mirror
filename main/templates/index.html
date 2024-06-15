@@ -59,6 +59,14 @@
                 window.location = "/post/"+$("#search-input").val();
             });
         });
+
+        $(function() {
+            $("#search-input").keypress(function (event) {
+                if (event.keyCode === 13) {
+                    $("#search_button").click();
+                }
+            });
+        });
     </script>
 
     <div class="w-100% pt-2 mt-3.75rem">

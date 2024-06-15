@@ -5,5 +5,31 @@
 {% endblock %}
 
 {% block main %}
-    Welcome to the author's home!
+    <p class="text-4xl text-center mt-5">Statistics</p>
+    <div class="grid grid-cols-3 gap-y-5 mt-4 justify-items-center">
+        <p class="text-xl"><a href="{{url_for('post', post_url=most_viewed_post.title)}}">
+            Most Viewed Post:{{most_viewed_post.title}}
+        </a></p>
+        <p class="text-xl"><a href="{{url_for('post', post_url=most_commented_post.title)}}">
+            Most Commented Post: {{most_commented_post.title}}
+        </a></p>
+        <p class="text-xl"><a href="{{url_for('post', post_url=most_liked_post.title)}}">
+            Most Liked Post: {{most_liked_post.title}}
+        </a></p>
+        <p class="text-xl">
+            Total Views: {{total_views}}
+        </p>
+        <p class="text-xl">
+            Total Likes: {{total_likes}}
+        </p>
+        <p class="text-xl">
+            Unique Views: {{unique_viewers}}
+        </p>
+        <p class="text-xl">
+            Unique Likes: {{unique_likers}}
+        </p>
+        <p class="text-xl">
+            Unique Commenters: {{unique_commenters}}
+        </p>
+    </div>
 {% endblock main %}
